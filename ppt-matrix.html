@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Presentations Matrix</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                linear-gradient(0deg, transparent 24%, rgba(165, 243, 252, 0.4) 25%, rgba(165, 243, 252, 0.4) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.4) 75%, rgba(165, 243, 252, 0.4) 76%, transparent 77%, transparent), 
+                linear-gradient(90deg, transparent 24%, rgba(165, 243, 252, 0.4) 25%, rgba(165, 243, 252, 0.4) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.4) 75%, rgba(165, 243, 252, 0.4) 76%, transparent 77%, transparent);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            color: #0f172a; padding: 20px; min-height: 100vh;
+        }
+
+        .matrix-container {
+            width: 100%; max-width: 1000px; margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border: 2px solid #22d3ee; border-radius: 16px; padding: 30px 20px;
+            box-shadow: 0 10px 30px -5px rgba(6, 182, 212, 0.2);
+        }
+
+        .header-title {
+            text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px;
+            font-weight: 800; color: #083344; margin-bottom: 5px; text-transform: uppercase;
+        }
+        .header-sub { text-align: center; color: #0ea5e9; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono'; margin-bottom: 25px; letter-spacing: 1px; }
+
+        .software-filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .filter-btn {
+            background: #ffffff; border: 2px solid #bae6fd; color: #0369a1;
+            padding: 12px 24px; border-radius: 8px; font-weight: 700;
+            font-family: 'JetBrains Mono', monospace; font-size: 14px; cursor: pointer;
+            transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .filter-btn:hover { border-color: #06b6d4; transform: translateY(-2px); }
+        .filter-btn.active { background: #06b6d4; color: #ffffff; border-color: #0891b2; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+
+        .module-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 768px) { .module-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .module-card {
+            background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px;
+            padding: 20px; cursor: pointer; transition: all 0.2s; border-left: 5px solid #06b6d4;
+        }
+        .module-card:hover {
+            background: #ecfeff; border-color: #06b6d4; transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+        }
+        .module-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
+        .module-tag { font-size: 11px; font-family: 'JetBrains Mono'; color: #0284c7; font-weight: 800; text-transform: uppercase; }
+
+        /* --- MODAL ENGINE --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px);
+            z-index: 100; justify-content: center; align-items: center; padding: 15px;
+        }
+        .modal-content {
+            background: #ffffff; border: 2px solid #06b6d4; border-radius: 12px;
+            width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3); display: flex; flex-direction: column;
+        }
+        .modal-header {
+            background: linear-gradient(90deg, #164e63, #0891b2); color: #fff;
+            padding: 15px 20px; position: sticky; top: 0; z-index: 10; flex-shrink: 0;
+        }
+        .close-btn { position: absolute; right: 20px; top: 15px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; line-height: 1; }
+        .modal-body { padding: 20px; }
+        
+        /* --- PRESENTATION EMULATOR SCREEN --- */
+        .emulator-wrapper {
+            background: #1e293b; border-radius: 8px; padding: 10px; margin-bottom: 20px;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 2px solid #334155;
+        }
+        .emulator-screen {
+            background: #f8fafc; border-radius: 4px; height: 160px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .rec-status {
+            position: absolute; top: 5px; right: 10px; font-family: 'JetBrains Mono'; font-size: 9px;
+            color: #ef4444; font-weight: bold; z-index: 30; animation: flashRec 1s infinite;
+        }
+        @keyframes flashRec { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        
+        .sim-ribbon { height: 30px; background: #e2e8f0; border-bottom: 1px solid #cbd5e1; display: flex; align-items: center; padding: 0 10px; gap: 8px; }
+        .sim-btn { height: 12px; width: 25px; background: #cbd5e1; border-radius: 3px; }
+        .sim-btn-target { background: #f59e0b; border: 1px solid #b45309; } /* Orange for PPT */
+        
+        .sim-workspace { display: flex; flex-grow: 1; background: #f1f5f9; }
+        .sim-sidebar { width: 40px; background: #e2e8f0; border-right: 1px solid #cbd5e1; padding: 5px; display: flex; flex-direction: column; gap: 5px; align-items: center; }
+        .sim-thumb { width: 30px; height: 18px; background: #fff; border: 1px solid #94a3b8; border-radius: 2px; }
+        .sim-thumb.active { border: 2px solid #f59e0b; }
+        
+        .sim-slide-area { flex-grow: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        .sim-slide { width: 140px; height: 80px; background: #fff; box-shadow: 0 4px 6px rgba(0,0,0,0.1); display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; position: relative; }
+        
+        /* LIVE TEXT FEED */
+        .sim-feed { position: absolute; top: 5px; left: 45px; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #64748b; font-weight: bold; }
+        .anim-master .sim-feed::after { content: 'RENDERING SLIDE MASTER...'; color: #b45309; animation: pulseText 2s infinite; }
+        .anim-animate .sim-feed::after { content: 'EXECUTING TRANSITION PROTOCOL...'; color: #047857; animation: pulseText 2s infinite; }
+        .anim-export .sim-feed::after { content: 'EXPORTING MEDIA MATRIX...'; color: #0369a1; animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .sim-box { width: 80%; height: 20px; background: #bae6fd; border: 1px solid #38bdf8; border-radius: 2px; }
+        .sim-line { width: 60%; height: 4px; background: #cbd5e1; border-radius: 2px; }
+        
+        .sim-cursor {
+            width: 14px; height: 14px; background: #0f172a; clip-path: polygon(0 0, 100% 40%, 40% 100%);
+            position: absolute; bottom: 20px; right: 20px; z-index: 20; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+        }
+
+        /* Animations */
+        .anim-master .sim-cursor { animation: moveMaster 4s infinite ease-in-out; }
+        .anim-master .sim-box { animation: masterEdit 4s infinite ease-in-out; }
+        @keyframes moveMaster { 0% { bottom: -20px; right: -20px; } 30%, 40% { top: 35px; left: 80px; } 100% { top: 35px; left: 80px; } }
+        @keyframes masterEdit { 0%, 40% { background: #bae6fd; width: 80%; } 50%, 100% { background: #fde68a; border-color: #d97706; width: 90%; } }
+
+        .anim-animate .sim-cursor { animation: moveAnim 4s infinite ease-in-out; }
+        .anim-animate .sim-slide { animation: slideTransition 4s infinite ease-in-out; }
+        @keyframes moveAnim { 0% { bottom: -20px; right: -20px; } 30%, 40% { top: 10px; left: 60px; } 100% { top: 10px; left: 60px; } }
+        @keyframes slideTransition { 0%, 40% { transform: translateX(0); opacity: 1; } 45% { transform: translateX(-20px); opacity: 0; } 55% { transform: translateX(20px); opacity: 0; } 60%, 100% { transform: translateX(0); opacity: 1; } }
+
+        .anim-export .sim-cursor { animation: moveExport 4s infinite ease-in-out; }
+        .anim-export .sim-slide { animation: slideExport 4s infinite ease-in-out; }
+        @keyframes moveExport { 0% { bottom: -20px; right: -20px; } 30%, 40% { top: 10px; left: 15px; } 100% { top: 10px; left: 15px; } }
+        @keyframes slideExport { 0%, 40% { border: none; } 50%, 100% { border: 2px dashed #0284c7; background: #e0f2fe; } }
+
+        /* --- SCENARIO TEXT --- */
+        .scenario-box { background: #f1f5f9; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px; }
+        .scenario-title { font-weight: 800; color: #b45309; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
+        .scenario-text { color: #334155; font-size: 13px; line-height: 1.5; }
+        .step-container { display: flex; flex-direction: column; gap: 12px; }
+        .step-row { display: flex; gap: 15px; background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .step-number { background: #e0f2fe; color: #0369a1; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: 800; font-family: 'JetBrains Mono'; flex-shrink: 0; font-size: 12px; }
+        .step-instruction { font-size: 13px; color: #1e293b; line-height: 1.5; align-self: center; }
+    </style>
+</head>
+<body>
+
+    <div class="matrix-container">
+        <h1 class="header-title">Guidance Matrix: Presentations</h1>
+        <div class="header-sub">ENTERPRISE DECK ARCHITECTURE</div>
+        
+        <div class="software-filters">
+            <button class="filter-btn active" onclick="filterSoftware('all')">ALL SYSTEMS</button>
+            <button class="filter-btn" onclick="filterSoftware('ppt')">MS POWERPOINT</button>
+            <button class="filter-btn" onclick="filterSoftware('wps_ppt')">WPS PRESENTATION</button>
+            <button class="filter-btn" onclick="filterSoftware('gslides')">GOOGLE SLIDES</button>
+        </div>
+
+        <div class="module-grid" id="grid-target"></div>
+    </div>
+
+    <div class="modal-overlay" id="sim-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+                <div id="modal-tag" style="font-size: 11px; font-family: 'JetBrains Mono'; color: #a5f3fc; margin-bottom: 5px;"></div>
+                <h2 id="modal-title" style="font-size: 18px; font-weight: 700; margin: 0;"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="emulator-wrapper">
+                    <div style="font-size: 10px; font-family: 'JetBrains Mono'; color: #94a3b8; margin-bottom: 5px; font-weight: bold;">SYS.EMULATOR_V2</div>
+                    <div class="emulator-screen" id="emulator-engine">
+                        <div class="rec-status">● REC</div>
+                        <div class="sim-feed"></div>
+                        <div class="sim-ribbon">
+                            <div class="sim-btn"></div><div class="sim-btn sim-btn-target"></div><div class="sim-btn"></div>
+                        </div>
+                        <div class="sim-workspace">
+                            <div class="sim-sidebar">
+                                <div class="sim-thumb active"></div>
+                                <div class="sim-thumb"></div>
+                                <div class="sim-thumb"></div>
+                            </div>
+                            <div class="sim-slide-area">
+                                <div class="sim-slide">
+                                    <div class="sim-box"></div>
+                                    <div class="sim-line"></div>
+                                </div>
+                                <div class="sim-cursor"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="scenario-box">
+                    <div class="scenario-title">Real Life Scenario</div>
+                    <div class="scenario-text" id="modal-scenario"></div>
+                </div>
+                <div class="step-container" id="modal-steps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================================
+        // 🛠️ PRESENTATIONS DATABASE (BATCH 1)
+        // =====================================================================
+        
+        const database = [
+            // --- MS POWERPOINT ---
+            { software: "ppt", softwareLabel: "MS POWERPOINT", animType: "anim-master", title: "The Slide Master Rule", scenario: "You have 50 slides detailing Swiggy IM Voice rosters. Management wants the company logo moved from the bottom left to the top right. Doing it one by one takes hours.", steps: ["Go to the 'View' tab on the top ribbon.", "Click 'Slide Master'. This reveals the hidden DNA of your presentation.", "Click the very top 'Master Slide' on the left panel.", "Move the logo to the top right. Click 'Close Master View'. Every single slide in your deck updates instantly."] },
+            { software: "ppt", softwareLabel: "MS POWERPOINT", animType: "anim-animate", title: "The Morph Transition", scenario: "You want a complex flowchart of shift timings to smoothly rearrange itself on the next slide without programming 20 confusing animations.", steps: ["Create your first slide with your shapes.", "Right-click the slide thumbnail on the left and hit 'Duplicate Slide'.", "On the second slide, move the shapes around, resize them, or change their colors.", "Go to the 'Transitions' tab and click 'Morph'. PPT automatically animates the movement between the two states perfectly."] },
+            { software: "ppt", softwareLabel: "MS POWERPOINT", animType: "anim-master", title: "Align and Distribute", scenario: "You added 5 icons for team leads, but they are crooked and unevenly spaced. Don't drag them by eye.", steps: ["Click and drag your mouse to highlight all 5 icons.", "Go to 'Home' > 'Arrange' > 'Align'.", "Click 'Align Middle' to make them perfectly straight.", "Go back to 'Align' and click 'Distribute Horizontally'. The gaps between them become mathematically identical."] },
+            { software: "ppt", softwareLabel: "MS POWERPOINT", animType: "anim-export", title: "Using Presenter View", scenario: "You are presenting the Q1 Roster on a projector, but you need to read your secret speaking notes without the team seeing them.", steps: ["Plug your laptop into the projector/external monitor.", "Go to the 'Slide Show' tab and ensure 'Use Presenter View' is checked.", "Start the presentation.", "The projector shows the clean slides, while your laptop shows the current slide, the next slide, a timer, and your private typed notes."] },
+            { software: "ppt", softwareLabel: "MS POWERPOINT", animType: "anim-export", title: "Exporting Deck to Video", scenario: "You created an automated tutorial deck, and you want to send it to the team's WhatsApp group as a video file so they don't need a PPT viewer.", steps: ["Go to 'File' > 'Export'.", "Click 'Create a Video'.", "Select the resolution (e.g., Standard 480p is best for WhatsApp).", "Set the 'Seconds spent on each slide' timer.", "Click 'Create Video'. PPT renders the entire deck, complete with your transitions, into an MP4 file."] },
+
+            // --- WPS PRESENTATION ---
+            { software: "wps_ppt", softwareLabel: "WPS PRESENTATION", animType: "anim-export", title: "Magic File Compression", scenario: "You added high-res images of the Vizag and Araku Valley offsite to the presentation. Now the file is 100MB and Gmail rejects it.", steps: ["Open the heavy presentation in WPS.", "Click 'Menu' in the top left.", "Go to 'File Information' > 'Compress File'.", "WPS will analyze every image and media file. Select 'Screen viewing' quality and click Compress to shrink the file by up to 80% without deleting anything."] },
+            { software: "wps_ppt", softwareLabel: "WPS PRESENTATION", animType: "anim-master", title: "Auto-Design Layouts", scenario: "You typed a boring bulleted list of 4 shift schedules. You want it to look like a professional corporate infographic instantly.", steps: ["Highlight your bulleted list.", "Look for the 'Design' or 'Magic' panel on the right side of the screen.", "WPS will automatically suggest graphical SmartArt and icon layouts based on your text.", "Click a design, and your boring text transforms into a polished diagram."] },
+            { software: "wps_ppt", softwareLabel: "WPS PRESENTATION", animType: "anim-export", title: "Export to Pictures", scenario: "The Team Leads just want a quick screenshot of slide 5 (the final roster) without opening the whole file.", steps: ["Go to 'Menu' > 'Export to Picture'.", "You can choose to export the entire deck as a folder of images, or just generate one massive, long image containing all slides stacked vertically.", "Select your preferred format and hit Export."] },
+            { software: "wps_ppt", softwareLabel: "WPS PRESENTATION", animType: "anim-animate", title: "Animation Painter", scenario: "You spent 10 minutes setting up a perfect entry animation for a text box. You want to apply that exact same animation to 12 other boxes.", steps: ["Click the text box that has the perfect animation.", "Go to the 'Animation' tab and click 'Animation Painter' (it looks like a brush).", "Click the new text box you want to animate.", "The exact timing, bounce, and fade effects are copied over instantly."] },
+            { software: "wps_ppt", softwareLabel: "WPS PRESENTATION", animType: "anim-master", title: "Eye Protection & Reading Mode", scenario: "You are reviewing a 60-slide deck at night and the bright white backgrounds are hurting your eyes.", steps: ["Look at the status bar at the bottom right of the WPS window.", "Click the 'Eye Protection Mode' icon.", "The slides will take on a softer, warmer tint, making it easier to audit the presentation data in low light without altering the actual save file."] },
+
+            // --- GOOGLE SLIDES ---
+            { software: "gslides", softwareLabel: "GOOGLE SLIDES", animType: "anim-master", title: "Theme Builder (Slide Master)", scenario: "You need every slide to have the Swiggy IM Voice process logo in the corner, and you refuse to paste it 40 times.", steps: ["Go to 'View' > 'Theme builder' (This is Google's version of Slide Master).", "Click the 'Theme' slide at the very top of the hierarchy.", "Paste your logo in the corner.", "Click the 'X' in the top right to close the builder. Every slide now has the logo baked into the background."] },
+            { software: "gslides", softwareLabel: "GOOGLE SLIDES", animType: "anim-export", title: "Audience Q&A Link", scenario: "You are presenting the new shift policy to 50 people. You want them to submit questions from their phones anonymously while you speak.", steps: ["Click the drop-down arrow next to the 'Slideshow' button in the top right.", "Select 'Presenter view'.", "In the new window, click the 'Audience Tools' tab and hit 'Start new'.", "A URL appears at the top of your presentation. The audience goes to that URL on their phones to type questions, which pop up on your private screen."] },
+            { software: "gslides", softwareLabel: "GOOGLE SLIDES", animType: "anim-animate", title: "Linking Live Sheets Charts", scenario: "You want your presentation to show the live shift coverage metrics. It must update automatically if the Excel/Sheets roster changes.", steps: ["Go to 'Insert' > 'Chart' > 'From Sheets'.", "Select your master roster spreadsheet.", "Click the specific chart you want and make sure 'Link to spreadsheet' is checked.", "When the data changes next week, open the presentation and click the 'Update' button that appears on the chart."] },
+            { software: "gslides", softwareLabel: "GOOGLE SLIDES", animType: "anim-export", title: "Auto-Play Looping for Kiosks", scenario: "You want a 5-slide presentation of the week's roster to play continuously on a TV screen in the breakroom.", steps: ["Go to 'File' > 'Share' > 'Publish to web'.", "Go to the 'Link' tab.", "Set the 'Auto-advance slides' timer (e.g., every 5 seconds).", "Check the box to 'Restart the slideshow after the last slide'.", "Copy the URL, put it on the breakroom TV browser, and it will loop endlessly."] },
+            { software: "gslides", softwareLabel: "GOOGLE SLIDES", animType: "anim-master", title: "Explore Tool for Instant Layouts", scenario: "You dumped a title and three bullet points on a plain white slide. You need it to look professional in 10 seconds.", steps: ["Look at the bottom right corner of the screen.", "Click the star-shaped 'Explore' button.", "Google's AI instantly scans your text and generates a sidebar full of professional, color-coordinated slide layouts.", "Click the one you like, and your text is instantly formatted into the new design."] }
+        ];
+
+        // =====================================================================
+        // ⚙️ RENDER & MODAL ENGINE
+        // =====================================================================
+        
+        const gridTarget = document.getElementById('grid-target');
+        
+        function renderCards(filterType) {
+            gridTarget.innerHTML = ''; 
+            database.forEach((item, index) => {
+                if (filterType === 'all' || item.software === filterType) {
+                    const card = document.createElement('div');
+                    card.className = 'module-card';
+                    card.innerHTML = `<div class="module-tag">${item.softwareLabel}</div><div class="module-title">${item.title}</div>`;
+                    card.onclick = () => openModal(index);
+                    gridTarget.appendChild(card);
+                }
+            });
+        }
+
+        function filterSoftware(type) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderCards(type);
+        }
+
+        function openModal(dbIndex) {
+            const data = database[dbIndex];
+            document.getElementById('modal-tag').innerText = data.softwareLabel;
+            document.getElementById('modal-title').innerText = data.title;
+            document.getElementById('modal-scenario').innerText = data.scenario;
+            
+            const emulator = document.getElementById('emulator-engine');
+            emulator.className = `emulator-screen ${data.animType}`;
+            
+            const stepsContainer = document.getElementById('modal-steps');
+            stepsContainer.innerHTML = '';
+            data.steps.forEach((stepText, index) => {
+                const stepRow = document.createElement('div');
+                stepRow.className = 'step-row';
+                stepRow.innerHTML = `<div class="step-number">${index + 1}</div><div class="step-instruction">${stepText}</div>`;
+                stepsContainer.appendChild(stepRow);
+            });
+            
+            document.getElementById('sim-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('sim-modal').style.display = 'none';
+            document.getElementById('emulator-engine').className = 'emulator-screen';
+        }
+
+        renderCards('all');
+    </script>
+</body>
+</html>
+
