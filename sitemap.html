@@ -3,85 +3,117 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced Guidance Portal - Site Map</title>
+    <title>Enterprise Telemetry - AI Simulation Sitemap</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f3f4f6; 
+            background-color: #f0f9ff; /* Lightest Cyan background */
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 10%),
+                radial-gradient(circle at 90% 80%, rgba(34, 211, 238, 0.05) 0%, transparent 10%);
             color: #1e293b; 
             padding: 30px 15px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
         }
+
         .sitemap-container {
             width: 100%;
             max-width: 1000px;
             background: #ffffff;
-            border: 1px solid #e5e7eb;
-            border-radius: 12px;
+            border: 2px solid #a5f3fc; /* Light Cyan Border */
+            border-radius: 16px;
             padding: 30px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.1), 0 4px 6px -2px rgba(6, 182, 212, 0.05);
             align-self: flex-start;
+            position: relative;
+            overflow: hidden;
         }
+        
+        /* Subtle Circuit Background Pattern */
+        .sitemap-container::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M10 10h10v10H10zM30 10h10v10H30zM50 10h10v10H50zM70 10h10v10H70zM90 10h10v10H90zM10 30h10v10H10zM30 30h10v10H30zM50 30h10v10H50zM70 30h10v10H70zM90 30h10v10H90zM10 50h10v10H10zM30 50h10v10H30zM50 50h10v10H50zM70 50h10v10H70zM90 50h10v10H90zM10 70h10v10H10zM30 70h10v10H30zM50 70h10v10H50zM70 70h10v10H70zM90 70h10v10H90zM10 90h10v10H10zM30 90h10v10H30zM50 90h10v10H50zM70 90h10v10H70zM90 90h10v10H90z" fill="%23a5f3fc" fill-opacity="0.1"/></svg>');
+            opacity: 0.6; pointer-events: none;
+        }
+
         .header {
-            border-bottom: 2px solid #f1f5f9;
+            border-bottom: 2px solid #a5f3fc;
             padding-bottom: 20px;
             margin-bottom: 30px;
             text-align: center;
         }
         .header h1 {
-            font-size: 24px;
-            color: #0f172a;
+            font-size: 26px;
+            color: #083344;
             font-weight: 800;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
         }
+        .ai-icon-core { width: 14px; height: 14px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 10px #06b6d4, 0 0 20px #22d3ee; animation: corePulse 1.5s infinite; }
+        @keyframes corePulse { 0% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.8; } }
+        
         .header p {
-            color: #64748b;
-            font-size: 13px;
+            color: #06b6d4; /* Light Cyan */
+            font-size: 11px;
             margin-top: 6px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 600;
+            letter-spacing: 2px;
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace; /* Code font */
         }
         
         .tree-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 20px;
+            position: relative;
         }
         /* Mobile responsive grids */
-        @media (min-width: 640px) {
-            .tree-grid { grid-template-columns: repeat(2, 1fr); }
+        @media (min-width: 640px) { .tree-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (min-width: 1024px) { .tree-grid { grid-template-columns: repeat(3, 1fr); } }
+
+        /* Moving connection lines pattern on tree grid background */
+        .tree-grid::after {
+            content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
+            background-image: linear-gradient(0deg, transparent 24%, #a5f3fc 25%, #a5f3fc 26%, transparent 27%, transparent 74%, #a5f3fc 75%, #a5f3fc 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, #a5f3fc 25%, #a5f3fc 26%, transparent 27%, transparent 74%, #a5f3fc 75%, #a5f3fc 76%, transparent 77%, transparent);
+            background-size: 50px 50px; opacity: 0.2; animation: linesMove 40s linear infinite;
         }
-        @media (min-width: 1024px) {
-            .tree-grid { grid-template-columns: repeat(3, 1fr); }
-        }
+        @keyframes linesMove { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
 
         .menu-block {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 10px;
+            background: #ffffff;
+            border: 1px solid #bae6fd; /* Very Light Cyan border */
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 1px 3px rgba(6, 182, 212, 0.05);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+            position: relative; z-index: 2;
         }
         .menu-block:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transform: translateY(-4px) scale(1.01);
+            border-color: #06b6d4; /* Intense Cyan border on hover */
+            box-shadow: 0 20px 25px -5px rgba(6, 182, 212, 0.2), 0 10px 10px -5px rgba(34, 211, 238, 0.1), 0 0 15px -3px rgba(34, 211, 238, 0.3); /* NEON BLOOM */
         }
         
         .menu-header {
-            background: #1e293b;
+            background: linear-gradient(135deg, #0e7490, #164e63); /* Dark Cyan gradient */
             color: #ffffff;
             padding: 16px 20px;
             font-weight: 700;
             font-size: 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
-            border-bottom: 3px solid #3b82f6;
+            gap: 12px;
+            border-bottom: 4px solid #06b6d4; /* Vibrant Cyan border */
+            position: relative;
         }
+        .menu-header::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 4px;
+            background: #ffffff; animation: headerFill 3s infinite ease-out;
+        }
+        @keyframes headerFill { 0% { width: 0; left: 0; } 50% { width: 100%; left: 0; } 100% { width: 0; left: 100%; } }
         
         .dropdown-list {
             list-style: none;
@@ -89,7 +121,8 @@
             margin: 0;
         }
         .dropdown-item {
-            border-bottom: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e0f2fe; /* Ultra-light Cyan */
+            position: relative;
         }
         .dropdown-item:last-child {
             border-bottom: none;
@@ -99,32 +132,49 @@
             display: flex;
             align-items: center;
             padding: 14px 20px;
-            color: #334155;
+            color: #164e63;
             text-decoration: none;
             font-weight: 600;
             font-size: 14px;
-            transition: all 0.2s;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
+        /* Connection Point Icon */
         .dropdown-link::before {
             content: '↳';
-            margin-right: 10px;
-            color: #94a3b8;
-            font-weight: 600;
+            margin-right: 12px;
+            color: #22d3ee; /* Light Cyan */
+            font-weight: 700;
             font-size: 16px;
+            transition: color 0.2s;
         }
+        
         .dropdown-link:hover {
-            background: #eff6ff;
-            color: #2563eb;
+            background: #ecfeff; /* Lightest Cyan hover */
+            color: #06b6d4; /* Clear Cyan text */
             padding-left: 26px;
         }
         .dropdown-link:hover::before {
-            color: #3b82f6;
+            color: #0891b2; /* Intense Teal-Cyan */
         }
+        
+        /* Floating dot effect on link hover */
+        .dropdown-link::after {
+            content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%;
+            background: #06b6d4; transform: scaleY(0); transition: transform 0.2s;
+        }
+        .dropdown-link:hover::after {
+            transform: scaleY(1);
+        }
+
         .empty-menu-msg {
             padding: 14px 20px;
-            color: #94a3b8;
+            color: #0891b2;
             font-size: 13px;
             font-style: italic;
+            background: #f0f9ff;
+            border-top: 1px solid #bae6fd;
         }
     </style>
 </head>
@@ -132,8 +182,12 @@
 
     <div class="sitemap-container">
         <div class="header">
-            <h1>Portal Architecture & Site Map</h1>
-            <p>System Directory Overview</p>
+            <h1>
+                <span class="ai-icon-core"></span>
+                Guidance Architecture [SIM 4.1]
+                <span class="ai-icon-core"></span>
+            </h1>
+            <p>ACTIVE AI NODE ROUTING MATRIX // 300MS FREQUENCY</p>
         </div>
         
         <div class="tree-grid" id="sitemap-render-target"></div>
@@ -156,7 +210,7 @@
             {
                 menuName: "Sitemap",
                 icon: "🗺️",
-                dropdowns: [] // No dropdowns for this menu yet
+                dropdowns: [] // No dropdowns currently attached
             }
         ];
 
@@ -166,7 +220,7 @@
         const renderTarget = document.getElementById('sitemap-render-target');
 
         portalStructure.forEach(section => {
-            // Create Menu Block
+            // Create Menu Block (The main Node)
             const block = document.createElement('div');
             block.className = 'menu-block';
 
@@ -176,7 +230,7 @@
             header.innerHTML = `<span>${section.icon}</span> ${section.menuName}`;
             block.appendChild(header);
 
-            // Create Dropdown List (The sub-items)
+            // Create Dropdown List (The sub-items/Endpoints)
             if (section.dropdowns && section.dropdowns.length > 0) {
                 const list = document.createElement('ul');
                 list.className = 'dropdown-list';
@@ -189,10 +243,10 @@
                 });
                 block.appendChild(list);
             } else {
-                // If there are no dropdowns, show a clean message
+                // Failsafe for empty menus
                 const emptyMsg = document.createElement('div');
                 emptyMsg.className = 'empty-menu-msg';
-                emptyMsg.innerText = "No sub-pages currently attached.";
+                emptyMsg.innerText = "NO ENDPOINTS ATTACHED // STANDBY";
                 block.appendChild(emptyMsg);
             }
 
