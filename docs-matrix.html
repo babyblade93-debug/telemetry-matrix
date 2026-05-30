@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Docs - Life Simulation Matrix</title>
+    <title>Enterprise Docs - Matrix & Emulator</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
         
@@ -23,121 +23,112 @@
         }
 
         .matrix-container {
-            width: 100%;
-            max-width: 1000px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 2px solid #22d3ee;
-            border-radius: 16px;
-            padding: 30px 20px;
+            width: 100%; max-width: 1000px; margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border: 2px solid #22d3ee; border-radius: 16px; padding: 30px 20px;
             box-shadow: 0 10px 30px -5px rgba(6, 182, 212, 0.2);
         }
 
         .header-title {
-            text-align: center;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 22px;
-            font-weight: 800;
-            color: #083344;
-            margin-bottom: 20px;
-            text-transform: uppercase;
+            text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px;
+            font-weight: 800; color: #083344; margin-bottom: 20px; text-transform: uppercase;
         }
 
-        /* --- THE 3 BUTTON SYSTEM --- */
-        .software-filters {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
+        .software-filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
         .filter-btn {
-            background: #ffffff;
-            border: 2px solid #bae6fd;
-            color: #0369a1;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+            background: #ffffff; border: 2px solid #bae6fd; color: #0369a1;
+            padding: 12px 24px; border-radius: 8px; font-weight: 700;
+            font-family: 'JetBrains Mono', monospace; font-size: 14px; cursor: pointer;
+            transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
         }
         .filter-btn:hover { border-color: #06b6d4; transform: translateY(-2px); }
-        .filter-btn.active {
-            background: #06b6d4;
-            color: #ffffff;
-            border-color: #0891b2;
-            box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
-        }
+        .filter-btn.active { background: #06b6d4; color: #ffffff; border-color: #0891b2; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
 
-        /* --- MODULE GRID --- */
-        .module-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 15px;
-        }
+        .module-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 768px) { .module-grid { grid-template-columns: repeat(2, 1fr); } }
 
         .module-card {
-            background: #f8fafc;
-            border: 1px solid #cbd5e1;
-            border-radius: 10px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border-left: 5px solid #06b6d4;
+            background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px;
+            padding: 20px; cursor: pointer; transition: all 0.2s; border-left: 5px solid #06b6d4;
         }
         .module-card:hover {
-            background: #ecfeff;
-            border-color: #06b6d4;
-            transform: translateX(5px);
+            background: #ecfeff; border-color: #06b6d4; transform: translateX(5px);
             box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
         }
         .module-title { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
         .module-tag { font-size: 11px; font-family: 'JetBrains Mono'; color: #0284c7; font-weight: 600; text-transform: uppercase; }
 
-        /* --- LIFE SIMULATION MODAL (POPUP) --- */
+        /* --- MODAL ENGINE --- */
         .modal-overlay {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(5px);
-            z-index: 100; justify-content: center; align-items: center; padding: 20px;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px);
+            z-index: 100; justify-content: center; align-items: center; padding: 15px;
         }
         .modal-content {
             background: #ffffff; border: 2px solid #06b6d4; border-radius: 12px;
-            width: 100%; max-width: 600px; max-height: 85vh; overflow-y: auto;
-            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3); position: relative;
+            width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3); display: flex; flex-direction: column;
         }
         .modal-header {
             background: linear-gradient(90deg, #164e63, #0891b2); color: #fff;
-            padding: 20px; position: sticky; top: 0; z-index: 2;
+            padding: 15px 20px; position: sticky; top: 0; z-index: 10; flex-shrink: 0;
         }
-        .close-btn {
-            position: absolute; right: 20px; top: 20px; background: none; border: none;
-            color: #fff; font-size: 24px; cursor: pointer; line-height: 1;
-        }
-        .modal-body { padding: 25px; }
+        .close-btn { position: absolute; right: 20px; top: 15px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; line-height: 1; }
+        .modal-body { padding: 20px; }
         
-        .scenario-box {
-            background: #f1f5f9; border-left: 4px solid #f59e0b; padding: 15px;
-            border-radius: 0 8px 8px 0; margin-bottom: 25px;
+        /* --- ANIMATED EMULATOR SCREEN --- */
+        .emulator-wrapper {
+            background: #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 20px;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #94a3b8;
         }
-        .scenario-title { font-weight: 800; color: #b45309; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
-        .scenario-text { color: #334155; font-size: 14px; line-height: 1.5; }
+        .emulator-screen {
+            background: #ffffff; border-radius: 4px; height: 160px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        /* Fake UI Elements */
+        .sim-ribbon { height: 35px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 10px; gap: 8px; }
+        .sim-btn { height: 15px; width: 30px; background: #e2e8f0; border-radius: 3px; }
+        .sim-btn-target { background: #bae6fd; border: 1px solid #38bdf8; position: relative; }
+        .sim-doc-area { flex-grow: 1; background: #e2e8f0; display: flex; justify-content: center; padding-top: 10px; }
+        .sim-paper { width: 60%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 15px; display: flex; flex-direction: column; gap: 6px; }
+        .sim-line { height: 6px; background: #cbd5e1; border-radius: 3px; width: 100%; }
+        .sim-line.short { width: 60%; }
+        .sim-line.title { height: 10px; width: 50%; }
+        
+        /* The Virtual Cursor */
+        .sim-cursor {
+            width: 14px; height: 14px; background: #06b6d4; clip-path: polygon(0 0, 100% 40%, 40% 100%);
+            position: absolute; bottom: 20px; right: 20px; z-index: 20; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+        }
 
-        .step-container { display: flex; flex-direction: column; gap: 15px; }
-        .step-row {
-            display: flex; gap: 15px; background: #fff; border: 1px solid #e2e8f0;
-            padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .step-number {
-            background: #e0f2fe; color: #0369a1; width: 30px; height: 30px;
-            display: flex; justify-content: center; align-items: center;
-            border-radius: 50%; font-weight: 800; font-family: 'JetBrains Mono'; flex-shrink: 0;
-        }
-        .step-instruction { font-size: 14px; color: #1e293b; line-height: 1.5; align-self: center; }
+        /* --- ANIMATION LOGIC (Driven by JS Class Switching) --- */
+        
+        /* 1. Mail Merge Animation */
+        .anim-merge .sim-cursor { animation: moveMerge 4s infinite ease-in-out; }
+        .anim-merge .sim-paper { animation: duplicatePaper 4s infinite ease-in-out; }
+        @keyframes moveMerge { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 85px; } 40% { top: 10px; left: 85px; transform: scale(0.8); } 100% { top: 10px; left: 85px; } }
+        @keyframes duplicatePaper { 0%, 40% { box-shadow: 0 2px 4px rgba(0,0,0,0.1); } 50%, 100% { box-shadow: -10px 10px 0px -1px #fff, -10px 10px 4px rgba(0,0,0,0.1), -20px 20px 0px -1px #fff, -20px 20px 4px rgba(0,0,0,0.1); transform: translate(10px, -10px); } }
+
+        /* 2. Formatting/Style Animation */
+        .anim-format .sim-cursor { animation: moveFormat 4s infinite ease-in-out; }
+        .anim-format .sim-line.title { animation: expandTitle 4s infinite ease-in-out; }
+        @keyframes moveFormat { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 45px; } 40% { top: 10px; left: 45px; transform: scale(0.8); } 100% { top: 10px; left: 45px; } }
+        @keyframes expandTitle { 0%, 40% { width: 50%; height: 10px; background: #cbd5e1; } 50%, 100% { width: 80%; height: 14px; background: #0369a1; border-bottom: 2px solid #06b6d4; } }
+
+        /* 3. Lock/Security Animation */
+        .anim-lock .sim-cursor { animation: moveLock 4s infinite ease-in-out; }
+        .anim-lock .sim-paper { animation: applyLock 4s infinite ease-in-out; }
+        @keyframes moveLock { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 125px; } 40% { top: 10px; left: 125px; transform: scale(0.8); } 100% { top: 10px; left: 125px; } }
+        @keyframes applyLock { 0%, 40% { border: none; } 50%, 100% { border: 3px solid #ef4444; background: #fef2f2; } }
+
+        /* --- SCENARIO TEXT --- */
+        .scenario-box { background: #f1f5f9; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px; }
+        .scenario-title { font-weight: 800; color: #b45309; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
+        .scenario-text { color: #334155; font-size: 13px; line-height: 1.5; }
+        .step-container { display: flex; flex-direction: column; gap: 12px; }
+        .step-row { display: flex; gap: 15px; background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .step-number { background: #e0f2fe; color: #0369a1; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: 800; font-family: 'JetBrains Mono'; flex-shrink: 0; font-size: 12px; }
+        .step-instruction { font-size: 13px; color: #1e293b; line-height: 1.5; align-self: center; }
 
     </style>
 </head>
@@ -161,9 +152,31 @@
             <div class="modal-header">
                 <button class="close-btn" onclick="closeModal()">&times;</button>
                 <div id="modal-tag" style="font-size: 11px; font-family: 'JetBrains Mono'; color: #a5f3fc; margin-bottom: 5px;"></div>
-                <h2 id="modal-title" style="font-size: 20px; font-weight: 700; margin: 0;"></h2>
+                <h2 id="modal-title" style="font-size: 18px; font-weight: 700; margin: 0;"></h2>
             </div>
             <div class="modal-body">
+                
+                <div class="emulator-wrapper">
+                    <div style="font-size: 10px; font-family: 'JetBrains Mono'; color: #64748b; margin-bottom: 5px; font-weight: bold;">LIVE SIMULATION FEED:</div>
+                    <div class="emulator-screen" id="emulator-engine">
+                        <div class="sim-ribbon">
+                            <div class="sim-btn"></div>
+                            <div class="sim-btn sim-btn-target" id="emu-target"></div>
+                            <div class="sim-btn"></div>
+                            <div class="sim-btn"></div>
+                        </div>
+                        <div class="sim-doc-area">
+                            <div class="sim-paper" id="emu-paper">
+                                <div class="sim-line title"></div>
+                                <div class="sim-line"></div>
+                                <div class="sim-line"></div>
+                                <div class="sim-line short"></div>
+                            </div>
+                        </div>
+                        <div class="sim-cursor"></div>
+                    </div>
+                </div>
+
                 <div class="scenario-box">
                     <div class="scenario-title">Real Life Scenario</div>
                     <div class="scenario-text" id="modal-scenario"></div>
@@ -176,7 +189,7 @@
     <script>
         // =====================================================================
         // 🛠️ THE 100+ DATABASE ENGINE
-        // Add new blocks here to scale up to 100+. The code does the rest.
+        // Added 'animType' (merge, format, lock) to trigger the correct emulator.
         // =====================================================================
         
         const database = [
@@ -184,19 +197,21 @@
                 software: "word",
                 softwareLabel: "MS WORD",
                 title: "Mail Merge: Automated Shift Letters",
+                animType: "anim-merge", // Triggers duplicating paper animation
                 scenario: "Management needs you to send 50 shift-change notices regarding the new schedule. Typing them one by one takes 3 hours and causes typos. We will do it in 2 minutes by linking a template to a spreadsheet.",
                 steps: [
                     "Open a blank MS Word document and type your base letter template.",
                     "Go to the 'Mailings' tab on the top ribbon and click 'Start Mail Merge' > 'Letters'.",
                     "Click 'Select Recipients' > 'Use an Existing List' and attach your shift roster spreadsheet.",
-                    "Click 'Insert Merge Field' to place tags like <<Employee_Name>> and <<Shift_Timing>> into the text.",
-                    "Click 'Finish & Merge' > 'Edit Individual Documents' to instantly generate all 50 customized letters."
+                    "Click 'Insert Merge Field' to place tags like <<Employee_Name>> into the text.",
+                    "Click 'Finish & Merge' to instantly generate all 50 customized letters."
                 ]
             },
             {
                 software: "wps",
                 softwareLabel: "WPS OFFICE",
                 title: "Restricting Format Edits",
+                animType: "anim-lock", // Triggers red security border animation
                 scenario: "You are sharing a weekly roster report with a team lead. You need them to read it, but you absolutely cannot let them accidentally delete rows or change the formatting.",
                 steps: [
                     "Open your document in WPS Writer.",
@@ -210,12 +225,13 @@
                 software: "gdocs",
                 softwareLabel: "GOOGLE DOCS",
                 title: "Version History Recovery",
+                animType: "anim-merge", // Using merge anim for restoring files
                 scenario: "A colleague accidentally deleted three pages of critical HR guidelines from a shared Google Doc yesterday. You need to pull that data back without retyping it.",
                 steps: [
                     "Open the damaged Google Doc.",
-                    "Click 'File' in the top left menu, hover over 'Version history', and select 'See version history'.",
+                    "Click 'File' in the menu, hover over 'Version history', and select 'See version history'.",
                     "Look at the right-hand panel. Click on the timestamp from two days ago.",
-                    "You will see the old, fully intact document. Click the blue 'Restore this version' button at the top.",
+                    "You will see the old, fully intact document. Click the blue 'Restore this version' button.",
                     "Crisis averted. The document is instantly rolled back."
                 ]
             },
@@ -223,33 +239,30 @@
                 software: "word",
                 softwareLabel: "MS WORD",
                 title: "Enterprise Styles & Navigation",
-                scenario: "You have a 30-page training manual. Scrolling through it is a nightmare, and the fonts are inconsistent. We need to structure it like a professional enterprise document.",
+                animType: "anim-format", // Triggers text expanding animation
+                scenario: "You have a 30-page training manual. Scrolling through it is a nightmare. We need to structure it like a professional enterprise document.",
                 steps: [
                     "Highlight your main chapter titles. On the 'Home' tab, click the 'Heading 1' style.",
                     "Highlight sub-sections and click the 'Heading 2' style. Notice how the font becomes uniform.",
                     "Go to the 'View' tab and check the box for 'Navigation Pane'.",
-                    "Look at the left side of your screen. You now have an interactive, clickable roadmap of your entire document."
+                    "You now have an interactive, clickable roadmap of your entire document."
                 ]
             }
         ];
 
         // =====================================================================
-        // ⚙️ RENDER & FILTER ENGINE
+        // ⚙️ RENDER & MODAL ENGINE
         // =====================================================================
         
         const gridTarget = document.getElementById('grid-target');
         
         function renderCards(filterType) {
-            gridTarget.innerHTML = ''; // Clear current cards
-            
+            gridTarget.innerHTML = ''; 
             database.forEach((item, index) => {
                 if (filterType === 'all' || item.software === filterType) {
                     const card = document.createElement('div');
                     card.className = 'module-card';
-                    card.innerHTML = `
-                        <div class="module-tag">${item.softwareLabel}</div>
-                        <div class="module-title">${item.title}</div>
-                    `;
+                    card.innerHTML = `<div class="module-tag">${item.softwareLabel}</div><div class="module-title">${item.title}</div>`;
                     card.onclick = () => openModal(index);
                     gridTarget.appendChild(card);
                 }
@@ -257,16 +270,10 @@
         }
 
         function filterSoftware(type) {
-            // Update button styles
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            // Render filtered cards
             renderCards(type);
         }
-
-        // =====================================================================
-        // ⚙️ MODAL (POPUP) ENGINE
-        // =====================================================================
 
         function openModal(dbIndex) {
             const data = database[dbIndex];
@@ -274,16 +281,17 @@
             document.getElementById('modal-title').innerText = data.title;
             document.getElementById('modal-scenario').innerText = data.scenario;
             
+            // Set the Emulator Animation Class
+            const emulator = document.getElementById('emulator-engine');
+            emulator.className = `emulator-screen ${data.animType}`;
+            
+            // Build the steps list
             const stepsContainer = document.getElementById('modal-steps');
             stepsContainer.innerHTML = '';
-            
             data.steps.forEach((stepText, index) => {
                 const stepRow = document.createElement('div');
                 stepRow.className = 'step-row';
-                stepRow.innerHTML = `
-                    <div class="step-number">${index + 1}</div>
-                    <div class="step-instruction">${stepText}</div>
-                `;
+                stepRow.innerHTML = `<div class="step-number">${index + 1}</div><div class="step-instruction">${stepText}</div>`;
                 stepsContainer.appendChild(stepRow);
             });
             
@@ -292,12 +300,8 @@
 
         function closeModal() {
             document.getElementById('sim-modal').style.display = 'none';
-        }
-
-        // Close modal if user clicks outside the box
-        window.onclick = function(event) {
-            const modal = document.getElementById('sim-modal');
-            if (event.target == modal) closeModal();
+            // Turn off animation when closed to save CPU
+            document.getElementById('emulator-engine').className = 'emulator-screen';
         }
 
         // Initial Load
