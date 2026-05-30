@@ -3,102 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Telemetry - AI Simulation Sitemap</title>
+    <title>Guidance Architecture - Neural Simulation</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
+        
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f0f9ff; /* Lightest Cyan background */
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff;
             background-image: 
-                radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 10%),
-                radial-gradient(circle at 90% 80%, rgba(34, 211, 238, 0.05) 0%, transparent 10%);
-            color: #1e293b; 
-            padding: 30px 15px;
+                radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                linear-gradient(0deg, transparent 24%, rgba(165, 243, 252, 0.3) 25%, rgba(165, 243, 252, 0.3) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.3) 75%, rgba(165, 243, 252, 0.3) 76%, transparent 77%, transparent), 
+                linear-gradient(90deg, transparent 24%, rgba(165, 243, 252, 0.3) 25%, rgba(165, 243, 252, 0.3) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.3) 75%, rgba(165, 243, 252, 0.3) 76%, transparent 77%, transparent);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            color: #0f172a; 
+            padding: 20px 10px;
             display: flex;
             justify-content: center;
             min-height: 100vh;
         }
 
-        .sitemap-container {
+        .neural-container {
             width: 100%;
-            max-width: 1000px;
-            background: #ffffff;
-            border: 2px solid #a5f3fc; /* Light Cyan Border */
+            max-width: 1200px; /* EXPANDED FOR DESKTOP SCREENS */
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid #67e8f9;
             border-radius: 16px;
-            padding: 30px;
-            box-shadow: 0 10px 15px -3px rgba(6, 182, 212, 0.1), 0 4px 6px -2px rgba(6, 182, 212, 0.05);
-            align-self: flex-start;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* Subtle Circuit Background Pattern */
-        .sitemap-container::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg width="100" height="100" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path d="M10 10h10v10H10zM30 10h10v10H30zM50 10h10v10H50zM70 10h10v10H70zM90 10h10v10H90zM10 30h10v10H10zM30 30h10v10H30zM50 30h10v10H50zM70 30h10v10H70zM90 30h10v10H90zM10 50h10v10H10zM30 50h10v10H30zM50 50h10v10H50zM70 50h10v10H70zM90 50h10v10H90zM10 70h10v10H10zM30 70h10v10H30zM50 70h10v10H50zM70 70h10v10H70zM90 70h10v10H90zM10 90h10v10H10zM30 90h10v10H30zM50 90h10v10H50zM70 90h10v10H70zM90 90h10v10H90z" fill="%23a5f3fc" fill-opacity="0.1"/></svg>');
-            opacity: 0.6; pointer-events: none;
+            padding: 40px 20px;
+            box-shadow: 0 10px 30px -5px rgba(6, 182, 212, 0.15), inset 0 0 20px rgba(103, 232, 249, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        .header {
-            border-bottom: 2px solid #a5f3fc;
-            padding-bottom: 20px;
-            margin-bottom: 30px;
+        /* --- HEADER & CORE --- */
+        .system-header {
             text-align: center;
+            margin-bottom: 50px;
+            width: 100%;
         }
-        .header h1 {
-            font-size: 26px;
+        
+        .core-node-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .core-pulse {
+            width: 70px; height: 70px;
+            background: #ffffff;
+            border: 4px solid #06b6d4;
+            border-radius: 50%;
+            display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 0 25px #22d3ee, inset 0 0 15px #67e8f9;
+            z-index: 10;
+            position: relative;
+        }
+        .core-pulse::before {
+            content: ''; position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px;
+            border-radius: 50%; border: 2px solid #22d3ee;
+            animation: radarPulse 2s cubic-bezier(0.1, 0.7, 1, 0.1) infinite;
+        }
+        @keyframes radarPulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        .core-icon { font-size: 28px; }
+
+        .system-header h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
             color: #083344;
             font-weight: 800;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .ai-icon-core { width: 14px; height: 14px; background: #06b6d4; border-radius: 50%; box-shadow: 0 0 10px #06b6d4, 0 0 20px #22d3ee; animation: corePulse 1.5s infinite; }
-        @keyframes corePulse { 0% { opacity: 0.8; } 50% { opacity: 1; transform: scale(1.1); } 100% { opacity: 0.8; } }
-        
-        .header p {
-            color: #06b6d4; /* Light Cyan */
-            font-size: 11px;
-            margin-top: 6px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            font-weight: 700;
-            font-family: 'JetBrains Mono', monospace; /* Code font */
+            letter-spacing: -0.5px;
+            margin: 0;
         }
-        
-        .tree-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
+        .system-header p {
+            font-family: 'JetBrains Mono', monospace;
+            color: #0ea5e9;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            margin-top: 10px;
+            background: #e0f2fe;
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 6px;
+            border: 1px solid #bae6fd;
+        }
+
+        /* --- NEURAL TREE GRID --- */
+        .neural-tree {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
             position: relative;
         }
-        /* Mobile responsive grids */
-        @media (min-width: 640px) { .tree-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (min-width: 1024px) { .tree-grid { grid-template-columns: repeat(3, 1fr); } }
-
-        /* Moving connection lines pattern on tree grid background */
-        .tree-grid::after {
-            content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
-            background-image: linear-gradient(0deg, transparent 24%, #a5f3fc 25%, #a5f3fc 26%, transparent 27%, transparent 74%, #a5f3fc 75%, #a5f3fc 76%, transparent 77%, transparent), linear-gradient(90deg, transparent 24%, #a5f3fc 25%, #a5f3fc 26%, transparent 27%, transparent 74%, #a5f3fc 75%, #a5f3fc 76%, transparent 77%, transparent);
-            background-size: 50px 50px; opacity: 0.2; animation: linesMove 40s linear infinite;
+        
+        /* Central neural stem line */
+        .neural-tree::before {
+            content: ''; position: absolute;
+            top: -30px; bottom: 30px; left: 50%;
+            width: 4px; background: linear-gradient(to bottom, #06b6d4, #a5f3fc);
+            transform: translateX(-50%);
+            z-index: 1;
+            border-radius: 2px;
         }
-        @keyframes linesMove { 0% { background-position: 0 0; } 100% { background-position: 1000px 1000px; } }
 
-        .menu-block {
+        .neural-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            position: relative;
+            z-index: 2;
+        }
+        
+        /* The main menu block (Mobile Base) */
+        .menu-node {
             background: #ffffff;
-            border: 1px solid #bae6fd; /* Very Light Cyan border */
+            border: 2px solid #22d3ee;
             border-radius: 12px;
+            width: 90%; /* Wide on mobile */
+            max-width: 450px;
+            box-shadow: 0 4px 6px rgba(6, 182, 212, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
             overflow: hidden;
-            box-shadow: 0 1px 3px rgba(6, 182, 212, 0.05);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
-            position: relative; z-index: 2;
         }
-        .menu-block:hover {
-            transform: translateY(-4px) scale(1.01);
-            border-color: #06b6d4; /* Intense Cyan border on hover */
-            box-shadow: 0 20px 25px -5px rgba(6, 182, 212, 0.2), 0 10px 10px -5px rgba(34, 211, 238, 0.1), 0 0 15px -3px rgba(34, 211, 238, 0.3); /* NEON BLOOM */
+
+        /* --- DESKTOP WIDESCREEN ADAPTATION --- */
+        @media (min-width: 768px) {
+            .menu-node { width: 42%; max-width: none; } /* Shrinks width so they fit side-by-side */
+            
+            /* Pushes odd menus to the LEFT */
+            .neural-branch:nth-child(odd) { align-items: flex-end; padding-right: 54%; }
+            /* Pushes even menus to the RIGHT */
+            .neural-branch:nth-child(even) { align-items: flex-start; padding-left: 54%; }
+            
+            /* Horizontal Cyan Connection Lines for Desktop */
+            .neural-branch::before {
+                content: ''; position: absolute; top: 35px; left: 50%; width: 50%; height: 3px;
+                background: linear-gradient(90deg, #06b6d4, transparent); z-index: -1;
+            }
+            .neural-branch:nth-child(odd)::before {
+                left: auto; right: 50%;
+                background: linear-gradient(270deg, #06b6d4, transparent);
+            }
+        }
+
+        .menu-node:hover {
+            transform: translateY(-4px);
+            border-color: #06b6d4;
+            box-shadow: 0 15px 25px -5px rgba(6, 182, 212, 0.3), 0 0 15px rgba(34, 211, 238, 0.4);
         }
         
         .menu-header {
-            background: linear-gradient(135deg, #0e7490, #164e63); /* Dark Cyan gradient */
+            background: linear-gradient(90deg, #164e63, #0891b2);
             color: #ffffff;
             padding: 16px 20px;
             font-weight: 700;
@@ -106,152 +171,105 @@
             display: flex;
             align-items: center;
             gap: 12px;
-            border-bottom: 4px solid #06b6d4; /* Vibrant Cyan border */
-            position: relative;
-        }
-        .menu-header::after {
-            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 4px;
-            background: #ffffff; animation: headerFill 3s infinite ease-out;
-        }
-        @keyframes headerFill { 0% { width: 0; left: 0; } 50% { width: 100%; left: 0; } 100% { width: 0; left: 100%; } }
-        
-        .dropdown-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-        .dropdown-item {
-            border-bottom: 1px solid #e0f2fe; /* Ultra-light Cyan */
-            position: relative;
-        }
-        .dropdown-item:last-child {
-            border-bottom: none;
-        }
-        
-        .dropdown-link {
-            display: flex;
-            align-items: center;
-            padding: 14px 20px;
-            color: #164e63;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        /* Connection Point Icon */
-        .dropdown-link::before {
-            content: '↳';
-            margin-right: 12px;
-            color: #22d3ee; /* Light Cyan */
-            font-weight: 700;
-            font-size: 16px;
-            transition: color 0.2s;
-        }
-        
-        .dropdown-link:hover {
-            background: #ecfeff; /* Lightest Cyan hover */
-            color: #06b6d4; /* Clear Cyan text */
-            padding-left: 26px;
-        }
-        .dropdown-link:hover::before {
-            color: #0891b2; /* Intense Teal-Cyan */
-        }
-        
-        /* Floating dot effect on link hover */
-        .dropdown-link::after {
-            content: ''; position: absolute; left: 0; top: 0; width: 3px; height: 100%;
-            background: #06b6d4; transform: scaleY(0); transition: transform 0.2s;
-        }
-        .dropdown-link:hover::after {
-            transform: scaleY(1);
+            border-bottom: 3px solid #67e8f9;
         }
 
-        .empty-menu-msg {
-            padding: 14px 20px;
-            color: #0891b2;
-            font-size: 13px;
-            font-style: italic;
-            background: #f0f9ff;
-            border-top: 1px solid #bae6fd;
+        /* Endpoints (Dropdown links) */
+        .endpoint-list { list-style: none; padding: 0; margin: 0; background: #f8fafc; }
+        .endpoint-item { border-bottom: 1px solid #cffafe; }
+        .endpoint-item:last-child { border-bottom: none; }
+        
+        .endpoint-link {
+            display: flex; align-items: center; padding: 14px 20px;
+            color: #0f172a; text-decoration: none; font-weight: 600; font-size: 14px;
+            transition: all 0.2s ease; position: relative;
         }
+        .endpoint-link::before {
+            content: '⊦'; margin-right: 12px; color: #06b6d4; font-weight: 800; font-size: 18px;
+        }
+        .endpoint-link:hover {
+            background: #ecfeff; color: #0891b2; padding-left: 26px;
+        }
+        
+        .empty-status {
+            padding: 14px 20px; color: #94a3b8; font-size: 12px;
+            font-family: 'JetBrains Mono', monospace; font-weight: 600;
+        }
+
     </style>
 </head>
 <body>
 
-    <div class="sitemap-container">
-        <div class="header">
-            <h1>
-                <span class="ai-icon-core"></span>
-                Guidance Architecture [SIM 4.1]
-                <span class="ai-icon-core"></span>
-            </h1>
-            <p>ACTIVE AI NODE ROUTING MATRIX // 300MS FREQUENCY</p>
+    <div class="neural-container">
+        
+        <div class="system-header">
+            <div class="core-node-container">
+                <div class="core-pulse"><span class="core-icon">🌐</span></div>
+            </div>
+            <h1>System Architecture map</h1>
+            <p>ACTIVE ROUTING // 300MS UPLINK</p>
         </div>
         
-        <div class="tree-grid" id="sitemap-render-target"></div>
+        <div class="neural-tree" id="render-target"></div>
+        
     </div>
 
     <script>
         // =====================================================================
-        // 🛠️ SITEMAP CONFIGURATION
-        // Your exact Google Sites menu structure is loaded here.
+        // YOUR EXACT GOOGLE SITES DATA STRUCTURE
         // =====================================================================
-        
         const portalStructure = [
             {
                 menuName: "Home",
                 icon: "🏠",
                 dropdowns: [
-                    { name: "Advanced Excel and Gsheets", link: "#" }
+                    { name: "Advanced Excel and Gsheets", link: "index.html" }
                 ]
             },
             {
                 menuName: "Sitemap",
                 icon: "🗺️",
-                dropdowns: [] // No dropdowns currently attached
+                dropdowns: [] 
             }
         ];
 
         // =====================================================================
-        // ⚙️ RENDER ENGINE: Automatically builds HTML from your list above
+        // NEURAL RENDERING ENGINE
         // =====================================================================
-        const renderTarget = document.getElementById('sitemap-render-target');
+        const renderTarget = document.getElementById('render-target');
 
         portalStructure.forEach(section => {
-            // Create Menu Block (The main Node)
-            const block = document.createElement('div');
-            block.className = 'menu-block';
+            const branch = document.createElement('div');
+            branch.className = 'neural-branch';
 
-            // Create Header (The Top Menu Name)
+            const node = document.createElement('div');
+            node.className = 'menu-node';
+
             const header = document.createElement('div');
             header.className = 'menu-header';
             header.innerHTML = `<span>${section.icon}</span> ${section.menuName}`;
-            block.appendChild(header);
+            node.appendChild(header);
 
-            // Create Dropdown List (The sub-items/Endpoints)
             if (section.dropdowns && section.dropdowns.length > 0) {
                 const list = document.createElement('ul');
-                list.className = 'dropdown-list';
+                list.className = 'endpoint-list';
                 
                 section.dropdowns.forEach(item => {
                     const li = document.createElement('li');
-                    li.className = 'dropdown-item';
-                    li.innerHTML = `<a href="${item.link}" class="dropdown-link">${item.name}</a>`;
+                    li.className = 'endpoint-item';
+                    li.innerHTML = `<a href="${item.link}" class="endpoint-link">${item.name}</a>`;
                     list.appendChild(li);
                 });
-                block.appendChild(list);
+                node.appendChild(list);
             } else {
-                // Failsafe for empty menus
                 const emptyMsg = document.createElement('div');
-                emptyMsg.className = 'empty-menu-msg';
-                emptyMsg.innerText = "NO ENDPOINTS ATTACHED // STANDBY";
-                block.appendChild(emptyMsg);
+                emptyMsg.className = 'empty-status';
+                emptyMsg.innerText = "NO ENDPOINTS ATTACHED";
+                node.appendChild(emptyMsg);
             }
 
-            // Append completed block to the grid
-            renderTarget.appendChild(block);
+            branch.appendChild(node);
+            renderTarget.appendChild(branch);
         });
     </script>
 </body>
