@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Telemetry Matrix - Strict Reality</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6; 
+            color: #1e293b; 
+            padding: 30px 15px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-frame {
+            width: 100%;
+            max-width: 1200px;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .header-block {
+            display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid #e5e7eb; padding-bottom: 16px;
+        }
+        @media (min-width: 768px) { .header-block { flex-direction: row; justify-content: space-between; align-items: center; } }
+        
+        .main-title { font-size: 22px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
+        .status-dot {
+            width: 12px; height: 12px; background: #059669; border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1); animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4); } 70% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(5, 150, 105, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(5, 150, 105, 0); } }
+        
+        .top-controls { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
+        select.module-selector {
+            padding: 10px 16px; font-size: 14px; font-weight: 600; color: #1e293b; background: #f9fafb;
+            border: 1px solid #d1d5db; border-radius: 8px; outline: none; cursor: pointer; transition: all 0.2s;
+        }
+        select.module-selector:hover { border-color: #9ca3af; background: #ffffff; }
+        select.module-selector:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+
+        .clocks-bracket { display: flex; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
+        .clock-pill { background: #f3f4f6; color: #4b5563; padding: 6px 12px; border-radius: 6px; border: 1px solid #e5e7eb; }
+
+        .data-module { display: none; opacity: 0; transition: opacity 0.3s ease-in-out; }
+        .data-module.active { display: block; opacity: 1; }
+
+        .cards-cluster { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-top: 10px; }
+        @media (min-width: 640px) { .cards-cluster { grid-template-columns: repeat(3, 1fr); } }
+        @media (min-width: 1024px) { .cards-cluster { grid-template-columns: repeat(4, 1fr); } }
+        
+        .metric-card {
+            background: #ffffff; border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px;
+            display: flex; flex-direction: column; align-items: center; justify-content: space-between;
+            min-height: 160px; transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+        }
+        .metric-card:hover { border-color: #cbd5e1; transform: translateY(-2px); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .metric-card.wide { grid-column: 1 / -1; min-height: auto; align-items: flex-start; background: #f9fafb; border: 1px solid #e5e7eb; }
+        .metric-card.wide:hover { transform: none; box-shadow: none; border-color: #d1d5db; }
+
+        .gauge-svg-container { width: 110px; height: 60px; position: relative; margin: 8px 0; }
+        .gauge-arc-bg { fill: none; stroke: #f1f5f9; stroke-width: 10; stroke-linecap: round; }
+        .gauge-arc-fill { fill: none; stroke: #2563eb; stroke-width: 10; stroke-linecap: round; stroke-dasharray: 141.4; stroke-dashoffset: 141.4; transition: stroke 0.3s; }
+        
+        .gauge-needle {
+            position: absolute; bottom: 0; left: 50%; width: 4px; height: 48px; background: #475569;
+            border-radius: 2px; transform-origin: bottom center; transform: translateX(-50%) rotate(-90deg);
+            z-index: 5; transition: transform 0.15s ease-out;
+        }
+        .gauge-center-pin {
+            position: absolute; bottom: -5px; left: calc(50% - 7px); width: 14px; height: 14px;
+            background: #1e293b; border: 2px solid #ffffff; border-radius: 50%; z-index: 6;
+        }
+
+        .card-lbl { font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; }
+        .card-val { font-size: 17px; font-weight: 700; color: #0f172a; text-align: center; margin-top: 4px; width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        .compass-container { width: 50px; height: 50px; border: 3px solid #e2e8f0; border-radius: 50%; position: relative; margin: 8px 0; background: #f8fafc; }
+        .compass-needle {
+            position: absolute; top: 4px; left: calc(50% - 2px); width: 4px; height: 42px;
+            background: linear-gradient(to bottom, #dc2626 50%, #94a3b8 50%); 
+            transform-origin: center center; transition: transform 0.3s ease-out;
+        }
+
+        .terminal-feed {
+            background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; height: 140px;
+            overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #334155; 
+            display: flex; flex-direction: column; gap: 6px; box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.02);
+        }
+        .terminal-feed::-webkit-scrollbar { width: 6px; }
+        .terminal-feed::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        
+        .log-sys { color: #0284c7; font-weight: 600; } 
+        .log-good { color: #059669; font-weight: 600; } 
+        .log-warn { color: #d97706; font-weight: 600; } 
+        .log-err { color: #dc2626; font-weight: 600; } 
+
+        .dash-footer {
+            border-top: 1px solid #e5e7eb; padding-top: 14px; display: flex; justify-content: space-between;
+            font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase;
+        }
+        
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; margin-top: 12px; }
+        .info-item { font-size: 12px; background: #ffffff; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; }
+        .info-label { color: #64748b; font-weight: 600; display: block; font-size: 10px; text-transform: uppercase; margin-bottom: 4px;}
+        .info-value { color: #0f172a; font-weight: 600; font-size: 13px; display:flex; align-items:center; gap: 6px;}
+
+        /* --- SAD FACE ANIMATION STATE --- */
+        .unavailable-state {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            color: #ef4444; font-size: 13px; font-weight: 700;
+        }
+        .sad-anim-face {
+            width: 18px; height: 18px; animation: sadSigh 3s infinite ease-in-out; stroke: #ef4444;
+        }
+        @keyframes sadSigh {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(2px) scaleY(0.9); }
+        }
+        @keyframes sadBlink {
+            0%, 90%, 100% { opacity: 1; }
+            95% { opacity: 0; }
+        }
+        .sad-eye { animation: sadBlink 4s infinite; }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-frame">
+        <div class="header-block">
+            <div class="main-title">
+                <span class="status-dot" id="system-status-indicator"></span>
+                Enterprise Telemetry Matrix (Strict Reality)
+            </div>
+            
+            <div class="top-controls">
+                <select id="module-select" class="module-selector" onchange="switchModule()">
+                    <option value="network">📶 Network & Connectivity Diagnostics</option>
+                    <option value="environment">🌍 Environmental & Spatial Telemetry</option>
+                    <option value="device">💻 Core Hardware & OS Specs</option>
+                    <option value="performance">🎮 Graphics & Live Performance</option>
+                    <option value="security">🛡️ Security Posture & I/O Peripherals</option>
+                </select>
+                <div class="clocks-bracket">
+                    <div class="clock-pill" id="local-clock">LOC: 00:00:00</div>
+                    <div class="clock-pill" id="gmt-clock">GMT: 00:00:00</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="network-module" class="data-module active">
+            <div class="cards-cluster">
+                <div class="metric-card" id="card-speed">
+                    <span class="card-lbl">Downlink Bandwidth</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-speed" class="gauge-arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-speed" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-speed" class="card-val">Scanning...</div>
+                </div>
+                <div class="metric-card" id="card-ping">
+                    <span class="card-lbl">Server Latency (Ping)</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-ping" class="gauge-arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-ping" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-ping" class="card-val">Scanning...</div>
+                </div>
+                <div class="metric-card" id="card-jitter">
+                    <span class="card-lbl">Network Jitter</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-jitter" class="gauge-arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-jitter" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-jitter" class="card-val">0 ms</div>
+                </div>
+                <div class="metric-card" id="card-loss">
+                    <span class="card-lbl">Packet Loss</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-loss" class="gauge-arc-fill" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-loss" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-loss" class="card-val">0.0%</div>
+                </div>
+                
+                <div class="metric-card wide">
+                    <span class="card-lbl" style="color:#2563eb;">Deep Network & Wi-Fi Metadata</span>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">ISP / Organization</span><span class="info-value" id="meta-isp">Fetching...</span></div>
+                        <div class="info-item"><span class="info-label">Public IPv4 Address</span><span class="info-value" id="meta-ip">Fetching...</span></div>
+                        <div class="info-item"><span class="info-label">Connection Protocol</span><span class="info-value" id="meta-type">Fetching...</span></div>
+                        <div class="info-item"><span class="info-label">Autonomous Sys No. (ASN)</span><span class="info-value" id="meta-asn">Fetching...</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="environment-module" class="data-module">
+            <div class="cards-cluster">
+                <div class="metric-card" id="card-weather">
+                    <span class="card-lbl">Local Atmosphere</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-weather" class="gauge-arc-fill" stroke="#ea580c" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-weather" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-weather" class="card-val">0.0°C</div>
+                </div>
+                <div class="metric-card" id="card-hygro">
+                    <span class="card-lbl">Relative Humidity</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-hygro" class="gauge-arc-fill" stroke="#3b82f6" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-hygro" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-hygro" class="card-val">0.0% RH</div>
+                </div>
+                <div class="metric-card" id="card-baro">
+                    <span class="card-lbl">Barometric Pressure</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-baro" class="gauge-arc-fill" stroke="#8b5cf6" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-baro" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-baro" class="card-val">0 hPa</div>
+                </div>
+                <div class="metric-card" id="card-windspeed">
+                    <span class="card-lbl">Wind Velocity</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-windspeed" class="gauge-arc-fill" stroke="#059669" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-windspeed" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-windspeed" class="card-val">Scanning...</div>
+                </div>
+                
+                <div class="metric-card" style="justify-content: center;">
+                    <span class="card-lbl">Device Heading / Mag</span>
+                    <div class="compass-container"><div id="mag-compass-needle" class="compass-needle"></div></div>
+                    <div id="val-mag-compass" class="card-val" style="color: #dc2626;">--°</div>
+                </div>
+                
+                <div class="metric-card" style="justify-content: center;">
+                    <span class="card-lbl">3D Gyroscopic Horizon</span>
+                    <div class="info-grid" style="text-align: center; margin-top: 15px; grid-template-columns: 1fr 1fr; border:none; background:transparent;">
+                        <div><span class="info-label">Pitch (X)</span><span class="info-value" id="gyro-pitch">Scanning...</span></div>
+                        <div><span class="info-label">Roll (Y)</span><span class="info-value" id="gyro-roll">Scanning...</span></div>
+                    </div>
+                </div>
+
+                <div class="metric-card wide">
+                    <span class="card-lbl" style="color:#ea580c;">Solar & Atmospheric Metadata</span>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label" style="color:#f59e0b;">▲ Local Sunrise</span><span class="info-value" id="sunrise-epoch-val">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label" style="color:#475569;">▼ Local Sunset</span><span class="info-value" id="sunset-epoch-val">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Current UV Index</span><span class="info-value" id="meta-uv">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Geodetic Altitude Estimator</span><span class="info-value" id="meta-alt">Scanning...</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="device-module" class="data-module">
+            <div class="cards-cluster">
+                <div class="metric-card" style="justify-content: center;">
+                    <span class="card-lbl">Hardware Profile</span>
+                    <div style="font-size: 32px; color: #2563eb; margin: 8px 0;" id="icon-device">💻</div>
+                    <div id="val-device-type" class="card-val" style="font-size: 14px;">DESKTOP</div>
+                </div>
+                <div class="metric-card" id="card-cpu">
+                    <span class="card-lbl">Logical Processors</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-cpu" class="gauge-arc-fill" stroke="#6d28d9" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-cpu" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-cpu" class="card-val">Scanning...</div>
+                </div>
+                <div class="metric-card" id="card-ram">
+                    <span class="card-lbl">Device Memory (RAM)</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-ram" class="gauge-arc-fill" stroke="#db2777" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-ram" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-ram" class="card-val">Scanning...</div>
+                </div>
+                <div class="metric-card" id="card-batt">
+                    <span class="card-lbl">Power Cell Level</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-batt" class="gauge-arc-fill" stroke="#059669" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-batt" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-batt" class="card-val">Scanning...</div>
+                </div>
+
+                <div class="metric-card wide">
+                    <span class="card-lbl" style="color:#6d28d9;">Deep System & Browser Metadata</span>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Operating System</span><span class="info-value" id="meta-os">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Browser Engine</span><span class="info-value" id="meta-browser">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Display Matrix (Res / DPR)</span><span class="info-value" id="meta-res">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">System Architecture</span><span class="info-value" id="meta-arch">Scanning...</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="performance-module" class="data-module">
+            <div class="cards-cluster">
+                <div class="metric-card" id="card-fps">
+                    <span class="card-lbl">Live Screen Refresh</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-fps" class="gauge-arc-fill" stroke="#d97706" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-fps" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-fps" class="card-val">Scanning...</div>
+                </div>
+                
+                <div class="metric-card" id="card-storage">
+                    <span class="card-lbl">Disk Storage Used</span>
+                    <div class="gauge-svg-container">
+                        <svg width="100%" height="100%" viewBox="0 0 100 60"><path class="gauge-arc-bg" d="M 10 55 A 40 40 0 0 1 90 55" /><path id="arc-storage" class="gauge-arc-fill" stroke="#4f46e5" d="M 10 55 A 40 40 0 0 1 90 55" /></svg>
+                        <div id="needle-storage" class="gauge-needle"></div><div class="gauge-center-pin"></div>
+                    </div>
+                    <div id="val-storage" class="card-val">Scanning...</div>
+                </div>
+
+                <div class="metric-card wide">
+                    <span class="card-lbl" style="color:#d97706;">GPU & Advanced Rendering Telemetry</span>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Physical GPU Renderer</span><span class="info-value" id="gpu-renderer" style="color:#0f172a;">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">GPU Vendor</span><span class="info-value" id="gpu-vendor">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Hardware Acceleration</span><span class="info-value" id="gpu-accel">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Local Disk Quota</span><span class="info-value" id="storage-quota">Scanning...</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="security-module" class="data-module">
+            <div class="cards-cluster">
+                <div class="metric-card" style="justify-content: center;">
+                    <span class="card-lbl">Ad-Blocker Posture</span>
+                    <div style="font-size: 26px; margin: 8px 0;" id="icon-adblock">🛡️</div>
+                    <div id="val-adblock" class="card-val" style="font-size: 14px;">SCANNING...</div>
+                </div>
+                
+                <div class="metric-card" style="justify-content: center;">
+                    <span class="card-lbl">Do Not Track (DNT)</span>
+                    <div style="font-size: 26px; margin: 8px 0;">👁️</div>
+                    <div id="val-dnt" class="card-val" style="font-size: 14px;">CHECKING...</div>
+                </div>
+                
+                <div class="metric-card" style="justify-content: center;">
+                    <span class="card-lbl">Cookies / Local Data</span>
+                    <div style="font-size: 26px; margin: 8px 0;">🍪</div>
+                    <div id="val-cookies" class="card-val" style="font-size: 14px;">CHECKING...</div>
+                </div>
+
+                <div class="metric-card wide">
+                    <span class="card-lbl" style="color:#dc2626;">Peripheral I/O Registry (Hardware Count)</span>
+                    <div class="info-grid">
+                        <div class="info-item"><span class="info-label">Audio Input (Mics)</span><span class="info-value" id="io-mics">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Video Input (Cameras)</span><span class="info-value" id="io-cams">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Audio Output (Speakers)</span><span class="info-value" id="io-spk">Scanning...</span></div>
+                        <div class="info-item"><span class="info-label">Max Touch Points</span><span class="info-value" id="meta-touch">Scanning...</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="terminal-feed" class="terminal-feed"></div>
+
+        <div class="dash-footer">
+            <div>Engine Status: <span style="color:#10b981;" id="engine-status-mode">LIVE SECURE CONNECTION</span></div>
+            <div id="gps-status-label" style="color:#2563eb; font-weight:700;">LOCATING SATELLITES...</div>
+        </div>
+
+    </div>
+
+    <script>
+        // --- GLOBAL FAILURE STATE UI (SAD ANIMATED SVG) ---
+        const UNAVAILABLE_HTML = `
+            <span class="unavailable-state">
+                <svg class="sad-anim-face" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"/><path d="M16 16s-1.5-2-4-2-4 2-4 2"/>
+                    <line class="sad-eye" x1="9" y1="9" x2="9.01" y2="9"/><line class="sad-eye" x1="15" y1="9" x2="15.01" y2="9"/>
+                </svg> Data Unavailable
+            </span>`;
+            
+        // Track APIs that hit a hard failure to disable their physics
+        let failedMetrics = new Set();
+
+        // --- UI SWITCH LOGIC ---
+        function switchModule() {
+            const selected = document.getElementById('module-select').value;
+            document.querySelectorAll('.data-module').forEach(el => el.classList.remove('active'));
+            document.getElementById(selected + '-module').classList.add('active');
+            pushLog(`SYS // UI CONTEXT SWITCHED TO: ${selected.toUpperCase()}`, 'log-sys');
+        }
+
+        // --- REAL TELEMENTRY METRICS ENGINE ---
+        const metricsEngine = {
+            speed:      { current: 0, target: 0, vel: 0, max: 200, arcId: 'arc-speed',     textId: 'val-speed',     suffix: ' Mbps', decimals: 1 },
+            ping:       { current: 0, target: 0, vel: 0, max: 300, arcId: 'arc-ping',      textId: 'val-ping',      suffix: ' ms', decimals: 0 },
+            loss:       { current: 0, target: 0, vel: 0, max: 10,  arcId: 'arc-loss',      textId: 'val-loss',      suffix: '%', decimals: 1 },
+            jitter:     { current: 0, target: 0, vel: 0, max: 50,  arcId: 'arc-jitter',    textId: 'val-jitter',    suffix: ' ms', decimals: 0 },
+            weather:    { current: 0, target: 0, vel: 0, max: 50,  arcId: 'arc-weather',   textId: 'val-weather',   suffix: '°C', decimals: 1 },
+            hygro:      { current: 0, target: 0, vel: 0, max: 100, arcId: 'arc-hygro',     textId: 'val-hygro',     suffix: '%', decimals: 1 },
+            baro:       { current: 0, target: 0, vel: 0, max: 1080,arcId: 'arc-baro',      textId: 'val-baro',      suffix: ' hPa', decimals: 1 },
+            windspeed:  { current: 0, target: 0, vel: 0, max: 120, arcId: 'arc-windspeed', textId: 'val-windspeed', suffix: ' km/h', decimals: 1 },
+            cpu:        { current: 0, target: 0, vel: 0, max: 32,  arcId: 'arc-cpu',       textId: 'val-cpu',       suffix: ' Cores', decimals: 0 },
+            ram:        { current: 0, target: 0, vel: 0, max: 32,  arcId: 'arc-ram',       textId: 'val-ram',       suffix: ' GB', decimals: 0 },
+            batt:       { current: 0, target: 0, vel: 0, max: 100, arcId: 'arc-batt',      textId: 'val-batt',      suffix: '%', decimals: 0 },
+            fps:        { current: 0, target: 0, vel: 0, max: 144, arcId: 'arc-fps',       textId: 'val-fps',       suffix: ' FPS', decimals: 0 },
+            storage:    { current: 0, target: 0, vel: 0, max: 100, arcId: 'arc-storage',   textId: 'val-storage',   suffix: '%', decimals: 1 }
+        };
+
+        const SPRING_K = 0.12; const DAMPING  = 0.75;
+        
+        function updateGaugesPhysicsLoop() {
+            for (let key in metricsEngine) {
+                let m = metricsEngine[key];
+                let arcEl = document.getElementById(m.arcId);
+                let needleEl = document.getElementById('needle-' + key);
+                let textEl = document.getElementById(m.textId);
+
+                if(failedMetrics.has(key)) {
+                    if(textEl && !textEl.innerHTML.includes('sad-anim-face')) textEl.innerHTML = UNAVAILABLE_HTML;
+                    if(arcEl) { arcEl.style.strokeDashoffset = 141.4; arcEl.style.stroke = '#cbd5e1'; }
+                    if(needleEl) needleEl.style.transform = `translateX(-50%) rotate(-90deg)`;
+                    continue;
+                }
+
+                let force = -SPRING_K * (m.current - m.target);
+                m.vel += force; m.vel *= DAMPING; m.current += m.vel;
+                if(Math.abs(m.current - m.target) < 0.001 && Math.abs(m.vel) < 0.001) { m.current = m.target; m.vel = 0; }
+
+                let displayVal = m.current < 0 ? 0 : m.current;
+                
+                if(textEl && !(key === 'batt' && textEl.innerText.includes('AC')) && !textEl.innerText.includes('Unavailable')) {
+                    textEl.innerText = displayVal.toFixed(m.decimals) + m.suffix;
+                }
+
+                let saturationRatio = Math.min(1.4, Math.max(0, m.current / m.max));
+                
+                if(arcEl) {
+                    arcEl.style.strokeDashoffset = 141.4 - (Math.min(1, saturationRatio) * 141.4);
+                    if (['ping', 'jitter', 'loss', 'storage'].includes(key)) {
+                        arcEl.style.stroke = saturationRatio > 0.6 ? '#dc2626' : '#2563eb'; 
+                    }
+                    if (key === 'fps') {
+                        arcEl.style.stroke = saturationRatio > 0.4 ? '#059669' : '#d97706'; 
+                    }
+                }
+                
+                if(needleEl) {
+                    let angleDeg = -90 + (saturationRatio * 180);
+                    needleEl.style.transform = `translateX(-50%) rotate(${Math.max(-105, Math.min(285, angleDeg))}deg)`;
+                }
+            }
+            requestAnimationFrame(updateGaugesPhysicsLoop);
+        }
+
+        // --- HARDWARE SENSORS ---
+        function initDeviceSensors() {
+            // Set defaults to unavailable. If valid data comes in, we overwrite it.
+            document.getElementById('val-mag-compass').innerHTML = UNAVAILABLE_HTML;
+            document.getElementById('gyro-pitch').innerHTML = UNAVAILABLE_HTML;
+            document.getElementById('gyro-roll').innerHTML = UNAVAILABLE_HTML;
+
+            const handleOrientation = (event) => {
+                let compassHeading = event.webkitCompassHeading || (event.alpha ? Math.abs(event.alpha - 360) : null);
+                if (compassHeading != null && !isNaN(compassHeading)) {
+                    document.getElementById('mag-compass-needle').style.transform = `rotate(${compassHeading}deg)`;
+                    document.getElementById('val-mag-compass').innerText = `${Math.round(compassHeading)}°`;
+                }
+                if (event.beta != null) document.getElementById('gyro-pitch').innerText = `${Math.round(event.beta)}°`;
+                if (event.gamma != null) document.getElementById('gyro-roll').innerText = `${Math.round(event.gamma)}°`;
+            };
+
+            if (window.DeviceOrientationEvent) {
+                window.addEventListener('deviceorientationabsolute', handleOrientation, true);
+                window.addEventListener('deviceorientation', handleOrientation, true);
+            }
+        }
+
+        // --- GRAPHICS ENGINE ---
+        function detectGPU() {
+            try {
+                let canvas = document.createElement('canvas');
+                let gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+                if(gl) {
+                    let debugInfo = gl.getExtension('WEBGL_debug_renderer_info');
+                    if(debugInfo) {
+                        document.getElementById('gpu-vendor').innerText = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
+                        document.getElementById('gpu-renderer').innerText = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
+                        document.getElementById('gpu-accel').innerHTML = '<span style="color:#059669;">Active (Hardware)</span>';
+                        pushLog(`GPU // WEBGL HW DETECTED`, 'log-good');
+                    } else throw new Error();
+                } else throw new Error();
+            } catch(e) { 
+                document.getElementById('gpu-renderer').innerHTML = UNAVAILABLE_HTML; 
+                document.getElementById('gpu-vendor').innerHTML = UNAVAILABLE_HTML;
+                document.getElementById('gpu-accel').innerHTML = UNAVAILABLE_HTML;
+            }
+        }
+
+        let frameCount = 0; let lastFpsTime = performance.now();
+        function monitorFPS() {
+            let now = performance.now(); frameCount++;
+            if (now - lastFpsTime >= 1000) { metricsEngine.fps.target = frameCount; frameCount = 0; lastFpsTime = now; }
+            requestAnimationFrame(monitorFPS);
+        }
+
+        async function monitorStorage() {
+            try {
+                let est = await navigator.storage.estimate();
+                if(est.quota > 0) {
+                    document.getElementById('storage-quota').innerText = `${(est.quota / (1024**3)).toFixed(2)} GB Total Alloc.`;
+                    metricsEngine.storage.target = (est.usage / est.quota) * 100;
+                } else throw new Error();
+            } catch(e) {
+                document.getElementById('storage-quota').innerHTML = UNAVAILABLE_HTML;
+                failedMetrics.add('storage');
+            }
+        }
+
+        // --- SECURITY POSTURE ENGINE ---
+        function checkSecurityPosture() {
+            let cookiesEnabled = navigator.cookieEnabled;
+            document.getElementById('val-cookies').innerText = cookiesEnabled ? "ALLOWED" : "BLOCKED";
+            document.getElementById('val-cookies').style.color = cookiesEnabled ? "#2563eb" : "#dc2626";
+
+            let dnt = navigator.doNotTrack === "1" || window.doNotTrack === "1";
+            document.getElementById('val-dnt').innerText = dnt ? "STRICT ENABLED" : "DISABLED";
+            document.getElementById('val-dnt').style.color = dnt ? "#059669" : "#d97706";
+
+            let ad = document.createElement('div');
+            ad.innerHTML = '&nbsp;'; ad.className = 'adsbox ad-banner public-ad'; ad.style.height = '1px';
+            document.body.appendChild(ad);
+            setTimeout(() => {
+                let isBlocked = ad.offsetHeight === 0 || window.getComputedStyle(ad).display === 'none';
+                document.getElementById('val-adblock').innerText = isBlocked ? "ACTIVE (BLOCKED)" : "INACTIVE";
+                document.getElementById('val-adblock').style.color = isBlocked ? "#059669" : "#dc2626";
+                ad.remove();
+                pushLog(`SEC // ADBLOCK DETECTED: ${isBlocked.toString().toUpperCase()}`, 'log-sys');
+            }, 100);
+        }
+
+        async function countPeripherals() {
+            try {
+                if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices) throw new Error();
+                let devices = await navigator.mediaDevices.enumerateDevices();
+                let mics = devices.filter(d => d.kind === 'audioinput').length;
+                let cams = devices.filter(d => d.kind === 'videoinput').length;
+                let spks = devices.filter(d => d.kind === 'audiooutput').length;
+                
+                document.getElementById('io-mics').innerText = mics > 0 ? `${mics} Port(s)` : "None Found";
+                document.getElementById('io-cams').innerText = cams > 0 ? `${cams} Lens(es)` : "None Found";
+                document.getElementById('io-spk').innerText = spks > 0 ? `${spks} Output(s)` : "None Found";
+            } catch(e) {
+                document.getElementById('io-mics').innerHTML = UNAVAILABLE_HTML;
+                document.getElementById('io-cams').innerHTML = UNAVAILABLE_HTML;
+                document.getElementById('io-spk').innerHTML = UNAVAILABLE_HTML;
+            }
+        }
+
+        // --- GLOBAL METADATA UTILITIES ---
+        function runChronograph() {
+            const pad = (n) => n.toString().padStart(2, '0');
+            setInterval(() => {
+                const now = new Date();
+                document.getElementById('local-clock').innerText = `LOC: ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+                document.getElementById('gmt-clock').innerText = `GMT: ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
+            }, 1000);
+        }
+
+        function updateNetworkConnectionType() {
+            let typeStr = "WIFI / ETHERNET"; 
+            if (navigator.connection) {
+                let eType = navigator.connection.effectiveType || ""; 
+                let speed = navigator.connection.downlink || 0;
+                if (eType === '4g') { typeStr = speed >= 50 ? "5G COMPLIANT" : "4G LTE BASE"; } 
+                else if (eType === '3g') { typeStr = "3G HSPA"; } 
+                else if (eType === '2g' || eType === 'slow-2g') { typeStr = "2G LEGACY"; }
+            }
+            document.getElementById('meta-type').innerText = typeStr;
+        }
+
+        async function fetchIPMetadata() {
+            try {
+                const res = await fetch('https://get.geojs.io/v1/ip/geo.json');
+                const data = await res.json();
+                document.getElementById('meta-isp').innerText = (data.organization || "UNKNOWN ISP NETWORK").replace(/^AS\d+\s/, '');
+                document.getElementById('meta-ip').innerText = data.ip || "REDACTED";
+                document.getElementById('meta-asn').innerText = data.asn ? "AS" + data.asn : "N/A";
+                return { lat: data.latitude, lon: data.longitude };
+            } catch(e) { 
+                document.getElementById('meta-isp').innerHTML = UNAVAILABLE_HTML;
+                document.getElementById('meta-ip').innerHTML = UNAVAILABLE_HTML;
+                document.getElementById('meta-asn').innerHTML = UNAVAILABLE_HTML;
+                return null; 
+            }
+        }
+
+        function getDeviceProfile() {
+            const ua = navigator.userAgent;
+            let os = "Linux Kernel";
+            if (ua.indexOf("Win") != -1) os = "Windows Server/Desktop";
+            if (ua.indexOf("Mac") != -1) os = "macOS Enterprise";
+            if (ua.indexOf("Android") != -1) os = "Android Architecture";
+            if (ua.indexOf("like Mac") != -1) os = "iOS Terminal";
+
+            let browser = "Chromium Engine";
+            if (ua.indexOf("Safari") != -1 && ua.indexOf("Chrome") == -1) browser = "WebKit / Safari";
+            if (ua.indexOf("Firefox") != -1) browser = "Gecko / Firefox";
+            
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(ua) || navigator.maxTouchPoints > 2;
+            document.getElementById("meta-os").innerText = os;
+            document.getElementById("meta-browser").innerText = browser;
+            document.getElementById("val-device-type").innerText = isMobile ? "MOBILE APPARATUS" : "ENTERPRISE WORKSTATION";
+            document.getElementById("icon-device").innerText = isMobile ? "📱" : "💻";
+            
+            document.getElementById("meta-res").innerText = `${window.screen.width}x${window.screen.height} @ ${window.devicePixelRatio||1}x DPR`;
+            document.getElementById("meta-touch").innerText = navigator.maxTouchPoints > 0 ? `${navigator.maxTouchPoints} Active Nodes` : "No Touch Grid";
+            document.getElementById("meta-arch").innerText = navigator.platform || "ARM/x86 Architecture";
+
+            if(navigator.hardwareConcurrency) { metricsEngine.cpu.target = navigator.hardwareConcurrency; } else { failedMetrics.add('cpu'); }
+            if(navigator.deviceMemory) { metricsEngine.ram.target = navigator.deviceMemory; } else { failedMetrics.add('ram'); }
+        }
+
+        async function fetchBatteryStatus() {
+            failedMetrics.add('batt');
+            if ('getBattery' in navigator) {
+                try {
+                    const battery = await navigator.getBattery();
+                    failedMetrics.delete('batt');
+                    const updateBatt = () => {
+                        metricsEngine.batt.target = battery.level * 100;
+                        document.getElementById('arc-batt').style.stroke = battery.charging ? '#059669' : (battery.level > 0.2 ? '#2563eb' : '#dc2626');
+                        if(battery.charging) document.getElementById('val-batt').innerText = (battery.level * 100).toFixed(0) + "% (AC TERMINAL)";
+                    };
+                    battery.addEventListener('levelchange', updateBatt); battery.addEventListener('chargingchange', updateBatt); updateBatt();
+                } catch(e) {}
+            }
+        }
+
+        async function connectLiveWeatherStream(lat, lon) {
+            try {
+                const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,relative_humidity_2m,surface_pressure,wind_speed_10m,uv_index&daily=sunrise,sunset&timezone=auto`;
+                const response = await fetch(url);
+                if(!response.ok) throw new Error();
+                const data = await response.json();
+                
+                metricsEngine.weather.target = data.current.temperature_2m;
+                metricsEngine.hygro.target = data.current.relative_humidity_2m;
+                metricsEngine.baro.target = data.current.surface_pressure;
+                metricsEngine.windspeed.target = data.current.wind_speed_10m;
+                
+                document.getElementById('meta-uv').innerText = data.current.uv_index.toFixed(1) + " Index";
+
+                if(data.daily && data.daily.sunrise) {
+                    const formatTime = (isoString) => new Date(isoString).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    document.getElementById('sunrise-epoch-val').innerText = formatTime(data.daily.sunrise[0]);
+                    document.getElementById('sunset-epoch-val').innerText = formatTime(data.daily.sunset[0]);
+                }
+                pushLog(`ENV // WEATHER METRICS HARVESTED SUCCESSFULLY`, 'log-good');
+            } catch(e) { 
+                pushLog(`ENV // CRITICAL METEO API OFFLINE`, 'log-err'); 
+                ['weather', 'hygro', 'baro', 'windspeed'].forEach(m => failedMetrics.add(m));
+                document.getElementById('sunrise-epoch-val').innerHTML = UNAVAILABLE_HTML;
+                document.getElementById('sunset-epoch-val').innerHTML = UNAVAILABLE_HTML;
+                document.getElementById('meta-uv').innerHTML = UNAVAILABLE_HTML;
+            }
+        }
+
+        async function connectLiveAltitudeStream(lat, lon) {
+            try {
+                const url = `https://api.open-meteo.com/v1/elevation?latitude=${lat}&longitude=${lon}`;
+                const response = await fetch(url);
+                if(response.ok) {
+                    const data = await response.json();
+                    metricsEngine.altitude.target = data.elevation[0] || 0;
+                } else throw new Error();
+            } catch(e){
+                metricsEngine.altitude.target = Math.abs(Math.round(lat * 3.5 + (lon / 10))); // Rough estimate if API fails
+                document.getElementById('meta-alt').innerHTML = `<span style="color:#d97706">Approximated: ${metricsEngine.altitude.target}m</span>`;
+            }
+        }
+
+        function setupFeeds(lat, lon, statusText) {
+            document.getElementById('gps-status-label').innerText = statusText;
+            connectLiveWeatherStream(lat, lon);
+            connectLiveAltitudeStream(lat, lon);
+        }
+
+        async function initializeDataStreams() {
+            const ipData = await fetchIPMetadata();
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => setupFeeds(pos.coords.latitude, pos.coords.longitude, "HARDWARE_GPS_LOCK_ACTIVE"),
+                    (err) => setupFeeds(ipData ? ipData.lat : 22.5726, ipData ? ipData.lon : 88.3639, ipData ? "IP_GEOLOCATION_ESTIMATE_ACTIVE" : "LOCAL_FAILSAFE_ACTIVE")
+                );
+            } else if (ipData) {
+                setupFeeds(ipData.lat, ipData.lon, "IP_GEOLOCATION_ESTIMATE_ACTIVE");
+            } else {
+                setupFeeds(22.5726, 88.3639, "LOCAL_FAILSAFE_ACTIVE");
+            }
+        }
+
+        const logFeed = document.getElementById('terminal-feed');
+        function pushLog(msg, type = '') {
+            const div = document.createElement('div');
+            div.innerHTML = `<span style="color:#94a3b8">[${new Date().toISOString().substring(11, 19)}]</span> <span class="${type}">${msg}</span>`;
+            logFeed.appendChild(div); logFeed.scrollTop = logFeed.scrollHeight;
+            if(logFeed.childNodes.length > 30) logFeed.removeChild(logFeed.firstChild);
+        }
+
+        let internalNetworkCache = { drops: 0, sequences: 1 };
+        async function runBackgroundNetworkPipeline() {
+            if(navigator.connection && navigator.connection.downlink) {
+                setInterval(() => { metricsEngine.speed.target = navigator.connection.downlink; }, 1000);
+            } else { failedMetrics.add('speed'); }
+
+            while(true) {
+                internalNetworkCache.sequences++;
+                let start = performance.now(); let success = false; let latency = 0;
+                try {
+                    const response = await fetch('https://cdnjs.cloudflare.com/ajax/libs/baseline-status/1.1.1/baseline-status.min.js', { method: 'HEAD', cache: 'no-store', mode: 'cors' });
+                    if(response.ok) { latency = Math.round(performance.now() - start); success = true; }
+                } catch(e) {}
+
+                if(!success) {
+                    internalNetworkCache.drops++;
+                    document.getElementById('system-status-indicator').style.background = '#dc2626'; 
+                    failedMetrics.add('ping');
+                    failedMetrics.add('jitter');
+                } else {
+                    document.getElementById('system-status-indicator').style.background = '#059669'; 
+                    failedMetrics.delete('ping');
+                    failedMetrics.delete('jitter');
+                    metricsEngine.ping.target = Math.min(290, latency);
+                    
+                    historicPingLatencies.push(latency);
+                    if (historicPingLatencies.length > 1) {
+                        const dev = [];
+                        for(let i = 1; i < historicPingLatencies.length; i++) { dev.push(Math.abs(historicPingLatencies[i] - historicPingLatencies[i-1])); }
+                        metricsEngine.jitter.target = Math.round(dev.reduce((a, b) => a + b, 0) / dev.length);
+                    }
+                    if (historicPingLatencies.length > 10) historicPingLatencies.shift();
+                }
+                
+                metricsEngine.loss.target = (internalNetworkCache.drops / internalNetworkCache.sequences) * 100;
+                await new Promise(resolve => setTimeout(resolve, 1500));
+            }
+        }
+
+        // --- INITIALIZATION ---
+        pushLog("SYSTEM // ENTERPRISE TELEMETRY MATRIX BOOTING...", "log-sys");
+        updateNetworkConnectionType();
+        if(navigator.connection) navigator.connection.addEventListener('change', updateNetworkConnectionType);
+        
+        initDeviceSensors();
+        runChronograph();
+        getDeviceProfile();
+        fetchBatteryStatus();
+        detectGPU();
+        checkSecurityPosture();
+        countPeripherals();
+        monitorStorage();
+        requestAnimationFrame(monitorFPS);
+
+        updateGaugesPhysicsLoop();
+        runBackgroundNetworkPipeline();
+        initializeDataStreams();
+
+    </script>
+</body>
+</html>
