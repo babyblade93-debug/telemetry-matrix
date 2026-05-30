@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enterprise Telemetry - Architecture Map</title>
+    <title>Advanced Guidance Portal - Site Map</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
@@ -15,193 +15,190 @@
             justify-content: center;
             min-height: 100vh;
         }
-
-        .dashboard-frame {
+        .sitemap-container {
             width: 100%;
             max-width: 1000px;
             background: #ffffff;
             border: 1px solid #e5e7eb;
             border-radius: 12px;
-            padding: 24px;
+            padding: 30px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+            align-self: flex-start;
+        }
+        .header {
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #0f172a;
+            font-weight: 800;
+        }
+        .header p {
+            color: #64748b;
+            font-size: 13px;
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+        
+        .tree-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 20px;
+        }
+        /* Mobile responsive grids */
+        @media (min-width: 640px) {
+            .tree-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (min-width: 1024px) {
+            .tree-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+
+        .menu-block {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .menu-block:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+        
+        .menu-header {
+            background: #1e293b;
+            color: #ffffff;
+            padding: 16px 20px;
+            font-weight: 700;
+            font-size: 16px;
             display: flex;
-            flex-direction: column;
-            gap: 24px;
+            align-items: center;
+            gap: 10px;
+            border-bottom: 3px solid #3b82f6;
         }
-
-        /* --- HEADER & MENUBAR --- */
-        .header-block {
-            display: flex; flex-direction: column; gap: 12px; border-bottom: 1px solid #e5e7eb; padding-bottom: 16px;
-        }
-        @media (min-width: 768px) { .header-block { flex-direction: row; justify-content: space-between; align-items: center; } }
         
-        .main-title { font-size: 22px; font-weight: 700; color: #111827; display: flex; align-items: center; gap: 10px; letter-spacing: -0.5px; }
-        .status-dot {
-            width: 12px; height: 12px; background: #3b82f6; border-radius: 50%;
-            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); animation: pulse 2s infinite;
+        .dropdown-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
-        @keyframes pulse { 0% { opacity: 1; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); } 70% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(59, 130, 246, 0); } 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); } }
+        .dropdown-item {
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
         
-        .top-controls { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; }
-        select.module-selector {
-            padding: 10px 16px; font-size: 14px; font-weight: 600; color: #1e293b; background: #f9fafb;
-            border: 1px solid #d1d5db; border-radius: 8px; outline: none; cursor: pointer; transition: all 0.2s;
+        .dropdown-link {
+            display: flex;
+            align-items: center;
+            padding: 14px 20px;
+            color: #334155;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
         }
-        select.module-selector:hover { border-color: #9ca3af; background: #ffffff; }
-
-        .clocks-bracket { display: flex; gap: 10px; font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; }
-        .clock-pill { background: #f3f4f6; color: #4b5563; padding: 6px 12px; border-radius: 6px; border: 1px solid #e5e7eb; }
-
-        /* --- SITEMAP GRID --- */
-        .sitemap-grid {
-            display: grid; grid-template-columns: 1fr; gap: 16px; width: 100%;
+        .dropdown-link::before {
+            content: '↳';
+            margin-right: 10px;
+            color: #94a3b8;
+            font-weight: 600;
+            font-size: 16px;
         }
-        @media (min-width: 640px) { .sitemap-grid { grid-template-columns: repeat(2, 1fr); } }
-        
-        .sm-core-block {
-            grid-column: 1 / -1; background: linear-gradient(135deg, #0f172a, #1e293b); color: white;
-            border-radius: 10px; padding: 32px 24px; display: flex; flex-direction: column; align-items: center;
-            justify-content: center; text-align: center; position: relative; overflow: hidden;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2); border: 1px solid #334155; margin-bottom: 8px;
+        .dropdown-link:hover {
+            background: #eff6ff;
+            color: #2563eb;
+            padding-left: 26px;
         }
-        .sm-core-block::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
-            background: linear-gradient(to right, transparent, rgba(255,255,255,0.08), transparent);
-            animation: scanline 3s linear infinite;
+        .dropdown-link:hover::before {
+            color: #3b82f6;
         }
-        @keyframes scanline { 0% { left: -100%; } 100% { left: 200%; } }
-
-        /* --- INTERACTIVE CARDS --- */
-        .sm-btn {
-            background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px;
-            display: flex; align-items: center; gap: 18px; cursor: pointer; text-decoration: none; color: inherit;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        .sm-btn:hover { border-color: #3b82f6; transform: translateY(-4px); box-shadow: 0 10px 15px -3px rgba(37,99,235,0.15); background: #f8fafc; }
-        .sm-btn::after {
-            content: ''; position: absolute; left: 0; bottom: 0; height: 4px; width: 0;
-            background: #3b82f6; transition: width 0.3s ease;
-        }
-        .sm-btn:hover::after { width: 100%; }
-        
-        .sm-icon {
-            font-size: 32px; background: #f1f5f9; width: 64px; height: 64px; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center; border: 1px solid #e2e8f0;
-            flex-shrink: 0; transition: transform 0.3s ease;
-        }
-        .sm-btn:hover .sm-icon { transform: scale(1.1); background: #e0f2fe; border-color: #bae6fd; }
-
-        .sm-text { text-align: left; display: flex; flex-direction: column; gap: 4px; }
-        .sm-text h3 { margin: 0; font-size: 16px; font-weight: 700; color: #0f172a; }
-        .sm-text p { margin: 0; font-size: 12px; color: #64748b; font-weight: 600; line-height: 1.4; }
-
-        .dash-footer {
-            border-top: 1px solid #e5e7eb; padding-top: 16px; display: flex; justify-content: space-between;
-            font-size: 11px; color: #6b7280; font-weight: 600; text-transform: uppercase; margin-top: 10px;
+        .empty-menu-msg {
+            padding: 14px 20px;
+            color: #94a3b8;
+            font-size: 13px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
 
-    <div class="dashboard-frame">
+    <div class="sitemap-container">
+        <div class="header">
+            <h1>Portal Architecture & Site Map</h1>
+            <p>System Directory Overview</p>
+        </div>
         
-        <div class="header-block">
-            <div class="main-title">
-                <span class="status-dot"></span>
-                <span>System Architecture Map</span>
-            </div>
-            
-            <div class="top-controls">
-                <select id="quick-dropdown" class="module-selector" onchange="routeFromDropdown()">
-                    <option value="" disabled selected>Select a Module to Launch...</option>
-                    <option value="network">📶 Network Diagnostics</option>
-                    <option value="environment">🌍 Spatial Telemetry</option>
-                    <option value="device">💻 Hardware Specs</option>
-                    <option value="performance">🎮 Performance Matrix</option>
-                    <option value="security">🛡️ Security Posture</option>
-                </select>
-                <div class="clocks-bracket">
-                    <div class="clock-pill" id="local-clock">LOC: 00:00:00</div>
-                    <div class="clock-pill" id="gmt-clock">GMT: 00:00:00</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="sitemap-grid">
-            
-            <div class="sm-core-block">
-                <div style="width:16px; height:16px; margin-bottom:14px; background:#34d399; border-radius:50%; box-shadow: 0 0 0 6px rgba(52, 211, 153, 0.2); animation: pulse 2s infinite;"></div>
-                <h2 style="font-size: 20px; font-weight: 800; margin:0; letter-spacing: 1px;">TELEMETRY CORE ROUTER</h2>
-                <p style="font-size: 12px; color: #94a3b8; margin-top:8px; font-weight: 600; letter-spacing: 0.5px;">SELECT A SUBSYSTEM BELOW TO INITIATE LIVE HARDWARE UPLINK</p>
-            </div>
-
-            <a href="index.html" class="sm-btn">
-                <div class="sm-icon">📶</div>
-                <div class="sm-text">
-                    <h3>Network & Connectivity</h3>
-                    <p>Live Ping, ISP, Bandwidth & Packet Loss Metrics</p>
-                </div>
-            </a>
-
-            <a href="index.html" class="sm-btn">
-                <div class="sm-icon">🌍</div>
-                <div class="sm-text">
-                    <h3>Environmental Telemetry</h3>
-                    <p>Local Weather, 3D Gyroscope & Geodetic Altitude</p>
-                </div>
-            </a>
-
-            <a href="index.html" class="sm-btn">
-                <div class="sm-icon">💻</div>
-                <div class="sm-text">
-                    <h3>Hardware Specifications</h3>
-                    <p>CPU Cores, RAM Allocation & Live Battery Cell</p>
-                </div>
-            </a>
-
-            <a href="index.html" class="sm-btn">
-                <div class="sm-icon">🎮</div>
-                <div class="sm-text">
-                    <h3>Graphics & Performance</h3>
-                    <p>WebGL Renderer, Live FPS & Disk Storage Quotas</p>
-                </div>
-            </a>
-
-            <a href="index.html" class="sm-btn" style="grid-column: 1 / -1; justify-content: center; max-width: 600px; margin: 0 auto; width: 100%;">
-                <div class="sm-icon">🛡️</div>
-                <div class="sm-text">
-                    <h3>Security Posture & I/O</h3>
-                    <p>Ad-Blocker Detection, Cookie Status & Peripheral Hardware Scan</p>
-                </div>
-            </a>
-
-        </div>
-
-        <div class="dash-footer">
-            <div>Routing Status: <span style="color:#3b82f6;" id="engine-status-mode">STANDBY FOR UPLINK</span></div>
-            <div style="color:#94a3b8;">SECURE ENVIRONMENT</div>
-        </div>
-
+        <div class="tree-grid" id="sitemap-render-target"></div>
     </div>
 
     <script>
-        // --- CHRONOGRAPH ---
-        function runChronograph() {
-            const pad = (n) => n.toString().padStart(2, '0');
-            setInterval(() => {
-                const now = new Date();
-                document.getElementById('local-clock').innerText = `LOC: ${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
-                document.getElementById('gmt-clock').innerText = `GMT: ${pad(now.getUTCHours())}:${pad(now.getUTCMinutes())}:${pad(now.getUTCSeconds())}`;
-            }, 1000);
-        }
-        runChronograph();
+        // =====================================================================
+        // 🛠️ SITEMAP CONFIGURATION
+        // Your exact Google Sites menu structure is loaded here.
+        // =====================================================================
+        
+        const portalStructure = [
+            {
+                menuName: "Home",
+                icon: "🏠",
+                dropdowns: [
+                    { name: "Advanced Excel and Gsheets", link: "#" }
+                ]
+            },
+            {
+                menuName: "Sitemap",
+                icon: "🗺️",
+                dropdowns: [] // No dropdowns for this menu yet
+            }
+        ];
 
-        // --- DROPDOWN ROUTER ---
-        function routeFromDropdown() {
-            // When a user selects from the dropdown, it also routes them to the main index file.
-            window.location.href = "index.html";
-        }
+        // =====================================================================
+        // ⚙️ RENDER ENGINE: Automatically builds HTML from your list above
+        // =====================================================================
+        const renderTarget = document.getElementById('sitemap-render-target');
+
+        portalStructure.forEach(section => {
+            // Create Menu Block
+            const block = document.createElement('div');
+            block.className = 'menu-block';
+
+            // Create Header (The Top Menu Name)
+            const header = document.createElement('div');
+            header.className = 'menu-header';
+            header.innerHTML = `<span>${section.icon}</span> ${section.menuName}`;
+            block.appendChild(header);
+
+            // Create Dropdown List (The sub-items)
+            if (section.dropdowns && section.dropdowns.length > 0) {
+                const list = document.createElement('ul');
+                list.className = 'dropdown-list';
+                
+                section.dropdowns.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'dropdown-item';
+                    li.innerHTML = `<a href="${item.link}" class="dropdown-link">${item.name}</a>`;
+                    list.appendChild(li);
+                });
+                block.appendChild(list);
+            } else {
+                // If there are no dropdowns, show a clean message
+                const emptyMsg = document.createElement('div');
+                emptyMsg.className = 'empty-menu-msg';
+                emptyMsg.innerText = "No sub-pages currently attached.";
+                block.appendChild(emptyMsg);
+            }
+
+            // Append completed block to the grid
+            renderTarget.appendChild(block);
+        });
     </script>
 </body>
 </html>
