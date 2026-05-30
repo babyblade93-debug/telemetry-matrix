@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise Docs - Phase 2 Matrix</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f9ff;
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+                linear-gradient(0deg, transparent 24%, rgba(165, 243, 252, 0.4) 25%, rgba(165, 243, 252, 0.4) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.4) 75%, rgba(165, 243, 252, 0.4) 76%, transparent 77%, transparent), 
+                linear-gradient(90deg, transparent 24%, rgba(165, 243, 252, 0.4) 25%, rgba(165, 243, 252, 0.4) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.4) 75%, rgba(165, 243, 252, 0.4) 76%, transparent 77%, transparent);
+            background-size: 100% 100%, 40px 40px, 40px 40px;
+            color: #0f172a; padding: 20px; min-height: 100vh;
+        }
+
+        .matrix-container {
+            width: 100%; max-width: 1000px; margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
+            border: 2px solid #22d3ee; border-radius: 16px; padding: 30px 20px;
+            box-shadow: 0 10px 30px -5px rgba(6, 182, 212, 0.2);
+        }
+
+        .header-title {
+            text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px;
+            font-weight: 800; color: #083344; margin-bottom: 5px; text-transform: uppercase;
+        }
+        .header-sub { text-align: center; color: #0ea5e9; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono'; margin-bottom: 25px; letter-spacing: 1px; }
+
+        .software-filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
+        .filter-btn {
+            background: #ffffff; border: 2px solid #bae6fd; color: #0369a1;
+            padding: 12px 24px; border-radius: 8px; font-weight: 700;
+            font-family: 'JetBrains Mono', monospace; font-size: 14px; cursor: pointer;
+            transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+        }
+        .filter-btn:hover { border-color: #06b6d4; transform: translateY(-2px); }
+        .filter-btn.active { background: #06b6d4; color: #ffffff; border-color: #0891b2; box-shadow: 0 0 15px rgba(6, 182, 212, 0.4); }
+
+        .module-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        @media (min-width: 768px) { .module-grid { grid-template-columns: repeat(2, 1fr); } }
+
+        .module-card {
+            background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px;
+            padding: 20px; cursor: pointer; transition: all 0.2s; border-left: 5px solid #06b6d4;
+        }
+        .module-card:hover {
+            background: #ecfeff; border-color: #06b6d4; transform: translateX(5px);
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
+        }
+        .module-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
+        .module-tag { font-size: 11px; font-family: 'JetBrains Mono'; color: #0284c7; font-weight: 800; text-transform: uppercase; }
+
+        /* --- MODAL ENGINE --- */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px);
+            z-index: 100; justify-content: center; align-items: center; padding: 15px;
+        }
+        .modal-content {
+            background: #ffffff; border: 2px solid #06b6d4; border-radius: 12px;
+            width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 0 40px rgba(6, 182, 212, 0.3); display: flex; flex-direction: column;
+        }
+        .modal-header {
+            background: linear-gradient(90deg, #164e63, #0891b2); color: #fff;
+            padding: 15px 20px; position: sticky; top: 0; z-index: 10; flex-shrink: 0;
+        }
+        .close-btn { position: absolute; right: 20px; top: 15px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; line-height: 1; }
+        .modal-body { padding: 20px; }
+        
+        /* --- EMULATOR SCREEN --- */
+        .emulator-wrapper {
+            background: #1e293b; border-radius: 8px; padding: 10px; margin-bottom: 20px;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 2px solid #334155;
+        }
+        .emulator-screen {
+            background: #f8fafc; border-radius: 4px; height: 160px; position: relative; overflow: hidden;
+            display: flex; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .rec-status {
+            position: absolute; top: 5px; right: 10px; font-family: 'JetBrains Mono'; font-size: 9px;
+            color: #ef4444; font-weight: bold; z-index: 30; animation: flashRec 1s infinite;
+        }
+        @keyframes flashRec { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        .sim-ribbon { height: 35px; background: #e2e8f0; border-bottom: 1px solid #cbd5e1; display: flex; align-items: center; padding: 0 10px; gap: 8px; }
+        .sim-btn { height: 15px; width: 30px; background: #cbd5e1; border-radius: 3px; }
+        .sim-btn-target { background: #38bdf8; border: 1px solid #0284c7; }
+        .sim-doc-area { flex-grow: 1; background: #f1f5f9; display: flex; justify-content: center; padding-top: 10px; }
+        .sim-paper { width: 70%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 15px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+        
+        /* LIVE TEXT FEED */
+        .sim-paper::before { content: 'STANDBY...'; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #64748b; display: block; margin-bottom: 8px; font-weight: bold; }
+        .anim-merge .sim-paper::before { content: 'PROCESSING MACRO SCRIPT...'; color: #0369a1; animation: pulseText 2s infinite; }
+        .anim-lock .sim-paper::before { content: 'SECURING ARCHITECTURE...'; color: #ef4444; animation: pulseText 2s infinite; }
+        .anim-format .sim-paper::before { content: 'EXECUTING IF/THEN LOGIC...'; color: #047857; animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        .sim-line { height: 6px; background: #cbd5e1; border-radius: 3px; width: 100%; }
+        .sim-line.short { width: 60%; }
+        .sim-line.title { height: 10px; width: 50%; }
+        .sim-cursor {
+            width: 14px; height: 14px; background: #0f172a; clip-path: polygon(0 0, 100% 40%, 40% 100%);
+            position: absolute; bottom: 20px; right: 20px; z-index: 20; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
+        }
+
+        /* Animations */
+        .anim-merge .sim-cursor { animation: moveMerge 4s infinite ease-in-out; }
+        .anim-merge .sim-paper { animation: duplicatePaper 4s infinite ease-in-out; }
+        @keyframes moveMerge { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 85px; } 40% { top: 10px; left: 85px; transform: scale(0.8); } 100% { top: 10px; left: 85px; } }
+        @keyframes duplicatePaper { 0%, 40% { box-shadow: 0 2px 4px rgba(0,0,0,0.1); } 50%, 100% { box-shadow: -10px 10px 0px -1px #fff, -10px 10px 4px rgba(0,0,0,0.1), -20px 20px 0px -1px #fff, -20px 20px 4px rgba(0,0,0,0.1); transform: translate(10px, -10px); } }
+        .anim-format .sim-cursor { animation: moveFormat 4s infinite ease-in-out; }
+        .anim-format .sim-line.title { animation: expandTitle 4s infinite ease-in-out; }
+        @keyframes moveFormat { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 45px; } 40% { top: 10px; left: 45px; transform: scale(0.8); } 100% { top: 10px; left: 45px; } }
+        @keyframes expandTitle { 0%, 40% { width: 50%; height: 10px; background: #cbd5e1; } 50%, 100% { width: 80%; height: 14px; background: #047857; border-bottom: 2px solid #10b981; } }
+        .anim-lock .sim-cursor { animation: moveLock 4s infinite ease-in-out; }
+        .anim-lock .sim-paper { animation: applyLock 4s infinite ease-in-out; }
+        @keyframes moveLock { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 125px; } 40% { top: 10px; left: 125px; transform: scale(0.8); } 100% { top: 10px; left: 125px; } }
+        @keyframes applyLock { 0%, 40% { border: none; } 50%, 100% { border: 3px solid #ef4444; background: #fef2f2; } }
+
+        /* --- SCENARIO TEXT --- */
+        .scenario-box { background: #f1f5f9; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px; }
+        .scenario-title { font-weight: 800; color: #b45309; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
+        .scenario-text { color: #334155; font-size: 13px; line-height: 1.5; }
+        .step-container { display: flex; flex-direction: column; gap: 12px; }
+        .step-row { display: flex; gap: 15px; background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        .step-number { background: #e0f2fe; color: #0369a1; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: 800; font-family: 'JetBrains Mono'; flex-shrink: 0; font-size: 12px; }
+        .step-instruction { font-size: 13px; color: #1e293b; line-height: 1.5; align-self: center; }
+    </style>
+</head>
+<body>
+
+    <div class="matrix-container">
+        <h1 class="header-title">Guidance Matrix: Docs [Phase 2]</h1>
+        <div class="header-sub">ULTRA-ADVANCED ENTERPRISE AUTOMATION</div>
+        
+        <div class="software-filters">
+            <button class="filter-btn active" onclick="filterSoftware('all')">ALL SYSTEMS</button>
+            <button class="filter-btn" onclick="filterSoftware('word')">MS WORD</button>
+            <button class="filter-btn" onclick="filterSoftware('wps')">WPS OFFICE</button>
+            <button class="filter-btn" onclick="filterSoftware('gdocs')">GOOGLE DOCS</button>
+        </div>
+
+        <div class="module-grid" id="grid-target"></div>
+    </div>
+
+    <div class="modal-overlay" id="sim-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+                <div id="modal-tag" style="font-size: 11px; font-family: 'JetBrains Mono'; color: #a5f3fc; margin-bottom: 5px;"></div>
+                <h2 id="modal-title" style="font-size: 18px; font-weight: 700; margin: 0;"></h2>
+            </div>
+            <div class="modal-body">
+                <div class="emulator-wrapper">
+                    <div style="font-size: 10px; font-family: 'JetBrains Mono'; color: #94a3b8; margin-bottom: 5px; font-weight: bold;">SYS.EMULATOR_V2</div>
+                    <div class="emulator-screen" id="emulator-engine">
+                        <div class="rec-status">● REC</div>
+                        <div class="sim-ribbon">
+                            <div class="sim-btn"></div><div class="sim-btn sim-btn-target"></div><div class="sim-btn"></div>
+                        </div>
+                        <div class="sim-doc-area">
+                            <div class="sim-paper"><div class="sim-line title"></div><div class="sim-line"></div><div class="sim-line short"></div></div>
+                        </div>
+                        <div class="sim-cursor"></div>
+                    </div>
+                </div>
+                <div class="scenario-box">
+                    <div class="scenario-title">Real Life Scenario</div>
+                    <div class="scenario-text" id="modal-scenario"></div>
+                </div>
+                <div class="step-container" id="modal-steps"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =====================================================================
+        // 🛠️ ENTERPRISE DATABASE - PHASE 2 (ADVANCED MODULES)
+        // =====================================================================
+        
+        const database = [
+            // --- MS WORD ---
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Mail Merge: IF/THEN/ELSE Rules", scenario: "You are generating shift notices, but you want the letter to automatically add a 'Night Shift Allowance' paragraph ONLY if their shift is past 22:00.", steps: ["Set up your Mail Merge normally.", "Click 'Rules' in the Mailings ribbon, and select 'If...Then...Else'.", "Set the condition: IF [Shift_Timing] contains '22:00'.", "In the 'Insert this text' box, type the allowance policy. Word will now intelligently alter the document for each person based on their exact data."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Interactive Drop-Down Menus", scenario: "You are creating a standardized HR intake form and want managers to select a 'Department' from a clean, clickable drop-down list.", steps: ["Enable the 'Developer' tab by going to File > Options > Customize Ribbon.", "Click the 'Developer' tab, place your cursor on the form, and click the 'Drop-Down List Content Control' icon.", "Click 'Properties' right next to it.", "Click 'Add' to enter your departments (e.g., 'Swiggy IM Voice', 'Backoffice'). Lock the document to form-filling only."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Outline View for Drag-and-Drop Chapters", scenario: "You have a 100-page manual. Management wants Chapter 8 moved to become Chapter 2. Copy-pasting 15 pages will break the formatting.", steps: ["Go to the 'View' tab and click 'Outline'.", "Word condenses the document down to just your Headings.", "Notice the plus (+) signs next to each Heading. Click and drag the + sign for Chapter 8.", "Drag it up and drop it under Chapter 1. The entire 15 pages of text underneath it move perfectly and instantly."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Building a Table of Figures", scenario: "Your yearly review has 30 different Excel charts embedded in it. You need an automated index specifically for the charts, separate from the main index.", steps: ["Right-click your first chart and select 'Insert Caption' (e.g., Figure 1: Q1 Roster).", "Repeat for all charts.", "Go to a blank page at the beginning.", "Click 'References' > 'Insert Table of Figures'. Word instantly generates a clickable index just for your visual data."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Auto-Updating Date & Time Codes", scenario: "You have a daily shift log template. Instead of typing the new date every morning, you want the document to automatically know what day it is when opened.", steps: ["Open your template.", "Go to 'Insert' > 'Date & Time' (located in the Text section).", "Choose your preferred format (e.g., 'May 31, 2026').", "Check the box that says 'Update automatically'. Every time you spawn a new document from this template, the date is perfectly current."] },
+
+            // --- WPS OFFICE ---
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Extracting Data from Corrupted Files", scenario: "A Team Lead's PC crashed, and their critical roster file is corrupted and refuses to open normally.", steps: ["Open a blank document in WPS.", "Go to 'Menu' > 'Open'.", "In the file dialogue box, click the small dropdown arrow next to the 'Open' button.", "Select 'Open and Repair'. WPS will attempt to bypass the broken code and extract the raw text data inside."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Creating Seamless Watermarks", scenario: "You need a watermark, but the default diagonal text overlaps terribly with your data tables.", steps: ["Go to the 'Insert' tab.", "Click 'Watermark' > 'Custom Watermark'.", "Select the 'Picture' option.", "Upload a highly transparent PNG of your company logo. Uncheck 'Washout' if it's already transparent, and scale it to 50% so it sits perfectly behind the grid lines."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Redacting Sensitive Information", scenario: "You have to share an employee performance review with a third party, but you must completely black out their home address and phone number.", steps: ["Highlight the sensitive text.", "Go to the 'Home' tab.", "Change the text highlight color to black, AND change the font color to black.", "Export the document as a PDF. Note: For true legal redaction, use a dedicated PDF editor, as text can sometimes be highlighted in standard exports."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Format Painter Double-Click Hack", scenario: "You built a perfect custom heading style, and you need to apply it to 15 different titles scattered across the document.", steps: ["Highlight your perfectly formatted text.", "Go to the 'Home' tab and DOUBLE-CLICK the 'Format Painter' icon (the little paintbrush).", "Your cursor turns into a brush permanently. Scroll through the document and click on all 15 titles one by one.", "Press 'Esc' to turn the brush off when you are done."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Exporting to Legacy Formats", scenario: "You are sending a file to an external vendor who uses an ancient computer system that cannot open modern .docx files.", steps: ["Open your finished document.", "Go to 'Menu' > 'Save As'.", "Click the 'File Type' dropdown.", "Select 'Microsoft Word 97-2003 Document (*.doc)'. This dumbs down the backend code so older legacy systems can read it perfectly."] },
+
+            // --- GOOGLE DOCS ---
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Custom Variables for Reusable Templates", scenario: "You use the exact same template for vendor contracts, but you have to type the vendor's name in 12 different places.", steps: ["Go to 'Tools' > 'Custom building blocks' > 'Custom variables'.", "Create a new variable named 'Client_Name'.", "Insert that variable chip in the 12 spots across your document.", "Next time you use the template, just change the variable value once in the right-hand panel, and it instantly updates all 12 spots simultaneously."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Embedding Interactive Flowcharts", scenario: "You need to show the exact escalation matrix for a Swiggy IM Voice ticket directly inside the manual.", steps: ["Go to 'Insert' > 'Drawing' > 'New'.", "A canvas opens. Use the shape and line tools to map out your flowchart.", "Click 'Save and Close'. The flowchart drops into the doc.", "If the process changes, double-click the flowchart. The canvas reopens, you adjust the lines, and it updates the document seamlessly."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Automated Meeting Notes", scenario: "You have a weekly roster alignment meeting scheduled in Google Calendar, and you need to instantly set up the agenda.", steps: ["Type '@' in a blank document.", "Select 'Meeting notes' from the dropdown.", "A side panel opens showing your Calendar. Click the Roster Alignment meeting.", "Docs instantly generates a template with the date, attendees, agenda, and action items, all linked directly to that calendar event."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Document Summary & Outline Panel", scenario: "Management wants to read your 40-page strategy, but they only have 2 minutes. They need an executive summary pinned to the side.", steps: ["Look at the top left corner, just above the page, and click the 'Show document outline' icon (looks like a bulleted list).", "At the very top of that sidebar, click the '+' next to 'Summary'.", "Type a 3-sentence executive brief.", "This summary stays pinned to the top of the navigation pane for anyone who opens the document."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Exporting to Markdown for GitHub", scenario: "You wrote a technical README guide in Google Docs because it has spellcheck, but you need it in Markdown (.md) code to upload to GitHub.", steps: ["Once your document is perfect (using standard Headings and bullets), go to 'File'.", "Click 'Download' > 'Markdown (.md)'.", "Docs strips out all the visual HTML and converts your document into pure, developer-ready Markdown syntax."] }
+        ];
+
+        // =====================================================================
+        // ⚙️ RENDER & MODAL ENGINE
+        // =====================================================================
+        
+        const gridTarget = document.getElementById('grid-target');
+        
+        function renderCards(filterType) {
+            gridTarget.innerHTML = ''; 
+            database.forEach((item, index) => {
+                if (filterType === 'all' || item.software === filterType) {
+                    const card = document.createElement('div');
+                    card.className = 'module-card';
+                    card.innerHTML = `<div class="module-tag">${item.softwareLabel}</div><div class="module-title">${item.title}</div>`;
+                    card.onclick = () => openModal(index);
+                    gridTarget.appendChild(card);
+                }
+            });
+        }
+
+        function filterSoftware(type) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            renderCards(type);
+        }
+
+        function openModal(dbIndex) {
+            const data = database[dbIndex];
+            document.getElementById('modal-tag').innerText = data.softwareLabel;
+            document.getElementById('modal-title').innerText = data.title;
+            document.getElementById('modal-scenario').innerText = data.scenario;
+            
+            const emulator = document.getElementById('emulator-engine');
+            emulator.className = `emulator-screen ${data.animType}`;
+            
+            const stepsContainer = document.getElementById('modal-steps');
+            stepsContainer.innerHTML = '';
+            data.steps.forEach((stepText, index) => {
+                const stepRow = document.createElement('div');
+                stepRow.className = 'step-row';
+                stepRow.innerHTML = `<div class="step-number">${index + 1}</div><div class="step-instruction">${stepText}</div>`;
+                stepsContainer.appendChild(stepRow);
+            });
+            
+            document.getElementById('sim-modal').style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('sim-modal').style.display = 'none';
+            document.getElementById('emulator-engine').className = 'emulator-screen';
+        }
+
+        renderCards('all');
+    </script>
+</body>
+</html>
+
