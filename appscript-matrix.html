@@ -10,141 +10,86 @@
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0fdf4; /* Slight green tint for code/matrix feel */
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+            font-family: 'Inter', sans-serif; background-color: #f0fdf4;
+            background-image: radial-gradient(circle at 50% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
                 linear-gradient(0deg, transparent 24%, rgba(167, 243, 208, 0.4) 25%, rgba(167, 243, 208, 0.4) 26%, transparent 27%, transparent 74%, rgba(167, 243, 208, 0.4) 75%, rgba(167, 243, 208, 0.4) 76%, transparent 77%, transparent), 
                 linear-gradient(90deg, transparent 24%, rgba(167, 243, 208, 0.4) 25%, rgba(167, 243, 208, 0.4) 26%, transparent 27%, transparent 74%, rgba(167, 243, 208, 0.4) 75%, rgba(167, 243, 208, 0.4) 76%, transparent 77%, transparent);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-            color: #0f172a; padding: 20px; min-height: 100vh;
+            background-size: 100% 100%, 40px 40px, 40px 40px; color: #0f172a; padding: 20px; min-height: 100vh;
         }
 
         .matrix-container {
-            width: 100%; max-width: 1000px; margin: 0 auto;
-            background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px);
-            border: 2px solid #10b981; border-radius: 16px; padding: 30px 20px;
+            width: 100%; max-width: 1000px; margin: 0 auto; background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px); border: 2px solid #10b981; border-radius: 16px; padding: 30px 20px;
             box-shadow: 0 10px 30px -5px rgba(16, 185, 129, 0.2);
         }
 
-        .header-title {
-            text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px;
-            font-weight: 800; color: #064e3b; margin-bottom: 5px; text-transform: uppercase;
-        }
+        .header-title { text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px; font-weight: 800; color: #064e3b; margin-bottom: 5px; text-transform: uppercase; }
         .header-sub { text-align: center; color: #059669; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono'; margin-bottom: 25px; letter-spacing: 1px; }
 
         .software-filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
-        .filter-btn {
-            background: #ffffff; border: 2px solid #a7f3d0; color: #047857;
-            padding: 12px 24px; border-radius: 8px; font-weight: 700;
-            font-family: 'JetBrains Mono', monospace; font-size: 14px; cursor: pointer;
-            transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-        }
-        .filter-btn:hover { border-color: #10b981; transform: translateY(-2px); }
+        .filter-btn { background: #ffffff; border: 2px solid #a7f3d0; color: #047857; padding: 12px 24px; border-radius: 8px; font-weight: 700; font-family: 'JetBrains Mono', monospace; font-size: 14px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .filter-btn.active { background: #10b981; color: #ffffff; border-color: #059669; box-shadow: 0 0 15px rgba(16, 185, 129, 0.4); }
 
         .module-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         @media (min-width: 768px) { .module-grid { grid-template-columns: repeat(2, 1fr); } }
 
-        .module-card {
-            background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px;
-            padding: 20px; cursor: pointer; transition: all 0.2s; border-left: 5px solid #10b981;
-        }
-        .module-card:hover {
-            background: #ecfdf5; border-color: #10b981; transform: translateX(5px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
-        }
+        .module-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 10px; padding: 20px; cursor: pointer; transition: all 0.2s; border-left: 5px solid #10b981; }
+        .module-card:hover { background: #ecfdf5; border-color: #10b981; transform: translateX(5px); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15); }
         .module-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
         .module-tag { font-size: 11px; font-family: 'JetBrains Mono'; color: #047857; font-weight: 800; text-transform: uppercase; }
 
         /* --- MODAL ENGINE --- */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px);
-            z-index: 100; justify-content: center; align-items: center; padding: 15px;
-        }
-        .modal-content {
-            background: #ffffff; border: 2px solid #10b981; border-radius: 12px;
-            width: 100%; max-width: 650px; max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 0 40px rgba(16, 185, 129, 0.3); display: flex; flex-direction: column;
-        }
-        .modal-header {
-            background: linear-gradient(90deg, #064e3b, #059669); color: #fff;
-            padding: 15px 20px; position: sticky; top: 0; z-index: 10; flex-shrink: 0;
-        }
-        .close-btn { position: absolute; right: 20px; top: 15px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; line-height: 1; }
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(5px); z-index: 100; justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background: #ffffff; border: 2px solid #10b981; border-radius: 12px; width: 100%; max-width: 750px; max-height: 95vh; overflow-y: auto; box-shadow: 0 0 40px rgba(16, 185, 129, 0.3); display: flex; flex-direction: column; }
+        .modal-header { background: linear-gradient(90deg, #064e3b, #059669); color: #fff; padding: 15px 20px; position: sticky; top: 0; z-index: 10; display: flex; justify-content: space-between; align-items: center; }
+        .close-btn { background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; line-height: 1; }
         .modal-body { padding: 20px; }
         
-        /* --- IDE EMULATOR SCREEN --- */
-        .emulator-wrapper {
-            background: #0f172a; border-radius: 8px; padding: 10px; margin-bottom: 20px;
-            box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 2px solid #334155;
-        }
-        .emulator-screen {
-            background: #1e293b; border-radius: 4px; height: 160px; position: relative; overflow: hidden;
-            display: flex; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        .rec-status {
-            position: absolute; top: 5px; right: 10px; font-family: 'JetBrains Mono'; font-size: 9px;
-            color: #34d399; font-weight: bold; z-index: 30; animation: flashRec 1s infinite;
-        }
-        @keyframes flashRec { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        /* --- V3 LIVE SANDBOX EMULATOR --- */
+        .sandbox-panel { background: #0f172a; border-radius: 8px; padding: 10px; margin-bottom: 20px; border: 2px solid #334155; position: relative; }
+        .sandbox-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .sandbox-tag { font-size: 10px; font-family: 'JetBrains Mono'; color: #94a3b8; font-weight: bold; }
+        .run-btn { background: #10b981; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-family: 'JetBrains Mono'; font-weight: 700; font-size: 11px; cursor: pointer; transition: all 0.2s; box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+        .run-btn:active { transform: scale(0.95); }
+
+        .sandbox-screen { background: #1e293b; border-radius: 4px; height: 180px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5); }
         
-        .sim-ribbon { height: 25px; background: #0f172a; border-bottom: 1px solid #334155; display: flex; align-items: center; padding: 0 10px; gap: 8px; }
-        .sim-btn { height: 10px; width: 10px; background: #ef4444; border-radius: 50%; }
-        .sim-btn:nth-child(2) { background: #f59e0b; }
-        .sim-btn:nth-child(3) { background: #10b981; }
+        /* 3-STAGE UI */
+        .stage { display: none; width: 100%; height: 100%; flex-direction: column; padding: 10px; animation: fadeIn 0.3s; }
+        .stage.active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Stage 1 & 3: Fake Spreadsheet Grid */
+        .fake-sheet { width: 100%; height: 100%; background: #fff; display: grid; grid-template-columns: 30px 1fr 1fr 1fr; grid-template-rows: 20px repeat(4, 1fr); border: 1px solid #cbd5e1; font-family: 'Inter', sans-serif; font-size: 10px; }
+        .sheet-cell { border: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 5px; color: #334155; overflow: hidden; white-space: nowrap; }
+        .sheet-head { background: #f1f5f9; font-weight: 700; text-align: center; justify-content: center; color: #475569; }
+        .sheet-index { background: #f8fafc; font-weight: bold; justify-content: center; color: #94a3b8; }
         
-        .sim-workspace { display: flex; flex-grow: 1; background: #1e293b; position: relative; }
-        .sim-sidebar { width: 30px; background: #0f172a; border-right: 1px solid #334155; display: flex; flex-direction: column; padding-top: 10px; font-family: 'JetBrains Mono'; font-size: 8px; color: #475569; text-align: center; gap: 4px; }
-        .sim-sidebar div { padding: 0 2px; }
+        /* Stage 2: Code & Flowchart */
+        .code-flow-container { display: flex; width: 100%; height: 100%; gap: 10px; }
+        .ide-box { flex: 1; background: #0f172a; border-radius: 4px; padding: 10px; font-family: 'JetBrains Mono'; font-size: 9px; color: #34d399; position: relative; overflow: hidden; }
+        .ide-type { overflow: hidden; border-right: .15em solid orange; white-space: nowrap; margin: 0 auto; letter-spacing: .15em; animation: typing 2s steps(40, end), blink-caret .75s step-end infinite; }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: orange; } }
         
-        .sim-code-area { flex-grow: 1; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
-        
-        /* LIVE CODE TEXT FEED */
-        .sim-feed { position: absolute; bottom: 10px; right: 10px; font-family: 'JetBrains Mono', monospace; font-size: 8px; color: #cbd5e1; font-weight: bold; z-index: 20; background: rgba(15, 23, 42, 0.8); padding: 2px 6px; border-radius: 4px; }
-        .anim-code .sim-feed::after { content: 'COMPILING APPS SCRIPT...'; color: #34d399; animation: pulseText 1.5s infinite; }
-        .anim-execute .sim-feed::after { content: 'EXECUTING AUTOMATION...'; color: #38bdf8; animation: pulseText 1s infinite; }
-        .anim-trigger .sim-feed::after { content: 'AWAITING EVENT TRIGGER...'; color: #f59e0b; animation: pulseText 2s infinite; }
-        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        .flowchart-box { flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 10px 0; }
+        .flow-node { background: #38bdf8; color: #0f172a; font-family: 'JetBrains Mono'; font-size: 9px; font-weight: bold; padding: 4px 8px; border-radius: 4px; text-align: center; width: 90%; }
+        .flow-arrow { color: #cbd5e1; font-size: 12px; }
 
-        /* Code Blocks */
-        .code-line { height: 6px; border-radius: 3px; }
-        .cl-blue { background: #38bdf8; width: 40%; }
-        .cl-yellow { background: #fde047; width: 60%; margin-left: 10px; }
-        .cl-green { background: #34d399; width: 70%; margin-left: 20px; }
-        .cl-purple { background: #c084fc; width: 30%; margin-left: 20px; }
-        .cl-bracket { background: #e2e8f0; width: 5%; margin-left: 10px; }
+        /* Stage 3 Specific Outputs */
+        .highlight-row .row-2 { background: #fef08a !important; transition: background 0.5s; } /* Sort/Highlight */
+        .gmail-popup { display: none; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #fff; border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); width: 200px; overflow: hidden; flex-direction: column; }
+        .gmail-head { background: #ef4444; color: #fff; padding: 5px 10px; font-size: 10px; font-weight: bold; }
+        .gmail-body { padding: 10px; font-size: 9px; color: #334155; display: flex; flex-direction: column; gap: 5px; }
 
-        /* Animations */
-        .anim-code .code-line { opacity: 0; animation: typeCode 4s infinite; }
-        .anim-code .cl-blue { animation-delay: 0s; }
-        .anim-code .cl-yellow { animation-delay: 0.5s; }
-        .anim-code .cl-green { animation-delay: 1s; }
-        .anim-code .cl-purple { animation-delay: 1.5s; }
-        .anim-code .cl-bracket { animation-delay: 2s; }
-        @keyframes typeCode { 0% { opacity: 0; transform: translateX(-10px); } 10%, 90% { opacity: 1; transform: translateX(0); } 100% { opacity: 0; } }
-
-        /* Execution Progress Bar */
-        .anim-execute .sim-code-area { align-items: center; justify-content: center; }
-        .anim-execute .code-line { display: none; }
-        .anim-execute::after { content: ''; position: absolute; width: 60%; height: 10px; background: #0f172a; border: 1px solid #38bdf8; border-radius: 5px; top: 50%; left: 20%; }
-        .anim-execute::before { content: ''; position: absolute; height: 8px; background: #38bdf8; border-radius: 4px; top: calc(50% + 1px); left: calc(20% + 1px); animation: fillBar 3s infinite ease-in-out; z-index: 5; }
-        @keyframes fillBar { 0% { width: 0%; } 50%, 80% { width: calc(60% - 2px); } 100% { width: 0%; } }
-
-        /* Trigger Pulse Effect */
-        .anim-trigger .code-line { opacity: 0.3; }
-        .anim-trigger::before { content: '⏱️'; font-size: 40px; position: absolute; top: 30px; left: 40%; animation: pulseClock 2s infinite; z-index: 10; text-shadow: 0 0 20px #f59e0b; }
-        @keyframes pulseClock { 0% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; text-shadow: 0 0 40px #f59e0b; } 100% { transform: scale(1); opacity: 0.8; } }
-
-        /* --- SCENARIO TEXT --- */
+        /* --- TEXT STYLES --- */
         .scenario-box { background: #f1f5f9; border-left: 4px solid #10b981; padding: 15px; border-radius: 0 8px 8px 0; margin-bottom: 25px; }
         .scenario-title { font-weight: 800; color: #047857; font-size: 12px; text-transform: uppercase; margin-bottom: 5px; letter-spacing: 1px; }
         .scenario-text { color: #334155; font-size: 13px; line-height: 1.5; }
         .step-container { display: flex; flex-direction: column; gap: 12px; }
         .step-row { display: flex; gap: 15px; background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .step-number { background: #ecfdf5; color: #059669; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: 800; font-family: 'JetBrains Mono'; flex-shrink: 0; font-size: 12px; }
-        .step-instruction { font-size: 13px; color: #1e293b; line-height: 1.5; align-self: center; font-family: 'Inter', sans-serif; }
+        .step-instruction { font-size: 13px; color: #1e293b; line-height: 1.5; align-self: center; }
         .code-snippet { background: #1e293b; color: #a7f3d0; padding: 2px 6px; border-radius: 4px; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
 
     </style>
@@ -153,7 +98,7 @@
 
     <div class="matrix-container">
         <h1 class="header-title">Guidance Matrix: Apps Script</h1>
-        <div class="header-sub">AUTOMATION & EVENT TRIGGERS</div>
+        <div class="header-sub">V3 INTERACTIVE SANDBOX & FLOWCHARTS</div>
         
         <div class="software-filters">
             <button class="filter-btn active" onclick="filterSoftware('all')">ALL SCRIPTS</button>
@@ -168,36 +113,78 @@
     <div class="modal-overlay" id="sim-modal">
         <div class="modal-content">
             <div class="modal-header">
+                <div>
+                    <div id="modal-tag" style="font-size: 11px; font-family: 'JetBrains Mono'; color: #a7f3d0; margin-bottom: 2px;"></div>
+                    <h2 id="modal-title" style="font-size: 18px; font-weight: 700; margin: 0;"></h2>
+                </div>
                 <button class="close-btn" onclick="closeModal()">&times;</button>
-                <div id="modal-tag" style="font-size: 11px; font-family: 'JetBrains Mono'; color: #a7f3d0; margin-bottom: 5px;"></div>
-                <h2 id="modal-title" style="font-size: 18px; font-weight: 700; margin: 0;"></h2>
             </div>
             <div class="modal-body">
-                <div class="emulator-wrapper">
-                    <div style="font-size: 10px; font-family: 'JetBrains Mono'; color: #94a3b8; margin-bottom: 5px; font-weight: bold; display: flex; justify-content: space-between;">
-                        <span>SYS.IDE_EMULATOR</span>
-                        <span>appscript.gs</span>
+                
+                <div class="sandbox-panel">
+                    <div class="sandbox-header">
+                        <div class="sandbox-tag">LIVE SIMULATION ENVIRONMENT</div>
+                        <button class="run-btn" onclick="runSimulation()">▶ RUN SCRIPT</button>
                     </div>
-                    <div class="emulator-screen" id="emulator-engine">
-                        <div class="rec-status">● LIVE</div>
-                        <div class="sim-feed"></div>
-                        <div class="sim-ribbon">
-                            <div class="sim-btn"></div><div class="sim-btn"></div><div class="sim-btn"></div>
-                        </div>
-                        <div class="sim-workspace">
-                            <div class="sim-sidebar">
-                                <div>1</div><div>2</div><div>3</div><div>4</div><div>5</div><div>6</div>
-                            </div>
-                            <div class="sim-code-area">
-                                <div class="code-line cl-blue"></div>
-                                <div class="code-line cl-yellow"></div>
-                                <div class="code-line cl-green"></div>
-                                <div class="code-line cl-purple"></div>
-                                <div class="code-line cl-bracket"></div>
+                    
+                    <div class="sandbox-screen" id="emulator-engine">
+                        
+                        <div class="stage active" id="stage-1">
+                            <div style="color:#cbd5e1; font-size:9px; font-family:'JetBrains Mono'; margin-bottom:4px;">STAGE 1: RAW DATA ARRAY</div>
+                            <div class="fake-sheet">
+                                <div class="sheet-cell sheet-head"></div><div class="sheet-cell sheet-head">A (Name)</div><div class="sheet-cell sheet-head">B (Shift)</div><div class="sheet-cell sheet-head">C (Status)</div>
+                                <div class="sheet-cell sheet-index">1</div><div class="sheet-cell">Subhasis Roy</div><div class="sheet-cell">08:00 - 17:00</div><div class="sheet-cell">Active</div>
+                                <div class="sheet-cell sheet-index">2</div><div class="sheet-cell">Tamali Ghosh</div><div class="sheet-cell">Wednesday Off</div><div class="sheet-cell">Pending</div>
+                                <div class="sheet-cell sheet-index">3</div><div class="sheet-cell">Voice Team A</div><div class="sheet-cell">22:00 - 07:00</div><div class="sheet-cell">Approved</div>
+                                <div class="sheet-cell sheet-index">4</div><div class="sheet-cell">Backoffice</div><div class="sheet-cell">10:00 - 19:00</div><div class="sheet-cell">Active</div>
                             </div>
                         </div>
+
+                        <div class="stage" id="stage-2">
+                            <div style="color:#cbd5e1; font-size:9px; font-family:'JetBrains Mono'; margin-bottom:4px;">STAGE 2: EXECUTING LOGIC ENGINE</div>
+                            <div class="code-flow-container">
+                                <div class="ide-box">
+                                    <div>function execute() {</div>
+                                    <div class="ide-type" style="padding-left: 10px;">var data = getRange();</div>
+                                    <div class="ide-type" style="padding-left: 10px; animation-delay: 1s;">if (condition met) {</div>
+                                    <div class="ide-type" style="padding-left: 20px; animation-delay: 2s;">triggerAction();</div>
+                                    <div style="padding-left: 10px;">}</div>
+                                    <div>}</div>
+                                </div>
+                                <div class="flowchart-box">
+                                    <div class="flow-node" id="flow-1">READ SPREADSHEET</div>
+                                    <div class="flow-arrow">↓</div>
+                                    <div class="flow-node" style="background:#fde047;" id="flow-2">CHECK CONDITIONS</div>
+                                    <div class="flow-arrow">↓</div>
+                                    <div class="flow-node" style="background:#10b981; color:#fff;" id="flow-3">FIRE ACTION</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="stage" id="stage-3">
+                            <div style="color:#cbd5e1; font-size:9px; font-family:'JetBrains Mono'; margin-bottom:4px;">STAGE 3: SYSTEM OUTPUT</div>
+                            
+                            <div class="fake-sheet highlight-row" id="out-sheet">
+                                <div class="sheet-cell sheet-head"></div><div class="sheet-cell sheet-head">A (Name)</div><div class="sheet-cell sheet-head">B (Shift)</div><div class="sheet-cell sheet-head">C (Status)</div>
+                                <div class="sheet-cell sheet-index">1</div><div class="sheet-cell">Subhasis Roy</div><div class="sheet-cell">08:00 - 17:00</div><div class="sheet-cell">Active</div>
+                                <div class="sheet-cell sheet-index row-2">2</div><div class="sheet-cell row-2">Tamali Ghosh</div><div class="sheet-cell row-2">Wednesday Off</div><div class="sheet-cell row-2">UPDATED NATIVELY</div>
+                                <div class="sheet-cell sheet-index">3</div><div class="sheet-cell">Voice Team A</div><div class="sheet-cell">22:00 - 07:00</div><div class="sheet-cell">Approved</div>
+                                <div class="sheet-cell sheet-index">4</div><div class="sheet-cell">Backoffice</div><div class="sheet-cell">10:00 - 19:00</div><div class="sheet-cell">Active</div>
+                            </div>
+
+                            <div class="gmail-popup" id="out-gmail">
+                                <div class="gmail-head">New Message</div>
+                                <div class="gmail-body">
+                                    <div><strong>To:</strong> team@swiggy.in</div>
+                                    <div><strong>Subject:</strong> Automated Notification</div>
+                                    <div style="border-top: 1px solid #e2e8f0; padding-top: 5px; margin-top: 5px;">Script execution complete. The system has automatically generated this alert based on roster criteria.</div>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
+
                 <div class="scenario-box">
                     <div class="scenario-title">Real Life Scenario</div>
                     <div class="scenario-text" id="modal-scenario"></div>
@@ -209,30 +196,31 @@
 
     <script>
         // =====================================================================
-        // 🛠️ APPS SCRIPT DATABASE (15 AUTOMATION MODULES)
+        // 🛠️ APPS SCRIPT DATABASE (BATCH 1: 15 MODULES)
+        // Note: I added 'outputType' (sheet or gmail) to trigger the correct Stage 3 UI.
         // =====================================================================
         
         const database = [
             // --- SHEETS MACROS ---
-            { software: "sheets", softwareLabel: "SHEETS MACROS", animType: "anim-code", title: "Custom Formula: Calculate Night Allowance", scenario: "Standard Excel formulas are too messy to calculate the Swiggy IM Voice night shift allowances correctly. We will write our own custom formula.", steps: ["Open your Google Sheet, go to 'Extensions' > 'Apps Script'.", "Delete the blank code and type: <br><span class='code-snippet'>function NIGHTALLOWANCE(shiftTime) { ... }</span>", "Write the javascript logic inside the brackets: <span class='code-snippet'>if (shiftTime >= 22) return 500; else return 0;</span>", "Save the script. Go back to your Sheet.", "You can now type <span class='code-snippet'>=NIGHTALLOWANCE(B2)</span> in any cell, just like a native Google formula!"] },
-            { software: "sheets", softwareLabel: "SHEETS MACROS", animType: "anim-execute", title: "Auto-Sort Roster by Shift Time", scenario: "TLs keep adding new names to the bottom of the roster. Instead of manually sorting the data every hour, a script will do it instantly with one click.", steps: ["Go to 'Extensions' > 'Apps Script'.", "Write a function using <span class='code-snippet'>SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()</span>.", "Use the <span class='code-snippet'>.sort()</span> method targeting the column containing your shift timings.", "Go back to the Sheet. Click 'Insert' > 'Drawing' and draw a button that says 'Sort Roster'.", "Right-click the button, select 'Assign Script', and type your function's name."] },
-            { software: "sheets", softwareLabel: "SHEETS MACROS", animType: "anim-code", title: "Bulk Delete Empty Rows", scenario: "When exporting raw data, there are hundreds of blank rows scattered throughout the document that crash your pivot tables.", steps: ["Open Apps Script.", "Write a loop that scans the sheet from the bottom up: <span class='code-snippet'>for (var i = sheet.getLastRow(); i > 0; i--)</span>", "Add an IF statement: <span class='code-snippet'>if (sheet.getRange(i, 1).isBlank())</span>", "Execute <span class='code-snippet'>sheet.deleteRow(i);</span>", "Run the script. Watch hundreds of blank lines vanish instantly without manual scrolling."] },
-            { software: "sheets", softwareLabel: "SHEETS MACROS", animType: "anim-execute", title: "Export Active Sheet to PDF", scenario: "You need to lock down the week's roster and send it as a PDF. Clicking through the print menus takes too long.", steps: ["Open Apps Script and create <span class='code-snippet'>function exportToPDF()</span>.", "Write code to grab the active sheet ID and construct an export URL ending in <span class='code-snippet'>export?exportFormat=pdf</span>.", "Use <span class='code-snippet'>UrlFetchApp.fetch()</span> to grab the PDF data.", "Use <span class='code-snippet'>DriveApp.createFile()</span> to instantly save that PDF straight into your Google Drive."] },
-            { software: "sheets", softwareLabel: "SHEETS MACROS", animType: "anim-code", title: "Protecting Past Dates Natively", scenario: "Team members keep accidentally editing last week's completed shift data. You want the script to lock any column where the date has passed.", steps: ["Create a function that checks the current date using <span class='code-snippet'>new Date()</span>.", "Loop through your date headers. If the header date is less than today, select that range.", "Use <span class='code-snippet'>range.protect().setDescription('Locked History')</span>.", "Assign the script to a button. Now, one click locks down all historical data permanently."] },
+            { software: "sheets", softwareLabel: "SHEETS MACROS", outputType: "sheet", title: "Custom Formula: Calculate Night Allowance", scenario: "Standard Excel formulas are too messy to calculate the Swiggy IM Voice night shift allowances correctly. We will write our own custom formula.", steps: ["Open your Google Sheet, go to 'Extensions' > 'Apps Script'.", "Delete the blank code and type: <br><span class='code-snippet'>function NIGHTALLOWANCE(shiftTime) { ... }</span>", "Write the javascript logic inside the brackets: <span class='code-snippet'>if (shiftTime >= 22) return 500; else return 0;</span>", "Save the script. Go back to your Sheet.", "You can now type <span class='code-snippet'>=NIGHTALLOWANCE(B2)</span> in any cell, just like a native Google formula!"] },
+            { software: "sheets", softwareLabel: "SHEETS MACROS", outputType: "sheet", title: "Auto-Sort Roster by Shift Time", scenario: "TLs keep adding new names to the bottom of the roster. Instead of manually sorting the data every hour, a script will do it instantly with one click.", steps: ["Go to 'Extensions' > 'Apps Script'.", "Write a function using <span class='code-snippet'>SpreadsheetApp.getActiveSpreadsheet().getActiveSheet()</span>.", "Use the <span class='code-snippet'>.sort()</span> method targeting the column containing your shift timings.", "Go back to the Sheet. Click 'Insert' > 'Drawing' and draw a button that says 'Sort Roster'.", "Right-click the button, select 'Assign Script', and type your function's name."] },
+            { software: "sheets", softwareLabel: "SHEETS MACROS", outputType: "sheet", title: "Bulk Delete Empty Rows", scenario: "When exporting raw data, there are hundreds of blank rows scattered throughout the document that crash your pivot tables.", steps: ["Open Apps Script.", "Write a loop that scans the sheet from the bottom up: <span class='code-snippet'>for (var i = sheet.getLastRow(); i > 0; i--)</span>", "Add an IF statement: <span class='code-snippet'>if (sheet.getRange(i, 1).isBlank())</span>", "Execute <span class='code-snippet'>sheet.deleteRow(i);</span>", "Run the script. Watch hundreds of blank lines vanish instantly without manual scrolling."] },
+            { software: "sheets", softwareLabel: "SHEETS MACROS", outputType: "sheet", title: "Export Active Sheet to PDF", scenario: "You need to lock down the week's roster and send it as a PDF. Clicking through the print menus takes too long.", steps: ["Open Apps Script and create <span class='code-snippet'>function exportToPDF()</span>.", "Write code to grab the active sheet ID and construct an export URL ending in <span class='code-snippet'>export?exportFormat=pdf</span>.", "Use <span class='code-snippet'>UrlFetchApp.fetch()</span> to grab the PDF data.", "Use <span class='code-snippet'>DriveApp.createFile()</span> to instantly save that PDF straight into your Google Drive."] },
+            { software: "sheets", softwareLabel: "SHEETS MACROS", outputType: "sheet", title: "Protecting Past Dates Natively", scenario: "Team members keep accidentally editing last week's completed shift data. You want the script to lock any column where the date has passed.", steps: ["Create a function that checks the current date using <span class='code-snippet'>new Date()</span>.", "Loop through your date headers. If the header date is less than today, select that range.", "Use <span class='code-snippet'>range.protect().setDescription('Locked History')</span>.", "Assign the script to a button. Now, one click locks down all historical data permanently."] },
 
             // --- GMAIL AUTOMATION ---
-            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", animType: "anim-execute", title: "Send Email on Roster Approval", scenario: "When the Operations Manager types 'Approved' in cell Z2, the system should automatically email all the TLs without you lifting a finger.", steps: ["Open Apps Script.", "Create a function that checks the value of Z2: <span class='code-snippet'>var status = sheet.getRange('Z2').getValue();</span>", "Write an IF statement: <span class='code-snippet'>if (status == 'Approved')</span>", "Call the Gmail service: <span class='code-snippet'>MailApp.sendEmail('tls@company.com', 'Roster Approved', 'The new shift roster is live.');</span>", "Assign this script to a button, or tie it to an onEdit trigger."] },
-            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", animType: "anim-code", title: "Automated Leave Request Responses", scenario: "You have a Google Sheet connected to a Leave Request form. You want a script to email the employee instantly based on a drop-down menu.", steps: ["Write a loop to check the 'Status' column of every row.", "If the status is 'Denied', grab the employee's email from column B.", "Use <span class='code-snippet'>MailApp.sendEmail(email, 'Leave Update', 'Your request was denied due to coverage.');</span>", "Write a line of code to mark that row as 'Email Sent' so it doesn't email them twice."] },
-            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", animType: "anim-execute", title: "Mail Merge via Apps Script", scenario: "You need to send 50 personalized warning emails. Doing it in Word is fine, but doing it directly from Sheets using Apps Script is faster.", steps: ["Write a loop that goes down your employee list: <span class='code-snippet'>for (var i = 2; i <= lastRow; i++)</span>", "Extract variables: <span class='code-snippet'>var name = sheet.getRange(i, 1).getValue();</span>", "Construct the message dynamically: <span class='code-snippet'>var msg = 'Hello ' + name + ', you were late.';</span>", "Execute <span class='code-snippet'>MailApp.sendEmail()</span> inside the loop. 50 emails sent in 2 seconds."] },
-            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", animType: "anim-code", title: "Attach Google Drive PDF to Email", scenario: "You generated a PDF roster using a previous script, and now you want Apps Script to automatically attach it to an email to the team.", steps: ["Get the file from Drive using its ID: <span class='code-snippet'>var file = DriveApp.getFileById('YOUR_FILE_ID');</span>", "Set up the email arguments using a Javascript object: <span class='code-snippet'>var options = { attachments: [file.getAs(MimeType.PDF)] };</span>", "Send it: <span class='code-snippet'>MailApp.sendEmail('team@', 'Roster', 'See attached.', options);</span>"] },
-            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", animType: "anim-execute", title: "Extract Shift Change Emails into Sheets", scenario: "Employees keep emailing you 'I need a shift change'. You want Apps Script to scan your inbox and dump those requests into a neat spreadsheet.", steps: ["Use the GmailApp service: <span class='code-snippet'>var threads = GmailApp.search('subject:\"Shift Change\"');</span>", "Write a loop to extract the sender and the body text of those emails.", "Use <span class='code-snippet'>sheet.appendRow([sender, body, new Date()]);</span> to dump the data straight into your tracking spreadsheet."] },
+            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", outputType: "gmail", title: "Send Email on Roster Approval", scenario: "When the Operations Manager types 'Approved' in cell Z2, the system should automatically email all the TLs without you lifting a finger.", steps: ["Open Apps Script.", "Create a function that checks the value of Z2: <span class='code-snippet'>var status = sheet.getRange('Z2').getValue();</span>", "Write an IF statement: <span class='code-snippet'>if (status == 'Approved')</span>", "Call the Gmail service: <span class='code-snippet'>MailApp.sendEmail('tls@company.com', 'Roster Approved', 'The new shift roster is live.');</span>", "Assign this script to a button, or tie it to an onEdit trigger."] },
+            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", outputType: "gmail", title: "Automated Leave Request Responses", scenario: "You have a Google Sheet connected to a Leave Request form. You want a script to email the employee instantly based on a drop-down menu.", steps: ["Write a loop to check the 'Status' column of every row.", "If the status is 'Denied', grab the employee's email from column B.", "Use <span class='code-snippet'>MailApp.sendEmail(email, 'Leave Update', 'Your request was denied due to coverage.');</span>", "Write a line of code to mark that row as 'Email Sent' so it doesn't email them twice."] },
+            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", outputType: "gmail", title: "Mail Merge via Apps Script", scenario: "You need to send 50 personalized warning emails. Doing it in Word is fine, but doing it directly from Sheets using Apps Script is faster.", steps: ["Write a loop that goes down your employee list: <span class='code-snippet'>for (var i = 2; i <= lastRow; i++)</span>", "Extract variables: <span class='code-snippet'>var name = sheet.getRange(i, 1).getValue();</span>", "Construct the message dynamically: <span class='code-snippet'>var msg = 'Hello ' + name + ', you were late.';</span>", "Execute <span class='code-snippet'>MailApp.sendEmail()</span> inside the loop. 50 emails sent in 2 seconds."] },
+            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", outputType: "gmail", title: "Attach Google Drive PDF to Email", scenario: "You generated a PDF roster using a previous script, and now you want Apps Script to automatically attach it to an email to the team.", steps: ["Get the file from Drive using its ID: <span class='code-snippet'>var file = DriveApp.getFileById('YOUR_FILE_ID');</span>", "Set up the email arguments using a Javascript object: <span class='code-snippet'>var options = { attachments: [file.getAs(MimeType.PDF)] };</span>", "Send it: <span class='code-snippet'>MailApp.sendEmail('team@', 'Roster', 'See attached.', options);</span>"] },
+            { software: "gmail", softwareLabel: "GMAIL AUTOMATION", outputType: "sheet", title: "Extract Shift Change Emails into Sheets", scenario: "Employees keep emailing you 'I need a shift change'. You want Apps Script to scan your inbox and dump those requests into a neat spreadsheet.", steps: ["Use the GmailApp service: <span class='code-snippet'>var threads = GmailApp.search('subject:\"Shift Change\"');</span>", "Write a loop to extract the sender and the body text of those emails.", "Use <span class='code-snippet'>sheet.appendRow([sender, body, new Date()]);</span> to dump the data straight into your tracking spreadsheet."] },
 
             // --- EVENT TRIGGERS ---
-            { software: "triggers", softwareLabel: "EVENT TRIGGERS", animType: "anim-trigger", title: "Simple Trigger: Custom Menu on Open", scenario: "You built 5 amazing scripts, but you don't want floating buttons cluttering the sheet. You want a professional 'Swiggy Tools' menu at the top of the screen.", steps: ["Open Apps Script and create exactly this function: <span class='code-snippet'>function onOpen(e) { }</span>", "Inside it, write: <span class='code-snippet'>var ui = SpreadsheetApp.getUi();</span>", "Then chain the menu creation: <span class='code-snippet'>ui.createMenu('Swiggy Tools').addItem('Sort Roster', 'mySortFunc').addToUi();</span>", "Refresh your Google Sheet. The trigger fires automatically, adding your custom software menu to the top bar!"] },
-            { software: "triggers", softwareLabel: "EVENT TRIGGERS", animType: "anim-trigger", title: "Simple Trigger: Auto-Timestamp on Edit", scenario: "Whenever a TL changes Tamali's shift (e.g., to 08:00 - 17:00), you want column 'D' to instantly stamp the exact date and time the change happened.", steps: ["Create the built-in function: <span class='code-snippet'>function onEdit(e) { }</span>", "Grab the row that was just edited using the event object: <span class='code-snippet'>var row = e.range.getRow();</span>", "Write the timestamp to column D: <span class='code-snippet'>sheet.getRange(row, 4).setValue(new Date());</span>", "Now, the moment anyone presses 'Enter' after editing a cell, the timestamp appears by magic."] },
-            { software: "triggers", softwareLabel: "EVENT TRIGGERS", animType: "anim-trigger", title: "Installable Trigger: Friday Midnight Backup", scenario: "You have a script that copies the current roster into an 'Archive' tab. You want this script to run automatically every single Friday at 23:59 while you are asleep.", steps: ["Open your Apps Script editor.", "Look at the left-hand menu and click the 'Triggers' icon (it looks like a clock or alarm).", "Click '+ Add Trigger' in the bottom right.", "Select your Archive script, set the event source to 'Time-driven', set it to 'Week timer', and choose 'Friday Midnight'.", "Save it. The Google servers will now run your code automatically."] },
-            { software: "triggers", softwareLabel: "EVENT TRIGGERS", animType: "anim-execute", title: "Installable Trigger: Alert TL on Critical Edit", scenario: "If anyone edits the 'Master Schedule' tab, you need an instant email alert, because that tab is strictly off-limits.", steps: ["Write a script that sends you an email: <span class='code-snippet'>MailApp.sendEmail('you@', 'WARNING', 'Master tab edited!');</span>", "Go to the Triggers menu (the clock icon) in the editor.", "Click '+ Add Trigger'.", "Select your alert script, choose 'From spreadsheet', and set the event type to 'On edit'.", "Add logic inside your script to check <span class='code-snippet'>if(e.source.getActiveSheet().getName() == 'Master')</span> before sending."] },
-            { software: "triggers", softwareLabel: "EVENT TRIGGERS", animType: "anim-trigger", title: "Trigger: Form Submit to Dashboard Update", scenario: "Employees submit leave requests via Google Forms. The moment they hit submit, you want a script to sort the data and format the row red.", steps: ["Ensure your Google Form is linked to your Google Sheet.", "Write a formatting script in the Sheet's Apps Script editor.", "Go to the Triggers menu (clock icon) > '+ Add Trigger'.", "Select your formatting script, choose 'From spreadsheet', and set the event type to 'On form submit'.", "Now, the exact second an employee finishes the form, your Sheet reorganizes itself automatically."] },
+            { software: "triggers", softwareLabel: "EVENT TRIGGERS", outputType: "sheet", title: "Simple Trigger: Custom Menu on Open", scenario: "You built 5 amazing scripts, but you don't want floating buttons cluttering the sheet. You want a professional 'Swiggy Tools' menu at the top of the screen.", steps: ["Open Apps Script and create exactly this function: <span class='code-snippet'>function onOpen(e) { }</span>", "Inside it, write: <span class='code-snippet'>var ui = SpreadsheetApp.getUi();</span>", "Then chain the menu creation: <span class='code-snippet'>ui.createMenu('Swiggy Tools').addItem('Sort Roster', 'mySortFunc').addToUi();</span>", "Refresh your Google Sheet. The trigger fires automatically, adding your custom software menu to the top bar!"] },
+            { software: "triggers", softwareLabel: "EVENT TRIGGERS", outputType: "sheet", title: "Simple Trigger: Auto-Timestamp on Edit", scenario: "Whenever a TL changes Tamali's shift (e.g., to 08:00 - 17:00), you want column 'D' to instantly stamp the exact date and time the change happened.", steps: ["Create the built-in function: <span class='code-snippet'>function onEdit(e) { }</span>", "Grab the row that was just edited using the event object: <span class='code-snippet'>var row = e.range.getRow();</span>", "Write the timestamp to column D: <span class='code-snippet'>sheet.getRange(row, 4).setValue(new Date());</span>", "Now, the moment anyone presses 'Enter' after editing a cell, the timestamp appears by magic."] },
+            { software: "triggers", softwareLabel: "EVENT TRIGGERS", outputType: "sheet", title: "Installable Trigger: Friday Midnight Backup", scenario: "You have a script that copies the current roster into an 'Archive' tab. You want this script to run automatically every single Friday at 23:59 while you are asleep.", steps: ["Open your Apps Script editor.", "Look at the left-hand menu and click the 'Triggers' icon (it looks like a clock or alarm).", "Click '+ Add Trigger' in the bottom right.", "Select your Archive script, set the event source to 'Time-driven', set it to 'Week timer', and choose 'Friday Midnight'.", "Save it. The Google servers will now run your code automatically."] },
+            { software: "triggers", softwareLabel: "EVENT TRIGGERS", outputType: "gmail", title: "Installable Trigger: Alert TL on Critical Edit", scenario: "If anyone edits the 'Master Schedule' tab, you need an instant email alert, because that tab is strictly off-limits.", steps: ["Write a script that sends you an email: <span class='code-snippet'>MailApp.sendEmail('you@', 'WARNING', 'Master tab edited!');</span>", "Go to the Triggers menu (the clock icon) in the editor.", "Click '+ Add Trigger'.", "Select your alert script, choose 'From spreadsheet', and set the event type to 'On edit'.", "Add logic inside your script to check <span class='code-snippet'>if(e.source.getActiveSheet().getName() == 'Master')</span> before sending."] },
+            { software: "triggers", softwareLabel: "EVENT TRIGGERS", outputType: "sheet", title: "Trigger: Form Submit to Dashboard Update", scenario: "Employees submit leave requests via Google Forms. The moment they hit submit, you want a script to sort the data and format the row red.", steps: ["Ensure your Google Form is linked to your Google Sheet.", "Write a formatting script in the Sheet's Apps Script editor.", "Go to the Triggers menu (clock icon) > '+ Add Trigger'.", "Select your formatting script, choose 'From spreadsheet', and set the event type to 'On form submit'.", "Now, the exact second an employee finishes the form, your Sheet reorganizes itself automatically."] },
                         // --- SHEETS MACROS (BATCH 2) ---
             ,
             { software: "sheets", softwareLabel: "SHEETS MACROS", animType: "anim-code", title: "Custom UI: Shift Change Prompt", scenario: "You don't want TLs messing with the raw spreadsheet cells. You want a clean popup box to ask them for the new shift timing.", steps: ["Use the UI service: <span class='code-snippet'>var ui = SpreadsheetApp.getUi();</span>", "Trigger an input box: <span class='code-snippet'>var response = ui.prompt('Enter new shift timing (e.g., 08:00 - 17:00):');</span>", "Check if they clicked OK: <span class='code-snippet'>if (response.getSelectedButton() == ui.Button.OK)</span>", "Write their response directly into the target cell: <span class='code-snippet'>sheet.getRange('D5').setValue(response.getResponseText());</span>"] },
@@ -283,6 +271,7 @@
         // ⚙️ RENDER & MODAL ENGINE
         // =====================================================================
         
+        let currentModuleIndex = 0;
         const gridTarget = document.getElementById('grid-target');
         
         function renderCards(filterType) {
@@ -305,13 +294,11 @@
         }
 
         function openModal(dbIndex) {
+            currentModuleIndex = dbIndex;
             const data = database[dbIndex];
             document.getElementById('modal-tag').innerText = data.softwareLabel;
             document.getElementById('modal-title').innerText = data.title;
             document.getElementById('modal-scenario').innerText = data.scenario;
-            
-            const emulator = document.getElementById('emulator-engine');
-            emulator.className = `emulator-screen ${data.animType}`;
             
             const stepsContainer = document.getElementById('modal-steps');
             stepsContainer.innerHTML = '';
@@ -322,16 +309,60 @@
                 stepsContainer.appendChild(stepRow);
             });
             
+            resetSimulation();
             document.getElementById('sim-modal').style.display = 'flex';
         }
 
         function closeModal() {
             document.getElementById('sim-modal').style.display = 'none';
-            document.getElementById('emulator-engine').className = 'emulator-screen';
+            resetSimulation();
+        }
+
+        // =====================================================================
+        // 🎮 LIVE SIMULATION ENGINE (V3)
+        // =====================================================================
+        
+        let simTimer;
+
+        function resetSimulation() {
+            clearTimeout(simTimer);
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            document.getElementById('stage-1').classList.add('active'); // Default to Stage 1
+            
+            // Reset UI states
+            document.getElementById('out-sheet').style.display = 'none';
+            document.getElementById('out-gmail').style.display = 'none';
+            document.querySelector('.run-btn').innerText = '▶ RUN SCRIPT';
+            document.querySelector('.run-btn').disabled = false;
+        }
+
+        function runSimulation() {
+            const data = database[currentModuleIndex];
+            const btn = document.querySelector('.run-btn');
+            btn.innerText = 'EXECUTING...';
+            btn.disabled = true;
+
+            // Go to Stage 2: Engine & Flowchart
+            document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+            document.getElementById('stage-2').classList.add('active');
+
+            // Wait 3 seconds, then go to Stage 3: Output
+            simTimer = setTimeout(() => {
+                document.querySelectorAll('.stage').forEach(s => s.classList.remove('active'));
+                document.getElementById('stage-3').classList.add('active');
+                
+                // Show the correct output type based on the database
+                if (data.outputType === 'gmail') {
+                    document.getElementById('out-gmail').style.display = 'flex';
+                } else {
+                    document.getElementById('out-sheet').style.display = 'grid';
+                }
+                
+                btn.innerText = 'SYSTEM COMPLETE';
+            }, 3000);
         }
 
         renderCards('all');
     </script>
 </body>
 </html>
-
