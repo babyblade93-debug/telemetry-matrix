@@ -17,9 +17,7 @@
                 linear-gradient(0deg, transparent 24%, rgba(165, 243, 252, 0.4) 25%, rgba(165, 243, 252, 0.4) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.4) 75%, rgba(165, 243, 252, 0.4) 76%, transparent 77%, transparent), 
                 linear-gradient(90deg, transparent 24%, rgba(165, 243, 252, 0.4) 25%, rgba(165, 243, 252, 0.4) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.4) 75%, rgba(165, 243, 252, 0.4) 76%, transparent 77%, transparent);
             background-size: 100% 100%, 40px 40px, 40px 40px;
-            color: #0f172a; 
-            padding: 20px;
-            min-height: 100vh;
+            color: #0f172a; padding: 20px; min-height: 100vh;
         }
 
         .matrix-container {
@@ -31,8 +29,9 @@
 
         .header-title {
             text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 22px;
-            font-weight: 800; color: #083344; margin-bottom: 20px; text-transform: uppercase;
+            font-weight: 800; color: #083344; margin-bottom: 5px; text-transform: uppercase;
         }
+        .header-sub { text-align: center; color: #0ea5e9; font-size: 12px; font-weight: 700; font-family: 'JetBrains Mono'; margin-bottom: 25px; letter-spacing: 1px; }
 
         .software-filters { display: flex; justify-content: center; gap: 10px; margin-bottom: 30px; flex-wrap: wrap; }
         .filter-btn {
@@ -55,8 +54,8 @@
             background: #ecfeff; border-color: #06b6d4; transform: translateX(5px);
             box-shadow: 0 4px 12px rgba(6, 182, 212, 0.15);
         }
-        .module-title { font-size: 16px; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
-        .module-tag { font-size: 11px; font-family: 'JetBrains Mono'; color: #0284c7; font-weight: 600; text-transform: uppercase; }
+        .module-title { font-size: 15px; font-weight: 700; color: #0f172a; margin-bottom: 5px; }
+        .module-tag { font-size: 11px; font-family: 'JetBrains Mono'; color: #0284c7; font-weight: 800; text-transform: uppercase; }
 
         /* --- MODAL ENGINE --- */
         .modal-overlay {
@@ -76,46 +75,50 @@
         .close-btn { position: absolute; right: 20px; top: 15px; background: none; border: none; color: #fff; font-size: 28px; cursor: pointer; line-height: 1; }
         .modal-body { padding: 20px; }
         
-        /* --- ANIMATED EMULATOR SCREEN --- */
+        /* --- EMULATOR SCREEN --- */
         .emulator-wrapper {
-            background: #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 20px;
-            box-shadow: inset 0 4px 6px rgba(0,0,0,0.1); border: 1px solid #94a3b8;
+            background: #1e293b; border-radius: 8px; padding: 10px; margin-bottom: 20px;
+            box-shadow: inset 0 4px 6px rgba(0,0,0,0.3); border: 2px solid #334155;
         }
         .emulator-screen {
-            background: #ffffff; border-radius: 4px; height: 160px; position: relative; overflow: hidden;
+            background: #f8fafc; border-radius: 4px; height: 160px; position: relative; overflow: hidden;
             display: flex; flex-direction: column; box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
-        /* Fake UI Elements */
-        .sim-ribbon { height: 35px; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; padding: 0 10px; gap: 8px; }
-        .sim-btn { height: 15px; width: 30px; background: #e2e8f0; border-radius: 3px; }
-        .sim-btn-target { background: #bae6fd; border: 1px solid #38bdf8; position: relative; }
-        .sim-doc-area { flex-grow: 1; background: #e2e8f0; display: flex; justify-content: center; padding-top: 10px; }
-        .sim-paper { width: 60%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 15px; display: flex; flex-direction: column; gap: 6px; }
+        .rec-status {
+            position: absolute; top: 5px; right: 10px; font-family: 'JetBrains Mono'; font-size: 9px;
+            color: #ef4444; font-weight: bold; z-index: 30; animation: flashRec 1s infinite;
+        }
+        @keyframes flashRec { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+        .sim-ribbon { height: 35px; background: #e2e8f0; border-bottom: 1px solid #cbd5e1; display: flex; align-items: center; padding: 0 10px; gap: 8px; }
+        .sim-btn { height: 15px; width: 30px; background: #cbd5e1; border-radius: 3px; }
+        .sim-btn-target { background: #38bdf8; border: 1px solid #0284c7; }
+        .sim-doc-area { flex-grow: 1; background: #f1f5f9; display: flex; justify-content: center; padding-top: 10px; }
+        .sim-paper { width: 70%; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); padding: 15px; display: flex; flex-direction: column; gap: 6px; position: relative; }
+        
+        /* LIVE TEXT FEED */
+        .sim-paper::before { content: 'STANDBY...'; font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #64748b; display: block; margin-bottom: 8px; font-weight: bold; }
+        .anim-merge .sim-paper::before { content: 'PROCESSING SCRIPT...'; color: #0369a1; animation: pulseText 2s infinite; }
+        .anim-lock .sim-paper::before { content: 'SECURING ARCHITECTURE...'; color: #ef4444; animation: pulseText 2s infinite; }
+        .anim-format .sim-paper::before { content: 'EXECUTING FORMAT PROTOCOL...'; color: #047857; animation: pulseText 2s infinite; }
+        @keyframes pulseText { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
         .sim-line { height: 6px; background: #cbd5e1; border-radius: 3px; width: 100%; }
         .sim-line.short { width: 60%; }
         .sim-line.title { height: 10px; width: 50%; }
-        
-        /* The Virtual Cursor */
         .sim-cursor {
-            width: 14px; height: 14px; background: #06b6d4; clip-path: polygon(0 0, 100% 40%, 40% 100%);
+            width: 14px; height: 14px; background: #0f172a; clip-path: polygon(0 0, 100% 40%, 40% 100%);
             position: absolute; bottom: 20px; right: 20px; z-index: 20; filter: drop-shadow(2px 2px 2px rgba(0,0,0,0.3));
         }
 
-        /* --- ANIMATION LOGIC (Driven by JS Class Switching) --- */
-        
-        /* 1. Mail Merge Animation */
+        /* Animations */
         .anim-merge .sim-cursor { animation: moveMerge 4s infinite ease-in-out; }
         .anim-merge .sim-paper { animation: duplicatePaper 4s infinite ease-in-out; }
         @keyframes moveMerge { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 85px; } 40% { top: 10px; left: 85px; transform: scale(0.8); } 100% { top: 10px; left: 85px; } }
         @keyframes duplicatePaper { 0%, 40% { box-shadow: 0 2px 4px rgba(0,0,0,0.1); } 50%, 100% { box-shadow: -10px 10px 0px -1px #fff, -10px 10px 4px rgba(0,0,0,0.1), -20px 20px 0px -1px #fff, -20px 20px 4px rgba(0,0,0,0.1); transform: translate(10px, -10px); } }
-
-        /* 2. Formatting/Style Animation */
         .anim-format .sim-cursor { animation: moveFormat 4s infinite ease-in-out; }
         .anim-format .sim-line.title { animation: expandTitle 4s infinite ease-in-out; }
         @keyframes moveFormat { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 45px; } 40% { top: 10px; left: 45px; transform: scale(0.8); } 100% { top: 10px; left: 45px; } }
-        @keyframes expandTitle { 0%, 40% { width: 50%; height: 10px; background: #cbd5e1; } 50%, 100% { width: 80%; height: 14px; background: #0369a1; border-bottom: 2px solid #06b6d4; } }
-
-        /* 3. Lock/Security Animation */
+        @keyframes expandTitle { 0%, 40% { width: 50%; height: 10px; background: #cbd5e1; } 50%, 100% { width: 80%; height: 14px; background: #047857; border-bottom: 2px solid #10b981; } }
         .anim-lock .sim-cursor { animation: moveLock 4s infinite ease-in-out; }
         .anim-lock .sim-paper { animation: applyLock 4s infinite ease-in-out; }
         @keyframes moveLock { 0% { bottom: -20px; right: -20px; } 30% { top: 10px; left: 125px; } 40% { top: 10px; left: 125px; transform: scale(0.8); } 100% { top: 10px; left: 125px; } }
@@ -129,13 +132,13 @@
         .step-row { display: flex; gap: 15px; background: #fff; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
         .step-number { background: #e0f2fe; color: #0369a1; width: 26px; height: 26px; display: flex; justify-content: center; align-items: center; border-radius: 50%; font-weight: 800; font-family: 'JetBrains Mono'; flex-shrink: 0; font-size: 12px; }
         .step-instruction { font-size: 13px; color: #1e293b; line-height: 1.5; align-self: center; }
-
     </style>
 </head>
 <body>
 
     <div class="matrix-container">
         <h1 class="header-title">Guidance Matrix: Documents</h1>
+        <div class="header-sub">BATCH 1: 45 CORE PROTOCOLS ACTIVE</div>
         
         <div class="software-filters">
             <button class="filter-btn active" onclick="filterSoftware('all')">ALL SYSTEMS</button>
@@ -155,28 +158,19 @@
                 <h2 id="modal-title" style="font-size: 18px; font-weight: 700; margin: 0;"></h2>
             </div>
             <div class="modal-body">
-                
                 <div class="emulator-wrapper">
-                    <div style="font-size: 10px; font-family: 'JetBrains Mono'; color: #64748b; margin-bottom: 5px; font-weight: bold;">LIVE SIMULATION FEED:</div>
+                    <div style="font-size: 10px; font-family: 'JetBrains Mono'; color: #94a3b8; margin-bottom: 5px; font-weight: bold;">SYS.EMULATOR_V2</div>
                     <div class="emulator-screen" id="emulator-engine">
+                        <div class="rec-status">● REC</div>
                         <div class="sim-ribbon">
-                            <div class="sim-btn"></div>
-                            <div class="sim-btn sim-btn-target" id="emu-target"></div>
-                            <div class="sim-btn"></div>
-                            <div class="sim-btn"></div>
+                            <div class="sim-btn"></div><div class="sim-btn sim-btn-target"></div><div class="sim-btn"></div>
                         </div>
                         <div class="sim-doc-area">
-                            <div class="sim-paper" id="emu-paper">
-                                <div class="sim-line title"></div>
-                                <div class="sim-line"></div>
-                                <div class="sim-line"></div>
-                                <div class="sim-line short"></div>
-                            </div>
+                            <div class="sim-paper"><div class="sim-line title"></div><div class="sim-line"></div><div class="sim-line short"></div></div>
                         </div>
                         <div class="sim-cursor"></div>
                     </div>
                 </div>
-
                 <div class="scenario-box">
                     <div class="scenario-title">Real Life Scenario</div>
                     <div class="scenario-text" id="modal-scenario"></div>
@@ -188,66 +182,112 @@
 
     <script>
         // =====================================================================
-        // 🛠️ THE 100+ DATABASE ENGINE
-        // Added 'animType' (merge, format, lock) to trigger the correct emulator.
+        // 🛠️ ENTERPRISE DATABASE - BATCH 1 (45 MODULES)
         // =====================================================================
         
         const database = [
-            {
-                software: "word",
-                softwareLabel: "MS WORD",
-                title: "Mail Merge: Automated Shift Letters",
-                animType: "anim-merge", // Triggers duplicating paper animation
-                scenario: "Management needs you to send 50 shift-change notices regarding the new schedule. Typing them one by one takes 3 hours and causes typos. We will do it in 2 minutes by linking a template to a spreadsheet.",
-                steps: [
-                    "Open a blank MS Word document and type your base letter template.",
-                    "Go to the 'Mailings' tab on the top ribbon and click 'Start Mail Merge' > 'Letters'.",
-                    "Click 'Select Recipients' > 'Use an Existing List' and attach your shift roster spreadsheet.",
-                    "Click 'Insert Merge Field' to place tags like <<Employee_Name>> into the text.",
-                    "Click 'Finish & Merge' to instantly generate all 50 customized letters."
-                ]
-            },
-            {
-                software: "wps",
-                softwareLabel: "WPS OFFICE",
-                title: "Restricting Format Edits",
-                animType: "anim-lock", // Triggers red security border animation
-                scenario: "You are sharing a weekly roster report with a team lead. You need them to read it, but you absolutely cannot let them accidentally delete rows or change the formatting.",
-                steps: [
-                    "Open your document in WPS Writer.",
-                    "Navigate to the 'Review' tab on the main ribbon.",
-                    "Click 'Restrict Editing'.",
-                    "Check the box that says 'Limit formatting to a selection of styles'.",
-                    "Click 'Start Enforcement' and set a password. Now the document structure is locked."
-                ]
-            },
-            {
-                software: "gdocs",
-                softwareLabel: "GOOGLE DOCS",
-                title: "Version History Recovery",
-                animType: "anim-merge", // Using merge anim for restoring files
-                scenario: "A colleague accidentally deleted three pages of critical HR guidelines from a shared Google Doc yesterday. You need to pull that data back without retyping it.",
-                steps: [
-                    "Open the damaged Google Doc.",
-                    "Click 'File' in the menu, hover over 'Version history', and select 'See version history'.",
-                    "Look at the right-hand panel. Click on the timestamp from two days ago.",
-                    "You will see the old, fully intact document. Click the blue 'Restore this version' button.",
-                    "Crisis averted. The document is instantly rolled back."
-                ]
-            },
-            {
-                software: "word",
-                softwareLabel: "MS WORD",
-                title: "Enterprise Styles & Navigation",
-                animType: "anim-format", // Triggers text expanding animation
-                scenario: "You have a 30-page training manual. Scrolling through it is a nightmare. We need to structure it like a professional enterprise document.",
-                steps: [
-                    "Highlight your main chapter titles. On the 'Home' tab, click the 'Heading 1' style.",
-                    "Highlight sub-sections and click the 'Heading 2' style. Notice how the font becomes uniform.",
-                    "Go to the 'View' tab and check the box for 'Navigation Pane'.",
-                    "You now have an interactive, clickable roadmap of your entire document."
-                ]
-            }
+            // --- MS WORD (15 MODULES) ---
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Mail Merge: Swiggy IM Voice Shift Letters", scenario: "Management needs you to send 50 shift-change notices regarding the new voice process schedule. We will do it in 2 minutes by linking a template to a spreadsheet.", steps: ["Open a blank MS Word document and type your base letter template.", "Go to the 'Mailings' tab on the top ribbon and click 'Start Mail Merge' > 'Letters'.", "Click 'Select Recipients' > 'Use an Existing List' and attach your shift roster spreadsheet.", "Click 'Insert Merge Field' to place tags like <<Employee_Name>> into the text.", "Click 'Finish & Merge' to instantly generate all customized letters."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Enterprise Styles: Roster Manual", scenario: "You have a 30-page operations manual. Scrolling through it is a nightmare. We need to structure it like a professional enterprise document.", steps: ["Highlight your main chapter titles. On the 'Home' tab, click the 'Heading 1' style.", "Highlight sub-sections and click the 'Heading 2' style. Notice how the font becomes uniform.", "Go to the 'View' tab and check the box for 'Navigation Pane'.", "You now have an interactive, clickable roadmap of your entire document."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-lock", title: "Track Changes: Leave Approval Review", scenario: "You are submitting a formal leave request draft to HR. You need to see exactly what management adds or deletes from your text before it is finalized.", steps: ["Open the draft in Word.", "Go to the 'Review' tab on the ribbon.", "Click the 'Track Changes' button so it highlights in grey.", "Send the document. Any deletions HR makes will now appear as red strikethroughs, and additions as red underlines."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Automated Table of Contents", scenario: "You've formatted the voice process training manual using Heading 1 and Heading 2. Now you need a perfect index page at the front.", steps: ["Place your cursor on the first blank page of the document.", "Click the 'References' tab on the ribbon.", "Click 'Table of Contents' on the far left.", "Select 'Automatic Table 2'. Word will instantly scan your Headings and generate a perfect index with page numbers."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Section Breaks vs Page Breaks", scenario: "You have a standard portrait document, but page 3 needs to be a wide landscape page to fit a massive Excel roster schedule. A standard Page Break will ruin the whole file.", steps: ["Place your cursor at the end of page 2.", "Go to 'Layout' > 'Breaks' > 'Next Page' (This is a Section Break, not a Page Break).", "Click on your new page 3. Go to 'Layout' > 'Orientation' > 'Landscape'.", "Only page 3 will turn sideways. The rest of the document remains portrait."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-lock", title: "Custom Text Watermarks", scenario: "You need to stamp 'CONFIDENTIAL HR DATA' across every page of a shift report so it cannot be easily screenshotted and shared.", steps: ["Go to the 'Design' tab on the top ribbon.", "Click 'Watermark' on the far right.", "Select 'Custom Watermark' > 'Text watermark'.", "Type 'CONFIDENTIAL HR DATA', set the color to a light grey, and hit Apply."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Recording Macros for Repetitive Typing", scenario: "You find yourself typing the exact same Swiggy IM Voice HR compliance paragraph 10 times a day. We need to automate this to a single keystroke.", steps: ["Go to the 'View' tab, click 'Macros', and select 'Record Macro'.", "Assign it to a Keyboard button (e.g., Ctrl+Alt+H).", "Type your entire compliance paragraph perfectly, then click 'Stop Recording'.", "Now, pressing Ctrl+Alt+H will instantly type that paragraph anywhere."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-lock", title: "Password Protecting Documents", scenario: "You are dealing with highly sensitive payroll and shift allowance data. The file must be encrypted before you email it.", steps: ["Click 'File' in the top left corner.", "Go to 'Info' > 'Protect Document'.", "Select 'Encrypt with Password'.", "Enter a secure password. If the recipient doesn't have it, they cannot read the data."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Comparing Two Document Versions", scenario: "A Team Lead sent back an updated roster, but didn't turn on Track Changes. You have no idea what they altered from your original file.", steps: ["Open Word, go to the 'Review' tab, and click 'Compare'.", "Select your Original document on the left, and the TL's Revised document on the right.", "Click OK. Word will instantly generate a third document highlighting exactly what was changed."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "AutoCorrect Hacks for Acronyms", scenario: "You type 'Swiggy IM Voice Process' constantly. Let's make Word do the heavy lifting so you only have to type 'SIVP'.", steps: ["Go to 'File' > 'Options' > 'Proofing'.", "Click the 'AutoCorrect Options' button.", "In the 'Replace' box, type 'SIVP'. In the 'With' box, type 'Swiggy IM Voice Process'.", "Click Add. Now, whenever you type SIVP and hit spacebar, it expands automatically."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Embedding Excel Tables in Word", scenario: "You need to show a shift roster inside a Word memo, but if the Excel file updates, the Word document needs to update automatically.", steps: ["Open your Excel file, copy the data table.", "Go to your Word document, click the drop-down under the 'Paste' button.", "Select 'Paste Special'.", "Choose 'Paste Link' and select 'Microsoft Excel Worksheet Object'. Now they are permanently tethered."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-lock", title: "Restricting Editing Exceptions", scenario: "You have a massive form, and you only want users to be able to type in specific blank boxes, locking the rest of the document.", steps: ["Go to 'Review' > 'Restrict Editing'.", "Check 'Allow only this type of editing' and select 'No changes (Read only)'.", "Highlight the specific blank lines where they should type, and check 'Everyone' under Exceptions.", "Start enforcement. The document is locked except for those blanks."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "SmartArt for HR Hierarchies", scenario: "You need to build a visual org chart for the voice process team showing the Operations Manager down to the Team Leads.", steps: ["Go to 'Insert' > 'SmartArt'.", "Select 'Hierarchy' from the left menu and choose a design.", "A text box will appear. Type your Manager's name at the top bullet point.", "Press 'Tab' on the next line to indent it, placing the TLs under the Manager visually."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "PDF to Word Conversion", scenario: "Someone sent you a locked PDF of last month's shift timings, and you need to extract the text to edit it.", steps: ["Open MS Word.", "Go to 'File' > 'Open' and browse for the PDF file on your computer.", "Word will warn you that it will convert the PDF to an editable document. Click OK.", "The PDF is now a fully editable Word file. Check for any minor formatting shifts."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Setting Default Fonts", scenario: "Every time you open Word, it defaults to Calibri size 11, but your company requires Arial size 10 for all official documents.", steps: ["Open a blank document.", "Press Ctrl+D to open the Font menu.", "Select Arial, Regular, Size 10.", "Click the 'Set As Default' button in the bottom left corner, and choose 'All documents based on the Normal template'."] },
+
+            // --- WPS OFFICE (15 MODULES) ---
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Restricting Format Edits on Rosters", scenario: "You are sharing a weekly roster report. You need the team to read it, but you absolutely cannot let them accidentally change the formatting.", steps: ["Open your document in WPS Writer.", "Navigate to the 'Review' tab on the main ribbon.", "Click 'Restrict Editing'.", "Check the box that says 'Limit formatting to a selection of styles'.", "Click 'Start Enforcement' and set a password. Now the document structure is locked."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Exporting Schedules to Secure PDF", scenario: "You finished mapping out the 08:00 to 17:00 shifts for the week. You must send it to the floor team in a format they cannot alter.", steps: ["Open the finalized roster in WPS.", "Click 'Menu' in the top left corner.", "Select 'Export to PDF'.", "In the popup menu, ensure 'Export all pages' is checked and hit confirm.", "Distribute the PDF to the team. It is now a read-only visual file."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Multi-Document Tab Navigation", scenario: "You are cross-referencing three different shift rosters simultaneously. Opening three separate windows is cluttering your screen.", steps: ["Open your first roster document in WPS Writer.", "Press 'Ctrl + O' or go to Menu > Open, and select your second document.", "Notice at the top of the screen, WPS places the documents in browser-like tabs.", "Click between the tabs to instantly cross-reference data without minimizing windows."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Password Protecting the Master File", scenario: "You have a Master file containing sensitive HR and leave request data. It needs a strict password before anyone can even open it.", steps: ["Open the Master file in WPS Writer.", "Click 'Menu' > 'Document Encryption' > 'Encryption'.", "Type a strong password into the 'Document password' field.", "Click OK and save the file. The next time it is opened, it will demand the password before loading."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Merging Multiple Documents", scenario: "Three different TLs sent you their individual shift updates. You need to combine all three Word files into one master report quickly.", steps: ["Open a blank document in WPS.", "Go to the 'Insert' tab.", "Click the drop-down arrow next to 'Object' and select 'Text from File'.", "Highlight all three TL documents in your folder and click Insert. They will instantly merge into one continuous file."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Eye Protection Mode", scenario: "You are working a late shift, staring at blinding white documents for 8 hours. You need to reduce blue light without changing the actual document color.", steps: ["Look at the very bottom right corner of the WPS window (the status bar).", "Click the 'Eye Protection Mode' icon (it looks like a small eye or glasses).", "The page will instantly turn a soft green/sepia tone to reduce strain.", "Note: This only changes your screen view. If you print it, it will still print on white paper."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Picture to Text (OCR)", scenario: "Someone sent you a JPEG photo of a printed roster, and you need to type all the names out into a digital format.", steps: ["Insert the picture into WPS.", "Click on the image, then go to the 'Picture Tools' tab.", "Click 'Picture to Text' (OCR).", "WPS will scan the image, extract all the readable text, and paste it into the document for you to edit."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "File Roaming & Cloud Backup", scenario: "You are working on a crucial HR draft on your PC, but you need to finish editing it on your Galaxy S25 during your commute.", steps: ["Log into your WPS Cloud account on your PC.", "Go to 'Menu' > 'Backup and Recovery' > 'Auto Backup'.", "Ensure 'File Roaming' is turned on.", "The document will seamlessly sync to your WPS mobile app so you can resume exactly where you left off."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Creating Smart Forms", scenario: "You need employees to fill out a shift-preference form, and you want them to click checkboxes instead of typing 'Yes' or 'No'.", steps: ["Go to the 'Insert' tab in WPS.", "Click 'Forms' and select the 'Check Box Form Field'.", "Place it next to your text (e.g., [ ] Prefer Morning Shift).", "Lock the document for editing (Allow only filling in forms) so they can only click the boxes."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Split Screen Viewing", scenario: "You have a 50-page document. You need to look at Page 1 (the index) while typing on Page 45, without scrolling up and down constantly.", steps: ["Go to the 'View' tab on the ribbon.", "Click 'Split Window' > 'Horizontal'.", "Your screen will divide into two viewports of the exact same document.", "Scroll the top half to Page 1, and the bottom half to Page 45. They act independently."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Document Size Compression", scenario: "You inserted 20 high-res photos into a training manual, and now the file is 50MB and won't attach to an email.", steps: ["Click on any picture in the document.", "Go to the 'Picture Tools' tab and click 'Compress Pictures'.", "Select 'All pictures in document' and choose the 'Web/Screen' resolution.", "Click OK. This drastically reduces the file size without ruining readability."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Digital Signatures", scenario: "You finalized an official warning letter and need to digitally sign it to prove authenticity before sending it to HR.", steps: ["Go to the 'Insert' tab.", "Click 'Sign' > 'Create Signature'.", "You can type your name, import an image of your signature, or draw it.", "Place the signature on the document. It locks the file state so any further edits invalidate the signature."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Applying Global Themes", scenario: "You need your document to match the company branding (specific blues and greys) instantly, without changing every heading manually.", steps: ["Go to the 'Page Layout' tab.", "Click 'Themes' on the far left.", "Select a pre-built color palette or create a custom one with your company colors.", "All fonts, tables, and SmartArt will instantly shift to match the new color scheme."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Batch Rename Tabs", scenario: "You have 10 tabs open named 'Document1', 'Document2', etc. You need to organize them quickly before saving.", steps: ["Right-click on the tab at the top of the screen.", "Select 'Rename' (or use the Save As prompt).", "Keep your tabs logically named (e.g., 'Roster_Week1', 'Roster_Week2') so you don't overwrite the wrong file."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Recover Unsaved Documents", scenario: "WPS crashed or your PC lost power before you could hit save on a 3-hour shift mapping project.", steps: ["Re-open WPS Writer.", "Go to 'Menu' > 'Backup and Recovery' > 'Auto Backup'.", "Look at the local backup folder.", "WPS takes snapshots every few minutes. Find the most recent timestamp and restore it."] },
+
+            // --- GOOGLE DOCS (15 MODULES) ---
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Version History Recovery", scenario: "A colleague accidentally deleted three pages of critical guidelines from a shared Google Doc yesterday. You need to pull that data back without retyping it.", steps: ["Open the damaged Google Doc.", "Click 'File' in the menu, hover over 'Version history', and select 'See version history'.", "Look at the right-hand panel. Click on the timestamp from two days ago.", "You will see the old, fully intact document. Click the blue 'Restore this version' button.", "Crisis averted. The document is instantly rolled back."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Tagging Team Members in Comments", scenario: "You are updating Tamali Ghosh's schedule and need to confirm if Wednesday is still her designated 08:00 to 17:00 week off directly inside the document.", steps: ["Highlight the text 'Wednesday Week Off'.", "Click the 'Add Comment' icon that appears on the right margin (or press Ctrl+Alt+M).", "In the comment box, type '@' followed by Tamali's email address.", "Check the box that says 'Assign to'. This will send her a direct email notification with a link to that exact line."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Suggesting Mode for TL Reviews", scenario: "You are reviewing a draft written by a junior staff member. You want to make corrections, but you want them to approve each change to learn from their mistakes.", steps: ["Open the document. Look at the top right corner under the 'Share' button.", "Click the pencil icon that says 'Editing'.", "Change it to the green icon that says 'Suggesting'.", "Now, any text you delete will turn into a green strikethrough, and any text you add will be bracketed in green. The junior staff can hit the 'Checkmark' to accept the changes."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Smart Chips for Roster Dates", scenario: "You are drafting the schedule for the period of April 27 to May 3. You need the document to sync with Google Calendar so nobody misses the dates.", steps: ["Type the '@' symbol anywhere in the blank document.", "A smart menu will appear. Type 'Date' and select the calendar option.", "Select April 27. It will turn into a clickable grey chip.", "Hover over that chip, and you can instantly book a Calendar event for the shift directly from the document."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Pageless Format for Infinite Logs", scenario: "You are maintaining a continuous shift log. Standard A4 pages are causing annoying page breaks right in the middle of data tables.", steps: ["Open the Google Doc.", "Click 'File' > 'Page setup'.", "At the top of the menu, click the 'Pageless' tab.", "Click OK. The document will instantly lose all page breaks and expand to fill your screen, perfect for wide tables and infinite scrolling logs."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Voice Typing (Dictation)", scenario: "You have to write a massive summary of a team meeting, and typing it out will take an hour. Let's dictate it.", steps: ["Ensure you are using Google Chrome and your microphone is on.", "Go to 'Tools' > 'Voice typing' (or press Ctrl+Shift+S).", "A microphone icon will appear. Click it so it turns red.", "Start speaking clearly. Google Docs will transcribe your voice into text in real-time. Say 'Period' or 'New Line' for punctuation."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Translating Entire Documents", scenario: "You wrote an HR policy in English, but you need a copy in Bengali for local team members in Kolkata.", steps: ["Open the completed document.", "Go to 'Tools' > 'Translate document'.", "Type a name for the new file and select 'Bengali' from the dropdown list.", "Click Translate. A new tab will open with a fully translated copy of the document."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Offline Editing Mode", scenario: "You are traveling and won't have internet access, but you need to finish editing a crucial shift roster.", steps: ["While still connected to the internet, go to Google Drive settings.", "Check the box for 'Offline' (Create, open and edit your recent Docs files while offline).", "Open the specific document, click 'File' > 'Make available offline'.", "You can now edit it without Wi-Fi. It will sync the moment you reconnect."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Integrating Google Tasks", scenario: "You are reading a project brief and realize you have 3 action items to complete by Friday.", steps: ["Look at the right-hand sidebar in Google Docs.", "Click the blue checkmark icon (Google Tasks).", "Click 'Add a task' and type your action item.", "These tasks are now linked to your Google Account and will appear in your Gmail and Calendar."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Using the Explore Tool for Research", scenario: "You are writing a memo and need to look up a quick fact without opening a new browser tab and losing focus.", steps: ["Look at the bottom right corner of your document.", "Click the star-shaped 'Explore' icon.", "A search bar opens on the right side. Search the web directly from within your document.", "You can drag and drop images or copy text directly from the Explore panel into your page."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Find and Replace with Regex", scenario: "You need to change every instance of 'Manager' to 'Operations Lead', but there are 50 mentions scattered across the file.", steps: ["Press Ctrl+H to open the Find and Replace menu.", "Type 'Manager' in the Find box.", "Type 'Operations Lead' in the Replace box.", "Click 'Replace All'. Every instance in the entire document changes instantly."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Creating Clickable Bookmarks", scenario: "You have a massive FAQ document. You want users to click a question at the top and instantly jump to the answer on page 20.", steps: ["Scroll to the answer on page 20. Place your cursor there.", "Go to 'Insert' > 'Bookmark'. A blue ribbon icon appears.", "Scroll back to the top. Highlight the question text.", "Press Ctrl+K (Link). Instead of pasting a URL, select 'Headings and bookmarks' and choose your new bookmark."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Email Collaborators Directly", scenario: "You need to send an urgent message to everyone who has access to the roster document, but you don't want to type out 15 email addresses.", steps: ["Go to 'File' > 'Email' > 'Email collaborators'.", "A popup appears with everyone's email pre-loaded.", "Type your message (e.g., 'Please check the updated 08:00 shifts').", "Click send. It emails them directly from within the Doc interface."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Building Custom Dictionaries", scenario: "Google Docs keeps flagging 'Swiggy' and specific employee names as spelling errors with annoying red squiggly lines.", steps: ["Right-click the word 'Swiggy' that has a red line under it.", "Select 'Add to personal dictionary'.", "To manage the whole list, go to 'Tools' > 'Spelling and grammar' > 'Personal dictionary'.", "Add all your company-specific terms so they are never flagged again."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Drafting Emails inside Docs", scenario: "You want to write a complex email to HR, have a colleague review it, and then instantly export it to Gmail.", steps: ["Type the '@' symbol in a blank document.", "Select 'Email draft' from the building blocks menu.", "A template appears. Fill in the 'To:', 'Subject:', and the body.", "Have your colleague review it. When ready, click the blue Gmail icon on the left to instantly port it to your outbox."] }
+                        // --- MS WORD (BATCH 2) ---
+            ,
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Emailing Directly to TLs from Word", scenario: "You finished typing up a disciplinary warning. Instead of saving it, opening Outlook, and attaching it, you can blast it out instantly.", steps: ["Click the 'Customize Quick Access Toolbar' arrow at the very top of the window.", "Check 'Email'. A small envelope icon will appear at the top of your screen.", "Click that envelope. Word instantly packages the document and opens an email draft.", "Type the TL's address and hit send. Zero desktop clutter."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-lock", title: "Inspecting Hidden Metadata", scenario: "You are sending an external memo. You need to make sure there are no hidden track-changes, invisible comments, or author data buried in the code.", steps: ["Go to 'File' > 'Info'.", "Click 'Check for Issues' > 'Inspect Document'.", "Leave all boxes checked and hit 'Inspect'.", "It will flag any hidden data. Click 'Remove All' next to Document Properties to sanitize the file completely before sending."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Advanced Wildcard Replacements", scenario: "You have a massive dataset and need to find every single shift ID that starts with 'SIV' and ends with '9', no matter what numbers are in the middle.", steps: ["Press Ctrl+H to open Find and Replace.", "Click the 'More >>' button and check 'Use wildcards'.", "In the Find box, type 'SIV*9' (The asterisk stands for 'any characters in between').", "Click Find Next. Word will track down every matching ID code instantly."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-lock", title: "Creating an HR Template (.dotx)", scenario: "You built the perfect layout for a Swiggy IM Voice leave-request form. You want your team to use it, but they keep accidentally saving over your blank master copy.", steps: ["Open your perfect, blank form.", "Go to 'File' > 'Save As'.", "Under the file format dropdown, select 'Word Template (*.dotx)'.", "Now, whenever someone double-clicks that file, it opens a brand new 'Document1' clone. They physically cannot overwrite your master."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "The Multi-Copy Clipboard", scenario: "You need to copy Tamali's shift, another TL's email, and a specific HR policy rule, and paste them all into a new file without switching windows 15 times.", steps: ["On the 'Home' tab, look at the 'Clipboard' section on the far left.", "Click the tiny arrow icon in the bottom right corner of that section.", "A sidebar opens. Everything you press 'Ctrl+C' on will now stack up in this list.", "Go to your new document, and just click the items in the sidebar to paste them in any order."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Legal Document Line Numbering", scenario: "You are reviewing a dense compliance contract. HR says 'Look at page 4, paragraph 3, sentence 2' which takes forever to find. We need exact coordinates.", steps: ["Go to the 'Layout' tab.", "Click 'Line Numbers'.", "Select 'Continuous' (or 'Restart Each Page').", "Numbers will instantly appear down the left margin, allowing you to say 'Check line 142' for pinpoint accuracy."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-lock", title: "Embedding Fonts for Other PCs", scenario: "You used a custom, high-tech font for a presentation document. When you send it to management, their PC doesn't have the font, and the layout breaks.", steps: ["Go to 'File' > 'Options' > 'Save'.", "Scroll down to 'Preserve fidelity when sharing this document'.", "Check the box for 'Embed fonts in the file'.", "Check 'Embed only the characters used' to keep the file size low. Now it will look perfect on any computer."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Read Mode for Long Policies", scenario: "You need to read a 50-page onboarding manual without being distracted by editing tools, flashing cursors, or page breaks.", steps: ["Go to the 'View' tab on the ribbon.", "Click 'Read Mode' on the far left.", "The entire Word interface vanishes, and the text scales up like a Kindle or iPad reading app.", "Press the 'Esc' key on your keyboard to instantly return to the standard editing matrix."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Master and Subdocuments", scenario: "Your team is writing a 500-page operational manual. If you put it all in one file, Word will crash. We need to modularize the architecture.", steps: ["Go to 'View' > 'Outline'.", "Type your main chapter titles (e.g., Chapter 1, Chapter 2).", "Highlight them and click 'Show Document' in the Master Document tab.", "Click 'Create'. Word automatically creates separate, linked sub-files for each chapter that roll up into this master dashboard."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Draft View for Pure Speed", scenario: "You have to type a massive block of raw shift data as fast as possible. Images and page borders are slowing down your PC's rendering engine.", steps: ["Go to the 'View' tab.", "Select 'Draft' instead of 'Print Layout'.", "All images, headers, footers, and page edges disappear.", "You are left with a pure, lightweight text editor designed for maximum typing speed. Switch back to Print Layout when done."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Linking Text Boxes for Layouts", scenario: "You are designing a company newsletter. You want an article to start on page 1, and automatically flow into a specific box on page 3 when it gets too long.", steps: ["Insert a Text Box on Page 1, and another on Page 3.", "Click the Text Box on Page 1.", "Go to the 'Shape Format' tab and click 'Create Link'.", "Your cursor will turn into a pitcher icon. Click on the empty Text Box on Page 3. The text will now flow seamlessly between them like a magazine."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Auto-Generating an Index", scenario: "You need an alphabetical glossary at the end of the HR manual mapping out every page where terms like 'Overtime' and 'Week-Off' appear.", steps: ["Highlight the word 'Overtime' in your text.", "Press Alt+Shift+X to 'Mark Index Entry', and hit Mark All.", "Repeat for other key terms.", "Go to the end of the document, click the 'References' tab, and select 'Insert Index'. Word does all the alphabetical sorting and page tracking instantly."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Fraction and Ordinal Auto-Format", scenario: "You type '1/2' and want it to shrink into a neat fraction, or '1st' and want the 'st' to float at the top.", steps: ["Go to 'File' > 'Options' > 'Proofing' > 'AutoCorrect Options'.", "Click the 'AutoFormat As You Type' tab.", "Check 'Fractions (1/2) with fraction character' and 'Ordinals (1st) with superscript'.", "Now Word will instantly clean up your mathematical and sequential data as you type."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-format", title: "Quick Parts for Boilerplate Text", scenario: "You have a complex, formatted table for capturing disciplinary actions. You shouldn't have to copy-paste it from old files.", steps: ["Highlight your perfect, blank disciplinary table.", "Go to 'Insert' > 'Quick Parts' > 'Save Selection to Quick Part Gallery'.", "Name it 'ActionTable'.", "Whenever you need it, type 'ActionTable' and press F3. The entire formatted table will instantly spawn into your document."] },
+            { software: "word", softwareLabel: "MS WORD", animType: "anim-merge", title: "Combining Revisions from Multiple TLs", scenario: "You sent the roster to three different TLs. They all sent back their own tracked changes. You need them all layered onto one screen.", steps: ["Go to 'Review' > 'Compare' > 'Combine'.", "Select your original document, and the first TL's document. Hit OK.", "Save that combined file. Now repeat the process, combining the new file with the second TL's document.", "You now have a master matrix showing every single change from the entire team simultaneously."] },
+
+            // --- WPS OFFICE (BATCH 2) ---
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Export to Picture for WhatsApp", scenario: "You need to send the completed shift schedule to the team's WhatsApp group, but not everyone has a document viewer on their phone.", steps: ["Open the finalized document in WPS Writer.", "Go to 'Menu' > 'Export to Picture'.", "Select 'Export as Long Picture' to combine multiple pages into one seamless image.", "Click Export. You now have a high-res JPEG image that anyone can view instantly in a chat app."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Smart Typesetting for Instant Fixes", scenario: "Someone copied text from a messy webpage. There are blank lines everywhere, weird spaces, and chaotic indents. Let's fix it in one click.", steps: ["Highlight the chaotic text.", "Go to the 'Home' tab and look for the 'Smart Typesetting' icon (it looks like a magic wand over lines of text).", "Click 'Delete Blank Paragraphs' and 'Delete Spaces'.", "WPS instantly scrubs the junk formatting and snaps it into enterprise-standard alignment."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Setting a Local Backup Directory", scenario: "You don't want your HR drafts saving to a random temp folder if WPS crashes. You want them going to your dedicated Secure Drive.", steps: ["Go to 'Menu' > 'Options' (or 'Settings').", "Navigate to 'General and Save'.", "Find the 'Backup options' section.", "Change the 'Backup directory' path to a highly secure folder on your PC or encrypted external drive."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Screen Grab Directly in WPS", scenario: "You are writing a tutorial and need a screenshot of an Excel formula, but using the Windows snipping tool is too slow.", steps: ["With WPS open, go to the 'Insert' tab.", "Click 'Screen Grab'.", "Your screen dims. Drag a box over the Excel formula.", "The exact image is instantly injected into your WPS document without ever opening an external editing program."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Native PDF to Word Conversion", scenario: "A vendor sent an invoice in PDF format, but you need to edit the billing address directly before filing it.", steps: ["Open the WPS main dashboard.", "Click 'PDF to Word' in the toolkit section.", "Drag and drop the locked PDF into the window.", "WPS runs an advanced OCR scan and converts the locked visual data back into an editable text document in seconds."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Cloud Fonts Deployment", scenario: "You opened a document on your Galaxy S25 that was formatted on your PC, but the mobile app doesn't have the fonts installed.", steps: ["Highlight the text that looks incorrect.", "Tap the font selection dropdown.", "Look for the 'Cloud Fonts' section with the download arrow next to the font name.", "Tap the arrow. WPS instantly pulls the font architecture from the cloud, perfectly preserving your PC design on mobile."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Document Map for Rapid Navigation", scenario: "You are auditing a 100-page manual. You need a permanent sidebar to jump between chapters without scrolling.", steps: ["Go to the 'View' tab on the ribbon.", "Check the box for 'Document Map'.", "A sleek sidebar opens on the left.", "As long as you used Heading styles, this map acts as a high-speed GPS. Click any heading in the sidebar to teleport to that exact page."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Adding a Custom Watermark", scenario: "You are generating a draft that hasn't been approved yet. You want 'DRAFT' stamped behind the text so nobody mistakes it for the final version.", steps: ["Go to the 'Insert' tab.", "Click 'Watermark' > 'Insert Watermark'.", "Select the 'Text' option.", "Type 'DRAFT - NOT FOR DISTRIBUTION', adjust the transparency so it doesn't block the text, and hit apply."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Presentation to Word Conversion", scenario: "Someone sent you a 40-slide PowerPoint, but you just need to extract the raw bullet points to write an email.", steps: ["Open the file in WPS Presentation.", "Go to 'Menu' > 'Save As'.", "Under the file type drop-down, select 'WPS Writer Document (*.doc/docx)'.", "WPS strips the slides and dumps all the raw text directly into a Word-style file for easy copy-pasting."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Managing Custom Dictionaries", scenario: "WPS keeps telling you that local names or specific Swiggy system acronyms are spelled wrong.", steps: ["Go to 'Menu' > 'Options' > 'Spell Check'.", "Click 'Custom Dictionaries'.", "Add all of your specific workplace terms.", "The engine will stop throwing red error lines at perfectly valid internal terminology."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Native Document Translation", scenario: "You received a corporate update from another region and need it translated fast, without copying it into Google Translate.", steps: ["Open the document in WPS.", "Go to the 'Review' tab.", "Click 'Translate' > 'Translate Document'.", "Select your target language. WPS will generate a new, translated version while keeping the original formatting intact."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Batch Rename Tabs in Workspace", scenario: "You have 8 different rosters open at once. The default names 'Doc1, Doc2' are confusing.", steps: ["Right click on any document tab at the top of the interface.", "Select 'Save All'.", "WPS will prompt you to name each one sequentially.", "Give them logical tags like 'Morning_Shift_Q1' so you can seamlessly navigate the workspace."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-lock", title: "Locking a Specific Table", scenario: "You want a team member to read a document, and they can add comments, but they absolutely cannot touch the core data table.", steps: ["Highlight the critical table.", "Go to 'Review' > 'Restrict Editing'.", "Select 'Limit formatting' and set it so only the un-highlighted areas can be edited.", "Apply the password. The table is now an impenetrable block within an otherwise editable file."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-format", title: "Paragraph Spacing without Returns", scenario: "People hit 'Enter' twice to create space between paragraphs, which breaks when formatting changes. Use the engine instead.", steps: ["Highlight your text.", "Right-click and select 'Paragraph'.", "Under the 'Spacing' section, look for 'Before' and 'After'.", "Set 'After' to 12pt. The system automatically handles the spacing, keeping the backend code clean."] },
+            { software: "wps", softwareLabel: "WPS OFFICE", animType: "anim-merge", title: "Embedding Videos in Documents", scenario: "You are writing a digital training guide and want a tutorial video to play directly inside the document.", steps: ["Go to the 'Insert' tab.", "Click 'Video' (or Object > Media).", "Select the MP4 file from your local drive.", "The video embeds directly onto the page, allowing trainees to click 'Play' without leaving the document interface."] },
+
+            // --- GOOGLE DOCS (BATCH 2) ---
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Smart Dropdown Menus in Tables", scenario: "You are building a live tracking sheet. Instead of typing 'Approved' or 'Pending', you want TLs to click a clean dropdown menu directly in the document.", steps: ["Click inside a blank table cell in your Google Doc.", "Type '@dropdown'.", "Select 'New dropdown'.", "Create tags: 'Approved' (make it green) and 'Pending' (make it yellow).", "Click Save. You now have a functional, color-coded interactive status menu right inside a text document."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Linking Live Charts from Google Sheets", scenario: "You need to show the monthly shift distribution in your report. If the data in Excel/Sheets changes, the chart in your Doc must update instantly.", steps: ["Go to 'Insert' > 'Chart' > 'From Sheets'.", "Select your roster spreadsheet and choose the specific chart.", "Make sure 'Link to spreadsheet' is checked and hit Insert.", "Whenever the raw data updates, a small 'Update' button appears on the chart in your Doc. Click it to sync instantly."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Activity Dashboard Visibility", scenario: "You sent out the final shift roster and want to know exactly which team members have actually opened and read it.", steps: ["Look at the top right corner of the document, next to the Share button.", "Click the jagged arrow icon ('Activity Dashboard').", "Select 'Viewers'.", "You will see a timestamped list of every person who has opened the file, proving they received the data."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Approvals Workflow", scenario: "Before an HR policy is finalized, it needs an official, documented sign-off from the Operations Manager.", steps: ["Go to 'File' > 'Approvals'.", "A panel opens on the right. Click 'Make a request'.", "Add the Manager's email address and a due date.", "The document locks. The Manager gets an alert, and they must click a green 'Approve' button inside the doc to unlock it for finalization."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Custom Text Substitutions", scenario: "You want to automate your typing. Whenever you type 'omg', you want the system to instantly replace it with 'Operations Management Group'.", steps: ["Go to 'Tools' > 'Preferences'.", "Click the 'Substitutions' tab.", "In the 'Replace' box, type your shortcut.", "In the 'With' box, type the full phrase.", "Hit OK. The system now acts as your personal auto-expander."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Publishing to the Web", scenario: "You want to share the shift schedule with 200 people, but you don't want them logging into Google Drive. You just want them to click a link and see it as a webpage.", steps: ["Go to 'File' > 'Share' > 'Publish to web'.", "Click 'Publish' and confirm.", "Google generates a direct URL.", "When users click this link, they see a clean, read-only webpage of your document. If you update the Doc, the webpage updates automatically."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Assigning Action Items in Checklists", scenario: "You have a list of tasks for the new shift transition, and you need to assign specific lines to specific people.", steps: ["Click the 'Checklist' button in the toolbar to create a list.", "Next to the first checkbox, type '@' and select a colleague's email.", "Google Docs will prompt you: 'Assign as a task?'.", "Click Assign. This physically injects the task into their personal Google Tasks app with a deadline."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Custom Image Watermarks", scenario: "You need a light grey company logo stamped behind all the text on an official communication.", steps: ["Go to 'Insert' > 'Watermark'.", "The right-hand panel opens. Select 'Image' instead of 'Text'.", "Upload your logo.", "Check the 'Faded' box so it doesn't overpower the black text, and click Done."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Comparing Documents Natively", scenario: "A colleague made a copy of your document, edited it heavily without track changes, and sent it back. You need to see the damage.", steps: ["Open your original master document.", "Go to 'Tools' > 'Compare documents'.", "Select the colleague's altered file from your Drive.", "Google generates a third, brand new document that highlights every single difference between the two."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Google Keep Integration", scenario: "You took a bunch of raw notes on your phone during a meeting using Google Keep. Now you need to turn them into a formal document.", steps: ["Open a blank Google Doc on your PC.", "Look at the far right edge of the screen and click the yellow lightbulb icon (Google Keep).", "Your phone notes appear in a sidebar.", "Simply click and drag the notes directly onto the blank page to instantly transfer the text."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Dictionary & Definition Tools", scenario: "You are writing a formal email and want to make sure you are using a complex word correctly without leaving the tab.", steps: ["Highlight the word you are unsure about.", "Right-click the word and select 'Define [word]' (or press Ctrl+Shift+Y).", "A dictionary panel slides out on the right with the official definition and synonyms."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Downloading as EPUB for Mobile", scenario: "You compiled a massive training guide. You want the team to be able to read it on their phones like an e-book, with resizable text.", steps: ["Go to 'File' > 'Download'.", "Select 'EPUB Publication (.epub)'.", "This format is vastly superior to PDF for mobile phones because the text wraps and scales perfectly to fit any screen size."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-merge", title: "Equation Editor for Metrics", scenario: "You need to show the exact mathematical formula used to calculate the team's average handling time (AHT) in the report.", steps: ["Go to 'Insert' > 'Equation'.", "A new math toolbar appears below the main ribbon.", "Use the drop-downs to insert fractions, Greek letters, or complex brackets.", "Type the variables. It formats the math perfectly, just like a scientific textbook."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-format", title: "Customizing Default Headings", scenario: "You hate the default Arial font for 'Heading 1' and want every document you ever create to use a bold blue 'JetBrains Mono' font instead.", steps: ["Type some text, change it to JetBrains Mono, make it blue and bold.", "Highlight it. Go to the styles dropdown (where it says 'Normal text').", "Hover over 'Heading 1', and click 'Update Heading 1 to match'.", "Now go to 'Options' at the bottom of that styles menu, and click 'Save as my default styles'."] },
+            { software: "gdocs", softwareLabel: "GOOGLE DOCS", animType: "anim-lock", title: "Preventing Downloads and Printing", scenario: "You are sharing a highly confidential strategy doc. They can view it, but you want to physically stop them from downloading or printing a copy.", steps: ["Click the blue 'Share' button.", "Click the gear icon (Settings) in the top right of the share popup.", "Uncheck the box that says 'Viewers and commenters can see the option to download, print, and copy'.", "The architecture is locked. The print and download buttons will disappear for them."] }
+
         ];
 
         // =====================================================================
@@ -281,11 +321,9 @@
             document.getElementById('modal-title').innerText = data.title;
             document.getElementById('modal-scenario').innerText = data.scenario;
             
-            // Set the Emulator Animation Class
             const emulator = document.getElementById('emulator-engine');
             emulator.className = `emulator-screen ${data.animType}`;
             
-            // Build the steps list
             const stepsContainer = document.getElementById('modal-steps');
             stepsContainer.innerHTML = '';
             data.steps.forEach((stepText, index) => {
@@ -300,11 +338,9 @@
 
         function closeModal() {
             document.getElementById('sim-modal').style.display = 'none';
-            // Turn off animation when closed to save CPU
             document.getElementById('emulator-engine').className = 'emulator-screen';
         }
 
-        // Initial Load
         renderCards('all');
     </script>
 </body>
