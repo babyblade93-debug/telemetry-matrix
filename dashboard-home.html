@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidance Portal - Dashboard</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: transparent; /* Lets the Google Sites background show through */
+            color: #0f172a;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .dashboard-panel {
+            width: 100%;
+            max-width: 900px;
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(16, 185, 129, 0.05) 0%, transparent 40%);
+        }
+
+        .dash-header {
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .title-block h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            color: #0f172a;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: -0.5px;
+        }
+
+        .title-block p {
+            color: #64748b;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .status-badge {
+            background: #ecfdf5;
+            color: #059669;
+            border: 1px solid #10b981;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .status-badge::before {
+            content: ''; display: block; width: 8px; height: 8px;
+            background: #10b981; border-radius: 50%;
+            box-shadow: 0 0 8px #34d399;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); border-color: #06b6d4; }
+        
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 28px;
+            font-weight: 800;
+            color: #0369a1;
+            margin-bottom: 5px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .quick-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .action-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: #334155;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .dash-btn {
+            background: #ffffff;
+            border: 2px solid #cbd5e1;
+            color: #334155;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .dash-btn:hover {
+            border-color: #0ea5e9;
+            color: #0284c7;
+            background: #f0f9ff;
+        }
+        .dash-btn.primary {
+            background: #0ea5e9;
+            color: #ffffff;
+            border-color: #0284c7;
+        }
+        .dash-btn.primary:hover {
+            background: #0284c7;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="dashboard-panel">
+        
+        <div class="dash-header">
+            <div class="title-block">
+                <h1>Swiggy IM Voice Portal</h1>
+                <p>Team Roster, Automation & Guidance Operations</p>
+            </div>
+            <div class="status-badge">SYSTEMS ONLINE</div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">120+</div>
+                <div class="stat-label">Active Modules</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">45</div>
+                <div class="stat-label">Live Automations</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">0ms</div>
+                <div class="stat-label">Sync Latency</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <div class="action-title">Quick Navigation</div>
+            <div class="btn-group">
+                <a href="sitemap.html" class="dash-btn primary">🗺️ Open Visual Sitemap</a>
+                <a href="excel-matrix.html" class="dash-btn">📊 Spreadsheets</a>
+                <a href="appscript-matrix.html" class="dash-btn">⚙️ Trigger Scripts</a>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>
+
