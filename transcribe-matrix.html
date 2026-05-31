@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guidance Portal - Local Extraction Node</title>
+    <title>Guidance Portal - Advanced Extraction Node</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
         
@@ -48,14 +48,26 @@
             box-shadow: 0 10px 25px rgba(6, 182, 212, 0.1), inset 0 0 15px rgba(6, 182, 212, 0.05);
         }
 
+        /* --- NEW SETTINGS GRID --- */
+        .settings-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 15px;
+            border-bottom: 1px solid #0891b2; padding-bottom: 15px;
+        }
+        @media (max-width: 600px) { .settings-grid { grid-template-columns: 1fr; } }
+        
+        .setting-item { display: flex; flex-direction: column; gap: 5px; }
+        .setting-item label { font-family: 'Orbitron', sans-serif; font-size: 10px; font-weight: 900; color: #0369a1; letter-spacing: 1px; }
+        
+        .matrix-select {
+            background: rgba(236, 254, 255, 0.5); border: 1px solid #0891b2; color: #0f172a;
+            padding: 8px; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 700;
+            outline: none; width: 100%; cursor: crosshair;
+        }
+        .matrix-select:focus { border-color: #00f0ff; box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
+
         .status-bar {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid #0891b2; padding-bottom: 10px;
             font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; color: #0f172a;
-        }
-        .lang-badge {
-            background: rgba(8, 145, 178, 0.1); border: 1px solid #0891b2; color: #0369a1;
-            padding: 4px 8px; border-radius: 2px; font-size: 11px; letter-spacing: 1px;
         }
 
         .status-text { color: #0891b2; }
@@ -64,7 +76,7 @@
 
         .upload-zone {
             border: 2px dashed #0891b2; background: rgba(236, 254, 255, 0.5);
-            padding: 30px 15px; text-align: center; transition: 0.3s;
+            padding: 25px 15px; text-align: center; transition: 0.3s;
             position: relative; overflow: hidden;
         }
         .upload-zone:hover { background: rgba(207, 250, 254, 0.8); border-color: #0284c7; }
@@ -83,40 +95,48 @@
         .action-btn:hover:not(:disabled) { background: rgba(165, 243, 252, 0.4); border-color: #00f0ff; color: #0369a1; box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
         .action-btn:disabled { background: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
-        .progress-bar-container { width: 100%; height: 4px; background: #cbd5e1; margin-top: 10px; display: none; }
-        .progress-fill { height: 100%; width: 0%; background: #0ea5e9; transition: width 0.2s; }
+        .progress-bar-container { width: 100%; height: 6px; background: #cbd5e1; margin-top: 5px; display: none; border-radius: 3px; overflow: hidden; }
+        .progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #0ea5e9, #34d399); transition: width 0.2s; }
 
-        /* --- NEW: DEDICATED TRANSCRIPT BOX --- */
+        /* --- DEDICATED TRANSCRIPT BOX --- */
         .transcript-display {
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid #059669;
-            border-radius: 4px;
-            padding: 20px;
-            margin-top: 10px;
-            display: none; /* Hidden until processing is done */
-            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.15);
+            background: rgba(255, 255, 255, 0.95); border: 2px solid #059669; border-radius: 4px;
+            padding: 20px; display: none; box-shadow: 0 10px 25px rgba(5, 150, 105, 0.15);
         }
         .transcript-display-header {
-            font-family: 'Orbitron', sans-serif;
-            font-size: 14px; font-weight: 700; color: #065f46;
+            font-family: 'Orbitron', sans-serif; font-size: 14px; font-weight: 700; color: #065f46;
             border-bottom: 2px solid #34d399; padding-bottom: 10px; margin-bottom: 15px;
-            display: flex; justify-content: space-between; align-items: center;
+            display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;
         }
-        .copy-btn {
-            background: #059669; color: white; border: none; padding: 5px 10px;
+        .btn-group { display: flex; gap: 10px; }
+        .util-btn {
+            background: #059669; color: white; border: none; padding: 6px 12px;
             font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;
             cursor: pointer; border-radius: 2px; transition: 0.2s;
         }
-        .copy-btn:hover { background: #047857; }
+        .util-btn:hover { background: #047857; }
+        .util-btn.export { background: #0284c7; }
+        .util-btn.export:hover { background: #0369a1; }
+        
         .transcript-text-content {
-            font-size: clamp(14px, 3.5vw, 16px); line-height: 1.6; color: #0f172a;
-            white-space: pre-wrap; font-weight: 500;
+            font-size: clamp(13px, 3vw, 15px); line-height: 1.6; color: #0f172a;
+            max-height: 400px; overflow-y: auto; padding-right: 10px;
         }
+        
+        /* Custom Scrollbar for transcript */
+        .transcript-text-content::-webkit-scrollbar { width: 6px; }
+        .transcript-text-content::-webkit-scrollbar-track { background: #f1f5f9; }
+        .transcript-text-content::-webkit-scrollbar-thumb { background: #10b981; border-radius: 3px; }
+
+        /* QA Chunk Formatting */
+        .chunk-line { margin-bottom: 8px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 8px; }
+        .chunk-line:last-child { border-bottom: none; }
+        .timestamp { color: #0284c7; font-weight: 700; font-size: 11px; margin-right: 8px; user-select: none; }
 
         /* --- TERMINAL LOGS --- */
         .log-container {
             background: #ffffff; border: 1px solid #cbd5e1; border-left: 3px solid #0891b2;
-            height: 200px; padding: 15px; overflow-y: auto; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+            height: 150px; padding: 15px; overflow-y: auto; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
         }
         .log-header { color: #64748b; font-size: 10px; font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 5px; }
         .sys-log { margin-bottom: 8px; font-size: 11px; color: #64748b; animation: fadeIn 0.2s ease-in; }
@@ -133,13 +153,30 @@
     <div class="engine-container">
         <div class="system-header">
             <h1>AUDIO_EXTRACTION_NODE</h1>
-            <p>LOCAL AI ENGINE // ZERO-API BYPASS ACTIVE</p>
+            <p>ADVANCED LOCAL AI // PRO-MATRIX ACTIVE</p>
         </div>
 
         <div class="control-panel" id="controlPanel">
+            
+            <div class="settings-grid">
+                <div class="setting-item">
+                    <label>AI NEURAL MODEL</label>
+                    <select id="modelSelect" class="matrix-select">
+                        <option value="Xenova/whisper-tiny">Tiny Model (~75MB) - Fast / Basic Audio</option>
+                        <option value="Xenova/whisper-base" selected>Base Model (~145MB) - High Accuracy / Accents</option>
+                    </select>
+                </div>
+                <div class="setting-item">
+                    <label>OPERATIONAL TASK</label>
+                    <select id="taskSelect" class="matrix-select">
+                        <option value="translate">Translate Audio to English</option>
+                        <option value="transcribe">Transcribe in Original Language</option>
+                    </select>
+                </div>
+            </div>
+
             <div class="status-bar">
-                <div>MODE: <span class="lang-badge">TRANSLATE (TO EN)</span></div>
-                <div>STAT: <span class="status-text" id="statusText">AWAITING FILE</span></div>
+                <div>STAT: <span class="status-text" id="statusText">AWAITING AUDIO PAYLOAD</span></div>
             </div>
 
             <div class="upload-zone" id="dropZone">
@@ -153,19 +190,22 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
 
-            <button class="action-btn" id="processBtn" disabled>PROCESS LOCALLY</button>
+            <button class="action-btn" id="processBtn" disabled>INITIALIZE EXTRACTION</button>
         </div>
 
         <div class="transcript-display" id="transcriptDisplayBox">
             <div class="transcript-display-header">
-                <span>[FINAL TRANSCRIPTION OUTPUT]</span>
-                <button class="copy-btn" id="copyBtn">COPY TEXT</button>
+                <span>[QA TRANSCRIPTION DATA]</span>
+                <div class="btn-group">
+                    <button class="util-btn" id="copyBtn">COPY</button>
+                    <button class="util-btn export" id="downloadBtn">EXPORT .TXT</button>
+                </div>
             </div>
             <div class="transcript-text-content" id="finalTranscriptText"></div>
         </div>
 
         <div class="log-container" id="logBox">
-            <div class="log-header">SYSTEM_TERMINAL // LOCAL_AI_LOG</div>
+            <div class="log-header">SYSTEM_TERMINAL // OPERATION_LOGS</div>
         </div>
     </div>
 
@@ -184,24 +224,29 @@
         const progressContainer = document.getElementById('progressContainer');
         const progressFill = document.getElementById('progressFill');
         
-        // New Output Elements
+        const modelSelect = document.getElementById('modelSelect');
+        const taskSelect = document.getElementById('taskSelect');
+
         const transcriptDisplayBox = document.getElementById('transcriptDisplayBox');
         const finalTranscriptText = document.getElementById('finalTranscriptText');
         const copyBtn = document.getElementById('copyBtn');
+        const downloadBtn = document.getElementById('downloadBtn');
 
         let selectedFile = null;
         let transcriber = null;
+        let loadedModelName = null;
+        let rawExportText = ""; // Holds pure text for downloading
 
         audioInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 selectedFile = e.target.files[0];
                 uploadInstruction.style.display = 'none';
                 fileNameDisplay.style.display = 'block';
-                fileNameDisplay.innerText = `[FILE ACQUIRED] ${selectedFile.name}`;
+                fileNameDisplay.innerText = `[PAYLOAD LOCKED] ${selectedFile.name}`;
                 
                 processBtn.disabled = false;
                 statusText.innerText = "READY FOR LOCAL EXTRACTION";
-                transcriptDisplayBox.style.display = 'none'; // Hide previous results
+                transcriptDisplayBox.style.display = 'none'; 
             }
         });
 
@@ -235,54 +280,87 @@
 
             processBtn.disabled = true;
             audioInput.disabled = true;
+            modelSelect.disabled = true;
+            taskSelect.disabled = true;
+            
             controlPanel.classList.add('processing');
             progressContainer.style.display = 'block';
-            transcriptDisplayBox.style.display = 'none'; // Keep hidden while processing
+            transcriptDisplayBox.style.display = 'none'; 
             
             try {
-                if (!transcriber) {
-                    statusText.innerText = "LOADING AI MODEL...";
-                    addLog("Fetching Xenova/whisper-tiny model... (May take a minute on first run)");
+                const targetModel = modelSelect.value;
+                const targetTask = taskSelect.value;
+
+                // Reload model if they changed the dropdown
+                if (!transcriber || loadedModelName !== targetModel) {
+                    statusText.innerText = "DOWNLOADING NEURAL CORE...";
+                    addLog(`Fetching ${targetModel}... (Requires cache update)`);
+                    progressFill.style.width = "0%";
                     
-                    transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
+                    transcriber = await pipeline('automatic-speech-recognition', targetModel, {
                         progress_callback: data => {
                             if (data.status === 'progress') {
                                 progressFill.style.width = `${Math.round(data.progress)}%`;
                             }
                         }
                     });
+                    loadedModelName = targetModel;
                     addLog("Model loaded and cached successfully.");
                 }
 
                 progressFill.style.width = "100%";
                 statusText.innerText = "DECODING AUDIO...";
-                addLog("Decoding and resampling audio to 16kHz...");
+                addLog("Processing file into 16kHz float array...");
                 
                 const audioData = await readAudioData(selectedFile);
 
-                statusText.innerText = "AI TRANSLATING...";
-                addLog("Running local neural network. Translating to English...");
+                statusText.innerText = `AI ${targetTask.toUpperCase()}ING...`;
+                addLog(`Running inference. Task: ${targetTask.toUpperCase()}. Chunking timestamps active...`);
 
+                // Run AI with Timestamp Chunking
                 const output = await transcriber(audioData, {
-                    task: 'translate',
+                    task: targetTask,
+                    return_timestamps: true,
+                    chunk_length_s: 30,
+                    stride_length_s: 5
                 });
 
-                // --- UI UPDATE: Push to Dedicated Box ---
+                // --- FORMAT TIMESTAMP CHUNKS FOR UI ---
+                let formattedHTML = "";
+                rawExportText = ""; // Reset export text
+
+                if (output.chunks && output.chunks.length > 0) {
+                    output.chunks.forEach(chunk => {
+                        let start = chunk.timestamp[0].toFixed(2).padStart(5, '0');
+                        let end = chunk.timestamp[1] !== null ? chunk.timestamp[1].toFixed(2).padStart(5, '0') : "END  ";
+                        
+                        formattedHTML += `<div class="chunk-line"><span class="timestamp">[${start}s - ${end}s]</span>${chunk.text}</div>`;
+                        rawExportText += `[${start}s - ${end}s] ${chunk.text}\n`;
+                    });
+                } else {
+                    // Fallback if timestamps fail
+                    formattedHTML = `<div class="chunk-line">${output.text}</div>`;
+                    rawExportText = output.text;
+                }
+
                 controlPanel.classList.remove('processing');
                 audioInput.disabled = false;
+                modelSelect.disabled = false;
+                taskSelect.disabled = false;
                 processBtn.innerText = "EXTRACTION COMPLETE";
                 statusText.innerText = "STANDBY";
                 progressContainer.style.display = 'none';
 
-                addLog(`Extraction complete. Zero API keys used.`);
+                addLog(`Extraction complete. UI populated.`);
                 
-                // Show the large result box and inject text
-                finalTranscriptText.innerText = output.text;
+                finalTranscriptText.innerHTML = formattedHTML;
                 transcriptDisplayBox.style.display = 'block';
 
             } catch (error) {
                 controlPanel.classList.remove('processing');
                 audioInput.disabled = false;
+                modelSelect.disabled = false;
+                taskSelect.disabled = false;
                 processBtn.innerText = "RETRY EXTRACTION";
                 statusText.innerText = "SYSTEM ERROR";
                 progressContainer.style.display = 'none';
@@ -292,10 +370,23 @@
 
         // Copy functionality
         copyBtn.addEventListener('click', () => {
-            navigator.clipboard.writeText(finalTranscriptText.innerText).then(() => {
+            navigator.clipboard.writeText(rawExportText).then(() => {
                 copyBtn.innerText = "COPIED!";
-                setTimeout(() => copyBtn.innerText = "COPY TEXT", 2000);
+                setTimeout(() => copyBtn.innerText = "COPY", 2000);
             });
+        });
+
+        // Download functionality
+        downloadBtn.addEventListener('click', () => {
+            const blob = new Blob([rawExportText], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `QA_Transcript_${selectedFile ? selectedFile.name : "Output"}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         });
 
     </script>
