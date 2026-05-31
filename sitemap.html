@@ -7,12 +7,12 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
         
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; } /* Targeting reticle cursor */
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
         
         body { 
-            font-family: 'JetBrains Mono', monospace; /* Total machine font */
-            background: #000000; /* Deep blackout */
-            color: #cffafe; /* Default high-vis cyan */
+            font-family: 'JetBrains Mono', monospace; 
+            background: #000000; 
+            color: #cffafe; 
             padding: 40px 10px; 
             display: flex; 
             justify-content: center; 
@@ -21,9 +21,6 @@
             overflow-x: hidden;
         }
 
-        /* --- HARDCORE ROBОCОP OVERLAYS --- */
-        
-        /* 1. CRT Scanlines & Flicker */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
@@ -38,7 +35,6 @@
 
         .container { width: 100%; max-width: 900px; z-index: 10; position: relative; }
         
-        /* Tactical Header with brackets */
         .header-container { text-align: center; margin-bottom: 60px; position: relative; padding: 20px; border: 2px solid #1e293b; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
         .header-container::before { content: '[ '; color: #22d3ee; font-size: 32px; font-weight: 800; }
         .header-container::after { content: ' ]'; color: #22d3ee; font-size: 32px; font-weight: 800; }
@@ -46,10 +42,8 @@
         .header { font-size: 32px; color: #fff; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; text-shadow: 0 0 15px #22d3ee; display: inline; }
         .sub { color: #06b6d4; font-size: 11px; font-weight: 800; letter-spacing: 3px; margin-top: 10px; text-transform: uppercase; }
 
-        /* --- NEURAL CONDUIT NETWORK --- */
         .neural-tree { width: 100%; display: flex; flex-direction: column; gap: 40px; position: relative; padding-bottom: 50px; }
         
-        /* Central high-voltage data conduit */
         .neural-tree::before {
             content: ''; position: absolute; top: -40px; bottom: 0px; left: 50%; width: 6px;
             background: repeating-linear-gradient(to bottom, #0ea5e9, #0ea5e9 10px, #000 10px, #000 20px);
@@ -59,7 +53,6 @@
 
         .neural-branch { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 2; }
 
-        /* --- SECTION TACTICAL HEADERS --- */
         .section-header {
             width: 100%; max-width: 500px; background: #1e293b; border: 2px solid #334155; padding: 12px 20px;
             margin-bottom: 20px; color: #fff; font-weight: 800; font-size: 14px; text-transform: uppercase;
@@ -68,12 +61,10 @@
         }
         .section-header::before { content: ''; width: 10px; height: 10px; background: #22d3ee; box-shadow: 0 0 10px #22d3ee; animation: pulse 1.5s infinite; }
         
-        /* Special handling for Desktop Neural Tree view */
         @media (min-width: 768px) {
             .neural-branch:nth-child(odd) { align-items: flex-end; padding-right: 54%; }
             .neural-branch:nth-child(even) { align-items: flex-start; padding-left: 54%; }
             
-            /* Horizontal data links that pulse */
             .neural-branch::before {
                 content: ''; position: absolute; top: 25px; left: 50%; width: 50%; height: 3px;
                 background: linear-gradient(90deg, #06b6d4, transparent); z-index: -1; animation: pulse 2s infinite;
@@ -83,7 +74,6 @@
             }
         }
 
-        /* --- TARGET NODES (Endpoints) --- */
         .endpoint-list { list-style: none; padding: 0; margin: 0; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
         
         .endpoint-item {
@@ -92,6 +82,7 @@
             transition: all 0.1s;
         }
         
+        /* ADDED target="_top" TO BREAK OUT OF THE EMBED BOX */
         .endpoint-link {
             display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;
             color: #bae6fd; text-decoration: none; font-weight: 700; font-size: 13px; letter-spacing: 1px;
@@ -99,12 +90,10 @@
         }
         .endpoint-link::before { content: '> '; color: #22d3ee; font-weight: 800; font-size: 16px; }
 
-        /* Tactical Data ID (the filename) */
         .data-id { font-size: 9px; color: #64748b; background: rgba(30, 41, 59, 0.5); padding: 2px 6px; border-radius: 2px; }
 
-        /* --- HARDCORE HOVER: TARGET ACQUIRED --- */
         .endpoint-item:hover {
-            border-color: #ef4444; /* Alert Red border */
+            border-color: #ef4444; 
             box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
             transform: scale(1.02);
         }
@@ -113,7 +102,6 @@
         .endpoint-item:hover .endpoint-link::before { color: #ef4444; content: 'X '; }
         .endpoint-item:hover .data-id { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
-        /* Target Reticle Overlay on Hover */
         .endpoint-item::after {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
             background-image: 
@@ -125,10 +113,8 @@
         }
         .endpoint-item:hover::after { opacity: 1; }
 
-        /* --- ANIMATION PROTOCOLS --- */
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
         
-        /* Hardcore Glitch effect on text hover */
         @keyframes glitch {
             0% { transform: translate(0); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
             20% { transform: translate(-2px, 2px); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
@@ -137,7 +123,6 @@
             80% { transform: translate(2px, -2px); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
             100% { transform: translate(0); text-shadow: none; }
         }
-
     </style>
 </head>
 <body>
@@ -154,25 +139,25 @@
                 <div class="section-header">Directives: Formulas & Software</div>
                 <ul class="endpoint-list">
                     <li class="endpoint-item">
-                        <a href="excel-matrix.html" class="endpoint-link">
+                        <a href="PASTE_YOUR_GOOGLE_SITES_EXCEL_LINK_HERE" target="_top" class="endpoint-link">
                             <span>Advanced Excel / G-Sheets</span>
                             <span class="data-id">DATA_MATRIX.gs</span>
                         </a>
                     </li>
                     <li class="endpoint-item">
-                        <a href="docs-matrix.html" class="endpoint-link">
+                        <a href="PASTE_YOUR_GOOGLE_SITES_WORD_LINK_HERE" target="_top" class="endpoint-link">
                             <span>Word / Docs Formatting [P1]</span>
                             <span class="data-id">DOCS_CORE.wps</span>
                         </a>
                     </li>
                     <li class="endpoint-item">
-                        <a href="docs-advanced.html" class="endpoint-link">
+                        <a href="PASTE_YOUR_GOOGLE_SITES_WORD_ADV_LINK_HERE" target="_top" class="endpoint-link">
                             <span>Word / Docs Automation [P2]</span>
                             <span class="data-id">DOCS_ADV.wps</span>
                         </a>
                     </li>
                     <li class="endpoint-item">
-                        <a href="ppt-matrix.html" class="endpoint-link">
+                        <a href="PASTE_YOUR_GOOGLE_SITES_PPT_LINK_HERE" target="_top" class="endpoint-link">
                             <span>PowerPoint / Slides Visualization</span>
                             <span class="data-id">PPT_ARCH.wps</span>
                         </a>
@@ -187,7 +172,7 @@
                 </div>
                 <ul class="endpoint-list">
                     <li class="endpoint-item" style="border-color: rgba(16, 185, 129, 0.3);">
-                        <a href="appscript-matrix.html" class="endpoint-link" style="color: #a7f3d0;">
+                        <a href="PASTE_YOUR_GOOGLE_SITES_APPSCRIPT_LINK_HERE" target="_top" class="endpoint-link" style="color: #a7f3d0;">
                             <span>Apps Script & Event Triggers</span>
                             <span class="data-id">GS_IDE.sandbox</span>
                         </a>
@@ -199,7 +184,7 @@
                 <div class="section-header" style="border-color: #64748b;">Directives: System Core</div>
                 <ul class="endpoint-list">
                     <li class="endpoint-item" style="border-color: #334155;">
-                        <a href="sitemap.html" class="endpoint-link" style="color: #94a3b8;">
+                        <a href="#" class="endpoint-link" style="color: #94a3b8; pointer-events: none;">
                             <span>Current Directory [ACTIVE]</span>
                             <span class="data-id">SYS_MAP.html</span>
                         </a>
@@ -212,4 +197,3 @@
 
 </body>
 </html>
-
