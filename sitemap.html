@@ -3,292 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guidance Architecture - Neural Simulation</title>
+    <title>Guidance Portal - Sitemap Matrix OCP-v4</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
         
-        * { box-sizing: border-box; margin: 0; padding: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; } /* Targeting reticle cursor */
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f9ff;
-            background-image: 
-                radial-gradient(circle at 50% 0%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-                linear-gradient(0deg, transparent 24%, rgba(165, 243, 252, 0.3) 25%, rgba(165, 243, 252, 0.3) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.3) 75%, rgba(165, 243, 252, 0.3) 76%, transparent 77%, transparent), 
-                linear-gradient(90deg, transparent 24%, rgba(165, 243, 252, 0.3) 25%, rgba(165, 243, 252, 0.3) 26%, transparent 27%, transparent 74%, rgba(165, 243, 252, 0.3) 75%, rgba(165, 243, 252, 0.3) 76%, transparent 77%, transparent);
-            background-size: 100% 100%, 40px 40px, 40px 40px;
-            color: #0f172a; 
-            padding: 20px 10px;
-            display: flex;
-            justify-content: center;
+        body { 
+            font-family: 'JetBrains Mono', monospace; /* Total machine font */
+            background: #000000; /* Deep blackout */
+            color: #cffafe; /* Default high-vis cyan */
+            padding: 40px 10px; 
+            display: flex; 
+            justify-content: center; 
             min-height: 100vh;
-        }
-
-        .neural-container {
-            width: 100%;
-            max-width: 1200px; 
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border: 1px solid #67e8f9;
-            border-radius: 16px;
-            padding: 40px 20px;
-            box-shadow: 0 10px 30px -5px rgba(6, 182, 212, 0.15), inset 0 0 20px rgba(103, 232, 249, 0.1);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        /* --- HEADER & CORE --- */
-        .system-header {
-            text-align: center;
-            margin-bottom: 50px;
-            width: 100%;
-        }
-        
-        .core-node-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 15px;
             position: relative;
+            overflow-x: hidden;
         }
+
+        /* --- HARDCORE ROBОCОP OVERLAYS --- */
         
-        .core-pulse {
-            width: 70px; height: 70px;
-            background: #ffffff;
-            border: 4px solid #06b6d4;
-            border-radius: 50%;
-            display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 0 25px #22d3ee, inset 0 0 15px #67e8f9;
-            z-index: 10;
-            position: relative;
+        /* 1. CRT Scanlines & Flicker */
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px; z-index: 100; pointer-events: none; opacity: 0.15;
         }
-        .core-pulse::before {
-            content: ''; position: absolute; top: -12px; left: -12px; right: -12px; bottom: -12px;
-            border-radius: 50%; border: 2px solid #22d3ee;
-            animation: radarPulse 2s cubic-bezier(0.1, 0.7, 1, 0.1) infinite;
+        body::after {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(6, 182, 212, 0.03); opacity: 0; z-index: 99; pointer-events: none;
+            animation: flicker 0.1s infinite;
         }
-        @keyframes radarPulse { 0% { transform: scale(0.8); opacity: 1; } 100% { transform: scale(1.5); opacity: 0; } }
+        @keyframes flicker { 0% { opacity: 0.1; } 50% { opacity: 0.2; } 100% { opacity: 0.1; } }
 
-        .core-icon { font-size: 28px; }
-
-        .system-header h1 {
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 24px;
-            color: #083344;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: -0.5px;
-            margin: 0;
-        }
-        .system-header p {
-            font-family: 'JetBrains Mono', monospace;
-            color: #0ea5e9;
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 2px;
-            margin-top: 10px;
-            background: #e0f2fe;
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 6px;
-            border: 1px solid #bae6fd;
-        }
-
-        /* --- NEURAL TREE GRID --- */
-        .neural-tree {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            position: relative;
-        }
+        .container { width: 100%; max-width: 900px; z-index: 10; position: relative; }
         
-        /* Central neural stem line */
+        /* Tactical Header with brackets */
+        .header-container { text-align: center; margin-bottom: 60px; position: relative; padding: 20px; border: 2px solid #1e293b; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
+        .header-container::before { content: '[ '; color: #22d3ee; font-size: 32px; font-weight: 800; }
+        .header-container::after { content: ' ]'; color: #22d3ee; font-size: 32px; font-weight: 800; }
+
+        .header { font-size: 32px; color: #fff; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; text-shadow: 0 0 15px #22d3ee; display: inline; }
+        .sub { color: #06b6d4; font-size: 11px; font-weight: 800; letter-spacing: 3px; margin-top: 10px; text-transform: uppercase; }
+
+        /* --- NEURAL CONDUIT NETWORK --- */
+        .neural-tree { width: 100%; display: flex; flex-direction: column; gap: 40px; position: relative; padding-bottom: 50px; }
+        
+        /* Central high-voltage data conduit */
         .neural-tree::before {
-            content: ''; position: absolute;
-            top: -30px; bottom: 30px; left: 50%;
-            width: 4px; background: linear-gradient(to bottom, #06b6d4, #a5f3fc);
-            transform: translateX(-50%);
-            z-index: 1;
-            border-radius: 2px;
+            content: ''; position: absolute; top: -40px; bottom: 0px; left: 50%; width: 6px;
+            background: repeating-linear-gradient(to bottom, #0ea5e9, #0ea5e9 10px, #000 10px, #000 20px);
+            transform: translateX(-50%); z-index: 1; opacity: 0.3; animation: conduitPulse 1s infinite linear;
         }
+        @keyframes conduitPulse { from { background-position: 0 0; } to { background-position: 0 40px; } }
 
-        .neural-branch {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            width: 100%;
-            position: relative;
-            z-index: 2;
+        .neural-branch { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 2; }
+
+        /* --- SECTION TACTICAL HEADERS --- */
+        .section-header {
+            width: 100%; max-width: 500px; background: #1e293b; border: 2px solid #334155; padding: 12px 20px;
+            margin-bottom: 20px; color: #fff; font-weight: 800; font-size: 14px; text-transform: uppercase;
+            letter-spacing: 2px; position: relative; display: flex; align-items: center; gap: 15px;
+            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
         }
+        .section-header::before { content: ''; width: 10px; height: 10px; background: #22d3ee; box-shadow: 0 0 10px #22d3ee; animation: pulse 1.5s infinite; }
         
-        /* The main menu block (Mobile Base) */
-        .menu-node {
-            background: #ffffff;
-            border: 2px solid #22d3ee;
-            border-radius: 12px;
-            width: 90%; 
-            max-width: 450px;
-            box-shadow: 0 4px 6px rgba(6, 182, 212, 0.1);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* --- DESKTOP WIDESCREEN ADAPTATION --- */
+        /* Special handling for Desktop Neural Tree view */
         @media (min-width: 768px) {
-            .menu-node { width: 42%; max-width: none; } 
-            
-            /* Pushes odd menus to the LEFT */
             .neural-branch:nth-child(odd) { align-items: flex-end; padding-right: 54%; }
-            /* Pushes even menus to the RIGHT */
             .neural-branch:nth-child(even) { align-items: flex-start; padding-left: 54%; }
             
-            /* Horizontal Cyan Connection Lines for Desktop */
+            /* Horizontal data links that pulse */
             .neural-branch::before {
-                content: ''; position: absolute; top: 35px; left: 50%; width: 50%; height: 3px;
-                background: linear-gradient(90deg, #06b6d4, transparent); z-index: -1;
+                content: ''; position: absolute; top: 25px; left: 50%; width: 50%; height: 3px;
+                background: linear-gradient(90deg, #06b6d4, transparent); z-index: -1; animation: pulse 2s infinite;
             }
             .neural-branch:nth-child(odd)::before {
-                left: auto; right: 50%;
-                background: linear-gradient(270deg, #06b6d4, transparent);
+                left: auto; right: 50%; background: linear-gradient(270deg, #06b6d4, transparent);
             }
         }
 
-        .menu-node:hover {
-            transform: translateY(-4px);
-            border-color: #06b6d4;
-            box-shadow: 0 15px 25px -5px rgba(6, 182, 212, 0.3), 0 0 15px rgba(34, 211, 238, 0.4);
-        }
+        /* --- TARGET NODES (Endpoints) --- */
+        .endpoint-list { list-style: none; padding: 0; margin: 0; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
         
-        .menu-header {
-            background: linear-gradient(90deg, #164e63, #0891b2);
-            color: #ffffff;
-            padding: 16px 20px;
-            font-weight: 700;
-            font-size: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            border-bottom: 3px solid #67e8f9;
+        .endpoint-item {
+            background: #000; border: 2px solid #1e293b; position: relative; overflow: hidden;
+            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+            transition: all 0.1s;
         }
-
-        /* Endpoints (Dropdown links) */
-        .endpoint-list { list-style: none; padding: 0; margin: 0; background: #f8fafc; }
-        .endpoint-item { border-bottom: 1px solid #cffafe; }
-        .endpoint-item:last-child { border-bottom: none; }
         
         .endpoint-link {
-            display: flex; align-items: center; padding: 14px 20px;
-            color: #0f172a; text-decoration: none; font-weight: 600; font-size: 14px;
-            transition: all 0.2s ease; position: relative;
+            display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;
+            color: #bae6fd; text-decoration: none; font-weight: 700; font-size: 13px; letter-spacing: 1px;
+            position: relative; z-index: 10;
         }
-        .endpoint-link::before {
-            content: '⊦'; margin-right: 12px; color: #06b6d4; font-weight: 800; font-size: 18px;
-        }
-        .endpoint-link:hover {
-            background: #ecfeff; color: #0891b2; padding-left: 26px;
+        .endpoint-link::before { content: '> '; color: #22d3ee; font-weight: 800; font-size: 16px; }
+
+        /* Tactical Data ID (the filename) */
+        .data-id { font-size: 9px; color: #64748b; background: rgba(30, 41, 59, 0.5); padding: 2px 6px; border-radius: 2px; }
+
+        /* --- HARDCORE HOVER: TARGET ACQUIRED --- */
+        .endpoint-item:hover {
+            border-color: #ef4444; /* Alert Red border */
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+            transform: scale(1.02);
         }
         
-        .empty-status {
-            padding: 14px 20px; color: #94a3b8; font-size: 12px;
-            font-family: 'JetBrains Mono', monospace; font-weight: 600;
+        .endpoint-item:hover .endpoint-link { color: #fff; animation: glitch 0.3s forwards; }
+        .endpoint-item:hover .endpoint-link::before { color: #ef4444; content: 'X '; }
+        .endpoint-item:hover .data-id { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
+
+        /* Target Reticle Overlay on Hover */
+        .endpoint-item::after {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                linear-gradient(#ef4444 2px, transparent 2px), linear-gradient(90deg, #ef4444 2px, transparent 2px),
+                linear-gradient(#ef4444 2px, transparent 2px), linear-gradient(90deg, #ef4444 2px, transparent 2px);
+            background-size: 15px 15px; background-repeat: no-repeat;
+            background-position: 0 0, 0 0, 100% 100%, 100% 100%;
+            opacity: 0; transition: opacity 0.1s; pointer-events: none;
+        }
+        .endpoint-item:hover::after { opacity: 1; }
+
+        /* --- ANIMATION PROTOCOLS --- */
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        /* Hardcore Glitch effect on text hover */
+        @keyframes glitch {
+            0% { transform: translate(0); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
+            20% { transform: translate(-2px, 2px); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
+            40% { transform: translate(-2px, -2px); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
+            60% { transform: translate(2px, 2px); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
+            80% { transform: translate(2px, -2px); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
+            100% { transform: translate(0); text-shadow: none; }
         }
 
     </style>
 </head>
 <body>
 
-    <div class="neural-container">
-        
-        <div class="system-header">
-            <div class="core-node-container">
-                <div class="core-pulse"><span class="core-icon">🌐</span></div>
-            </div>
-            <h1>System Architecture Map</h1>
-            <p>ACTIVE ROUTING // FULL DATABASE SYNCED</p>
+    <div class="container">
+        <div class="header-container">
+            <h1 class="header">SYSTEM_MAP_OCP_v4</h1>
+            <p class="sub">ROUTING PROTOCOLS // TACTICAL OVERVIEW</p>
         </div>
-        
-        <div class="neural-tree" id="render-target"></div>
-        
+
+        <div class="neural-tree">
+            
+            <div class="neural-branch">
+                <div class="section-header">Directives: Formulas & Software</div>
+                <ul class="endpoint-list">
+                    <li class="endpoint-item">
+                        <a href="excel-matrix.html" class="endpoint-link">
+                            <span>Advanced Excel / G-Sheets</span>
+                            <span class="data-id">DATA_MATRIX.gs</span>
+                        </a>
+                    </li>
+                    <li class="endpoint-item">
+                        <a href="docs-matrix.html" class="endpoint-link">
+                            <span>Word / Docs Formatting [P1]</span>
+                            <span class="data-id">DOCS_CORE.wps</span>
+                        </a>
+                    </li>
+                    <li class="endpoint-item">
+                        <a href="docs-advanced.html" class="endpoint-link">
+                            <span>Word / Docs Automation [P2]</span>
+                            <span class="data-id">DOCS_ADV.wps</span>
+                        </a>
+                    </li>
+                    <li class="endpoint-item">
+                        <a href="ppt-matrix.html" class="endpoint-link">
+                            <span>PowerPoint / Slides Visualization</span>
+                            <span class="data-id">PPT_ARCH.wps</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="neural-branch">
+                <div class="section-header" style="border-color: #10b981;">
+                    <span style="background: #10b981; width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #10b981; animation: pulse 1.5s infinite;"></span>
+                    Directives: Automation
+                </div>
+                <ul class="endpoint-list">
+                    <li class="endpoint-item" style="border-color: rgba(16, 185, 129, 0.3);">
+                        <a href="appscript-matrix.html" class="endpoint-link" style="color: #a7f3d0;">
+                            <span>Apps Script & Event Triggers</span>
+                            <span class="data-id">GS_IDE.sandbox</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="neural-branch">
+                <div class="section-header" style="border-color: #64748b;">Directives: System Core</div>
+                <ul class="endpoint-list">
+                    <li class="endpoint-item" style="border-color: #334155;">
+                        <a href="sitemap.html" class="endpoint-link" style="color: #94a3b8;">
+                            <span>Current Directory [ACTIVE]</span>
+                            <span class="data-id">SYS_MAP.html</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
     </div>
 
-    <script>
-        // =====================================================================
-        // UPGRADED GOOGLE SITES DATA STRUCTURE
-        // =====================================================================
-        const portalStructure = [
-            {
-                menuName: "Home",
-                icon: "🏠",
-                dropdowns: [
-                    { name: "Portal Dashboard", link: "#" }
-                ]
-            },
-            {
-                menuName: "Formulas",
-                icon: "📊",
-                dropdowns: [
-                    { name: "Advanced Excel and G-Sheets", link: "excel-matrix.html" },
-                    { name: "Advanced Word", link: "docs-matrix.html" },
-                    { name: "PowerPoint", link: "ppt-matrix.html" }
-                ]
-            },
-            {
-                menuName: "Automation",
-                icon: "⚙️",
-                dropdowns: [
-                    { name: "Apps Script and Triggers", link: "appscript-matrix.html" }
-                ]
-            },
-            {
-                menuName: "Sitemap",
-                icon: "🗺️",
-                dropdowns: [
-                    { name: "Current Directory (Active)", link: "sitemap.html" }
-                ]
-            }
-        ];
-
-        // =====================================================================
-        // NEURAL RENDERING ENGINE
-        // =====================================================================
-        const renderTarget = document.getElementById('render-target');
-
-        portalStructure.forEach(section => {
-            const branch = document.createElement('div');
-            branch.className = 'neural-branch';
-
-            const node = document.createElement('div');
-            node.className = 'menu-node';
-
-            const header = document.createElement('div');
-            header.className = 'menu-header';
-            header.innerHTML = `<span>${section.icon}</span> ${section.menuName}`;
-            node.appendChild(header);
-
-            if (section.dropdowns && section.dropdowns.length > 0) {
-                const list = document.createElement('ul');
-                list.className = 'endpoint-list';
-                
-                section.dropdowns.forEach(item => {
-                    const li = document.createElement('li');
-                    li.className = 'endpoint-item';
-                    li.innerHTML = `<a href="${item.link}" class="endpoint-link">${item.name}</a>`;
-                    list.appendChild(li);
-                });
-                node.appendChild(list);
-            } else {
-                const emptyMsg = document.createElement('div');
-                emptyMsg.className = 'empty-status';
-                emptyMsg.innerText = "NO ENDPOINTS ATTACHED";
-                node.appendChild(emptyMsg);
-            }
-
-            branch.appendChild(node);
-            renderTarget.appendChild(branch);
-        });
-    </script>
 </body>
 </html>
+
