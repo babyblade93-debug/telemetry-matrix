@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guidance Portal - Audio Extraction Node</title>
+    <title>Guidance Portal - Local Extraction Node</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
         
@@ -56,9 +56,7 @@
         .lang-badge {
             background: rgba(8, 145, 178, 0.1); border: 1px solid #0891b2; color: #0369a1;
             padding: 4px 8px; border-radius: 2px; font-size: 11px; letter-spacing: 1px;
-            animation: pulseGlow 2s infinite alternate;
         }
-        @keyframes pulseGlow { from { box-shadow: 0 0 0px transparent; } to { box-shadow: 0 0 8px rgba(8, 145, 178, 0.4); } }
 
         .status-text { color: #0891b2; }
         .processing .status-text { color: #ea580c; text-shadow: 0 0 5px rgba(234, 88, 12, 0.3); animation: blink 1s infinite; }
@@ -85,17 +83,6 @@
         .action-btn:hover:not(:disabled) { background: rgba(165, 243, 252, 0.4); border-color: #00f0ff; color: #0369a1; box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
         .action-btn:disabled { background: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
-        .visualizer { display: flex; align-items: center; justify-content: center; gap: 3px; height: 30px; margin-top: 5px; opacity: 0.2; transition: 0.3s; }
-        .processing .visualizer { opacity: 1; }
-        .bar { width: 4px; height: 5px; background: #ea580c; border-radius: 2px; box-shadow: 0 0 5px #ea580c; transition: height 0.1s; }
-        .processing .bar { animation: wave 1s infinite ease-in-out; }
-        .bar:nth-child(1) { animation-delay: 0.0s; } .bar:nth-child(2) { animation-delay: 0.1s; }
-        .bar:nth-child(3) { animation-delay: 0.2s; } .bar:nth-child(4) { animation-delay: 0.3s; }
-        .bar:nth-child(5) { animation-delay: 0.4s; } .bar:nth-child(6) { animation-delay: 0.5s; }
-        .bar:nth-child(7) { animation-delay: 0.4s; } .bar:nth-child(8) { animation-delay: 0.3s; }
-        .bar:nth-child(9) { animation-delay: 0.2s; } .bar:nth-child(10){ animation-delay: 0.1s; }
-        @keyframes wave { 0%, 100% { height: 5px; } 50% { height: 25px; } }
-
         .log-container {
             background: #ffffff; border: 1px solid #cbd5e1; border-left: 3px solid #0891b2;
             height: 350px; padding: 15px; overflow-y: auto; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
@@ -103,11 +90,11 @@
         .log-header { color: #64748b; font-size: 10px; font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 5px; }
         .sys-log { margin-bottom: 8px; font-size: 11px; color: #64748b; animation: fadeIn 0.2s ease-in; }
         .sys-log span { color: #0ea5e9; font-weight: bold; }
-        .transcript-line { margin-top: 15px; margin-bottom: 10px; line-height: 1.6; font-size: clamp(12px, 3.5vw, 14px); color: #0f172a; animation: fadeIn 0.4s ease-in; border-left: 2px solid #ea580c; background: rgba(234, 88, 12, 0.05); padding: 10px; }
+        .transcript-line { margin-top: 15px; margin-bottom: 10px; line-height: 1.6; font-size: clamp(12px, 3.5vw, 14px); color: #0f172a; animation: fadeIn 0.4s ease-in; border-left: 2px solid #059669; background: rgba(16, 185, 129, 0.05); padding: 10px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        .log-container::-webkit-scrollbar { width: 6px; }
-        .log-container::-webkit-scrollbar-track { background: #f1f5f9; }
-        .log-container::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 3px; }
+        
+        .progress-bar-container { width: 100%; height: 4px; background: #cbd5e1; margin-top: 10px; display: none; }
+        .progress-fill { height: 100%; width: 0%; background: #0ea5e9; transition: width 0.2s; }
     </style>
 </head>
 <body>
@@ -115,41 +102,40 @@
     <div class="engine-container">
         <div class="system-header">
             <h1>AUDIO_EXTRACTION_NODE</h1>
-            <p>APPS SCRIPT API ROUTER // NLP ACTIVE</p>
+            <p>LOCAL AI ENGINE // ZERO-API BYPASS ACTIVE</p>
         </div>
 
         <div class="control-panel" id="controlPanel">
             <div class="status-bar">
-                <div>LANG: <span class="lang-badge">AUTO-DETECT</span></div>
+                <div>MODE: <span class="lang-badge">TRANSLATE (TO EN)</span></div>
                 <div>STAT: <span class="status-text" id="statusText">AWAITING FILE</span></div>
             </div>
 
             <div class="upload-zone" id="dropZone">
                 <span class="upload-icon">📁</span>
-                <div class="upload-text" id="uploadInstruction">TAP TO SELECT AUDIO FILE (.WAV, .MP3)</div>
+                <div class="upload-text" id="uploadInstruction">TAP TO SELECT AUDIO FILE</div>
                 <div class="upload-file-name" id="fileNameDisplay"></div>
                 <input type="file" id="audioInput" accept="audio/*">
             </div>
 
-            <div class="visualizer">
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                <div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div>
+            <div class="progress-bar-container" id="progressContainer">
+                <div class="progress-fill" id="progressFill"></div>
             </div>
 
-            <button class="action-btn" id="processBtn" disabled>PROCESS DATA</button>
+            <button class="action-btn" id="processBtn" disabled>PROCESS LOCALLY</button>
         </div>
 
         <div class="log-container" id="logBox">
-            <div class="log-header">SYSTEM_TERMINAL // API_FETCH_LOG</div>
+            <div class="log-header">SYSTEM_TERMINAL // LOCAL_AI_LOG</div>
         </div>
     </div>
 
-    <script>
-        // =========================================================================
-        // URL LOCKED WITH NEW APPS SCRIPT DEPLOYMENT
-        // =========================================================================
-        const APPS_SCRIPT_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyI7wV3HN7g8TBCVODZK-7DJtdS1XSJLa8kyrYFxCpSNRXgwAD_CI_ZUxk1m90i2XchcQ/exec"; 
+    <script type="module">
+        import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.16.1';
         
+        // Disable local model loading since we are running in a browser
+        env.allowLocalModels = false;
+
         const audioInput = document.getElementById('audioInput');
         const uploadInstruction = document.getElementById('uploadInstruction');
         const fileNameDisplay = document.getElementById('fileNameDisplay');
@@ -157,19 +143,21 @@
         const controlPanel = document.getElementById('controlPanel');
         const statusText = document.getElementById('statusText');
         const logBox = document.getElementById('logBox');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressFill = document.getElementById('progressFill');
 
         let selectedFile = null;
+        let transcriber = null;
 
         audioInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 selectedFile = e.target.files[0];
                 uploadInstruction.style.display = 'none';
                 fileNameDisplay.style.display = 'block';
-                fileNameDisplay.innerText = `[FILE ACQUIRED] ${selectedFile.name} (${(selectedFile.size / 1024 / 1024).toFixed(2)} MB)`;
+                fileNameDisplay.innerText = `[FILE ACQUIRED] ${selectedFile.name}`;
                 
                 processBtn.disabled = false;
-                processBtn.innerText = "EXTRACT TRANSCRIPT";
-                statusText.innerText = "READY FOR EXTRACTION";
+                statusText.innerText = "READY FOR LOCAL EXTRACTION";
             }
         });
 
@@ -185,7 +173,7 @@
                 line.innerHTML = `<span>${getTime()} SYS:</span> ${text}`;
             } else if (type === "transcript") {
                 line.className = 'transcript-line';
-                line.innerHTML = `<strong>[AI DECODED TRANSCRIPT]:</strong><br>"${text}"`;
+                line.innerHTML = `<strong>[LOCAL AI TRANSCRIPT/TRANSLATION]:</strong><br>"${text}"`;
             } else if (type === "error") {
                 line.className = 'sys-log';
                 line.innerHTML = `<span style="color:#ef4444">${getTime()} ERR:</span> <span style="color:#ef4444">${text}</span>`;
@@ -194,58 +182,72 @@
             logBox.scrollTop = logBox.scrollHeight;
         }
 
-        processBtn.addEventListener('click', () => {
+        // Decode and resample audio to 16kHz (required by Whisper)
+        async function readAudioData(file) {
+            const arrayBuffer = await file.arrayBuffer();
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            return audioBuffer.getChannelData(0); // Get raw Float32 data
+        }
+
+        processBtn.addEventListener('click', async () => {
             if (!selectedFile) return;
 
             processBtn.disabled = true;
             audioInput.disabled = true;
             controlPanel.classList.add('processing');
-            statusText.innerText = "UPLOADING TO NODE...";
-
-            addLog(`Reading file: ${selectedFile.name}`);
-
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const base64Data = event.target.result.split(',')[1]; 
-                
-                addLog(`File converted. Transmitting to Apps Script router...`);
-                statusText.innerText = "AI PROCESSING...";
-
-                const payload = {
-                    fileName: selectedFile.name,
-                    mimeType: selectedFile.type || "audio/mp3",
-                    base64: base64Data
-                };
-
-                fetch(APPS_SCRIPT_WEB_APP_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'text/plain' }, 
-                    body: JSON.stringify(payload)
-                })
-                .then(response => response.json())
-                .then(data => {
-                    controlPanel.classList.remove('processing');
-                    audioInput.disabled = false;
-                    processBtn.innerText = "EXTRACTION COMPLETE";
-                    statusText.innerText = "STANDBY";
-
-                    if (data.status === "success") {
-                        addLog(`Packet received. AI transcription successful.`);
-                        addLog(data.transcript, "transcript");
-                    } else {
-                        addLog(`API ERROR: ${data.error}`, "error");
-                    }
-                })
-                .catch(error => {
-                    controlPanel.classList.remove('processing');
-                    audioInput.disabled = false;
-                    processBtn.innerText = "RETRY EXTRACTION";
-                    statusText.innerText = "NETWORK ERROR";
-                    addLog(`Connection failed: ${error}`, "error");
-                });
-            };
+            progressContainer.style.display = 'block';
             
-            reader.readAsDataURL(selectedFile);
+            try {
+                // Step 1: Load the AI Model (Downloads only on first run)
+                if (!transcriber) {
+                    statusText.innerText = "LOADING AI MODEL...";
+                    addLog("Fetching Xenova/whisper-tiny model... (May take a minute on first run)");
+                    
+                    transcriber = await pipeline('automatic-speech-recognition', 'Xenova/whisper-tiny', {
+                        progress_callback: data => {
+                            if (data.status === 'progress') {
+                                progressFill.style.width = `${Math.round(data.progress)}%`;
+                            }
+                        }
+                    });
+                    addLog("Model loaded and cached successfully.");
+                }
+
+                // Step 2: Process the Audio
+                progressFill.style.width = "100%";
+                statusText.innerText = "DECODING AUDIO...";
+                addLog("Decoding and resampling audio to 16kHz...");
+                
+                const audioData = await readAudioData(selectedFile);
+
+                // Step 3: Run the AI
+                statusText.innerText = "AI TRANSLATING...";
+                addLog("Running local neural network. Translating to English...");
+
+                // Forces translation to English if it detects Hindi
+                const output = await transcriber(audioData, {
+                    task: 'translate',
+                });
+
+                // Step 4: Output
+                controlPanel.classList.remove('processing');
+                audioInput.disabled = false;
+                processBtn.innerText = "EXTRACTION COMPLETE";
+                statusText.innerText = "STANDBY";
+                progressContainer.style.display = 'none';
+
+                addLog(`Extraction complete. Zero API keys used.`);
+                addLog(output.text, "transcript");
+
+            } catch (error) {
+                controlPanel.classList.remove('processing');
+                audioInput.disabled = false;
+                processBtn.innerText = "RETRY EXTRACTION";
+                statusText.innerText = "SYSTEM ERROR";
+                progressContainer.style.display = 'none';
+                addLog(`Failure: ${error.message}`, "error");
+            }
         });
 
     </script>
