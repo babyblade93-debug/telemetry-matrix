@@ -83,18 +83,49 @@
         .action-btn:hover:not(:disabled) { background: rgba(165, 243, 252, 0.4); border-color: #00f0ff; color: #0369a1; box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
         .action-btn:disabled { background: #e2e8f0; border-color: #cbd5e1; color: #94a3b8; box-shadow: none; cursor: not-allowed; }
 
+        .progress-bar-container { width: 100%; height: 4px; background: #cbd5e1; margin-top: 10px; display: none; }
+        .progress-fill { height: 100%; width: 0%; background: #0ea5e9; transition: width 0.2s; }
+
+        /* --- NEW: DEDICATED TRANSCRIPT BOX --- */
+        .transcript-display {
+            background: rgba(255, 255, 255, 0.95);
+            border: 2px solid #059669;
+            border-radius: 4px;
+            padding: 20px;
+            margin-top: 10px;
+            display: none; /* Hidden until processing is done */
+            box-shadow: 0 10px 25px rgba(5, 150, 105, 0.15);
+        }
+        .transcript-display-header {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 14px; font-weight: 700; color: #065f46;
+            border-bottom: 2px solid #34d399; padding-bottom: 10px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .copy-btn {
+            background: #059669; color: white; border: none; padding: 5px 10px;
+            font-family: 'JetBrains Mono', monospace; font-size: 10px; font-weight: bold;
+            cursor: pointer; border-radius: 2px; transition: 0.2s;
+        }
+        .copy-btn:hover { background: #047857; }
+        .transcript-text-content {
+            font-size: clamp(14px, 3.5vw, 16px); line-height: 1.6; color: #0f172a;
+            white-space: pre-wrap; font-weight: 500;
+        }
+
+        /* --- TERMINAL LOGS --- */
         .log-container {
             background: #ffffff; border: 1px solid #cbd5e1; border-left: 3px solid #0891b2;
-            height: 350px; padding: 15px; overflow-y: auto; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+            height: 200px; padding: 15px; overflow-y: auto; position: relative; box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
         }
         .log-header { color: #64748b; font-size: 10px; font-weight: 700; margin-bottom: 10px; letter-spacing: 2px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 5px; }
         .sys-log { margin-bottom: 8px; font-size: 11px; color: #64748b; animation: fadeIn 0.2s ease-in; }
         .sys-log span { color: #0ea5e9; font-weight: bold; }
-        .transcript-line { margin-top: 15px; margin-bottom: 10px; line-height: 1.6; font-size: clamp(12px, 3.5vw, 14px); color: #0f172a; animation: fadeIn 0.4s ease-in; border-left: 2px solid #059669; background: rgba(16, 185, 129, 0.05); padding: 10px; }
         @keyframes fadeIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
-        
-        .progress-bar-container { width: 100%; height: 4px; background: #cbd5e1; margin-top: 10px; display: none; }
-        .progress-fill { height: 100%; width: 0%; background: #0ea5e9; transition: width 0.2s; }
+        .log-container::-webkit-scrollbar { width: 6px; }
+        .log-container::-webkit-scrollbar-track { background: #f1f5f9; }
+        .log-container::-webkit-scrollbar-thumb { background: #0ea5e9; border-radius: 3px; }
+
     </style>
 </head>
 <body>
@@ -125,6 +156,14 @@
             <button class="action-btn" id="processBtn" disabled>PROCESS LOCALLY</button>
         </div>
 
+        <div class="transcript-display" id="transcriptDisplayBox">
+            <div class="transcript-display-header">
+                <span>[FINAL TRANSCRIPTION OUTPUT]</span>
+                <button class="copy-btn" id="copyBtn">COPY TEXT</button>
+            </div>
+            <div class="transcript-text-content" id="finalTranscriptText"></div>
+        </div>
+
         <div class="log-container" id="logBox">
             <div class="log-header">SYSTEM_TERMINAL // LOCAL_AI_LOG</div>
         </div>
@@ -133,7 +172,6 @@
     <script type="module">
         import { pipeline, env } from 'https://cdn.jsdelivr.net/npm/@xenova/transformers@2.16.1';
         
-        // Disable local model loading since we are running in a browser
         env.allowLocalModels = false;
 
         const audioInput = document.getElementById('audioInput');
@@ -145,6 +183,11 @@
         const logBox = document.getElementById('logBox');
         const progressContainer = document.getElementById('progressContainer');
         const progressFill = document.getElementById('progressFill');
+        
+        // New Output Elements
+        const transcriptDisplayBox = document.getElementById('transcriptDisplayBox');
+        const finalTranscriptText = document.getElementById('finalTranscriptText');
+        const copyBtn = document.getElementById('copyBtn');
 
         let selectedFile = null;
         let transcriber = null;
@@ -158,6 +201,7 @@
                 
                 processBtn.disabled = false;
                 statusText.innerText = "READY FOR LOCAL EXTRACTION";
+                transcriptDisplayBox.style.display = 'none'; // Hide previous results
             }
         });
 
@@ -171,9 +215,6 @@
             if (type === "sys") {
                 line.className = 'sys-log';
                 line.innerHTML = `<span>${getTime()} SYS:</span> ${text}`;
-            } else if (type === "transcript") {
-                line.className = 'transcript-line';
-                line.innerHTML = `<strong>[LOCAL AI TRANSCRIPT/TRANSLATION]:</strong><br>"${text}"`;
             } else if (type === "error") {
                 line.className = 'sys-log';
                 line.innerHTML = `<span style="color:#ef4444">${getTime()} ERR:</span> <span style="color:#ef4444">${text}</span>`;
@@ -182,12 +223,11 @@
             logBox.scrollTop = logBox.scrollHeight;
         }
 
-        // Decode and resample audio to 16kHz (required by Whisper)
         async function readAudioData(file) {
             const arrayBuffer = await file.arrayBuffer();
             const audioContext = new (window.AudioContext || window.webkitAudioContext)({ sampleRate: 16000 });
             const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-            return audioBuffer.getChannelData(0); // Get raw Float32 data
+            return audioBuffer.getChannelData(0); 
         }
 
         processBtn.addEventListener('click', async () => {
@@ -197,9 +237,9 @@
             audioInput.disabled = true;
             controlPanel.classList.add('processing');
             progressContainer.style.display = 'block';
+            transcriptDisplayBox.style.display = 'none'; // Keep hidden while processing
             
             try {
-                // Step 1: Load the AI Model (Downloads only on first run)
                 if (!transcriber) {
                     statusText.innerText = "LOADING AI MODEL...";
                     addLog("Fetching Xenova/whisper-tiny model... (May take a minute on first run)");
@@ -214,23 +254,20 @@
                     addLog("Model loaded and cached successfully.");
                 }
 
-                // Step 2: Process the Audio
                 progressFill.style.width = "100%";
                 statusText.innerText = "DECODING AUDIO...";
                 addLog("Decoding and resampling audio to 16kHz...");
                 
                 const audioData = await readAudioData(selectedFile);
 
-                // Step 3: Run the AI
                 statusText.innerText = "AI TRANSLATING...";
                 addLog("Running local neural network. Translating to English...");
 
-                // Forces translation to English if it detects Hindi
                 const output = await transcriber(audioData, {
                     task: 'translate',
                 });
 
-                // Step 4: Output
+                // --- UI UPDATE: Push to Dedicated Box ---
                 controlPanel.classList.remove('processing');
                 audioInput.disabled = false;
                 processBtn.innerText = "EXTRACTION COMPLETE";
@@ -238,7 +275,10 @@
                 progressContainer.style.display = 'none';
 
                 addLog(`Extraction complete. Zero API keys used.`);
-                addLog(output.text, "transcript");
+                
+                // Show the large result box and inject text
+                finalTranscriptText.innerText = output.text;
+                transcriptDisplayBox.style.display = 'block';
 
             } catch (error) {
                 controlPanel.classList.remove('processing');
@@ -248,6 +288,14 @@
                 progressContainer.style.display = 'none';
                 addLog(`Failure: ${error.message}`, "error");
             }
+        });
+
+        // Copy functionality
+        copyBtn.addEventListener('click', () => {
+            navigator.clipboard.writeText(finalTranscriptText.innerText).then(() => {
+                copyBtn.innerText = "COPIED!";
+                setTimeout(() => copyBtn.innerText = "COPY TEXT", 2000);
+            });
         });
 
     </script>
