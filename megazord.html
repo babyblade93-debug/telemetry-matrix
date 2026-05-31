@@ -3,151 +3,162 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>S.P.D. Megazord - WebGL Core</title>
+    <title>S.P.D. Megazord - Extreme PBR Engine</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-            background-color: #020617; 
+            margin: 0; padding: 0; overflow: hidden;
+            background-color: #010205; 
             font-family: 'Courier New', Courier, monospace;
         }
         #canvas-container {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            z-index: 1; /* Keep canvas behind HUD */
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;
         }
+        /* Cinematic HUD overlays */
         .hud {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            color: #00f0ff;
-            pointer-events: none;
-            text-shadow: 0 0 10px #00f0ff;
-            z-index: 10; /* Force HUD to top */
-            max-width: 90vw;
+            position: absolute; top: 20px; left: 20px; color: #00f0ff;
+            pointer-events: none; text-shadow: 0 0 15px rgba(0, 240, 255, 0.8); z-index: 10;
         }
-        /* Make text responsive for mobile */
-        .hud h1 { margin: 0; font-size: clamp(16px, 4vw, 24px); letter-spacing: 2px; font-weight: 900; }
-        .hud p { margin: 5px 0 0 0; font-size: clamp(9px, 2.5vw, 12px); font-weight: bold; }
+        .hud h1 { margin: 0; font-size: clamp(18px, 5vw, 28px); letter-spacing: 4px; font-weight: 900; }
+        .hud p { margin: 5px 0 0 0; font-size: clamp(10px, 2.5vw, 12px); font-weight: bold; letter-spacing: 1px; color: #fff; }
+        
+        .scanline {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+            background-size: 100% 4px; z-index: 9; pointer-events: none; opacity: 0.4;
+        }
+        .vignette {
+            position: absolute; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: radial-gradient(circle, rgba(0,0,0,0) 40%, rgba(1,2,5,0.9) 100%);
+            z-index: 8; pointer-events: none;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
 
+    <div class="scanline"></div>
+    <div class="vignette"></div>
+
     <div class="hud">
-        <h1>DELTA COMMAND CORE</h1>
-        <p>SYSTEM: ONLINE // RENDER: ACTIVE</p>
-        <p>TARGET: SPD MEGAZORD</p>
+        <h1>EXTREME_ENGINE_v2</h1>
+        <p>PBR SHADERS: ONLINE // ATMOSPHERE: DENSE</p>
+        <p>TARGET: S.P.D. DELTA COMMAND</p>
     </div>
 
     <div id="canvas-container"></div>
 
     <script>
-        // 1. SCENE SETUP
+        // 1. SCENE & DENSE ATMOSPHERE
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x020617, 0.03); 
+        scene.background = new THREE.Color(0x010205);
+        scene.fog = new THREE.FogExp2(0x010205, 0.04); 
 
-        // 2. RESPONSIVE CAMERA
+        // 2. CINEMATIC CAMERA
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
         
-        // 3. RENDERER
-        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        // 3. RENDERER (Max settings for realism)
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, powerPreference: "high-performance" });
         renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2)); // Optimizes for S25 display
         renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        renderer.toneMapping = THREE.ACESFilmicToneMapping; // Cinematic color grading
+        renderer.toneMappingExposure = 1.2;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // 4. STUDIO LIGHTING (Fixed for bright metal)
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Brighter base light
+        // 4. COMPLEX LIGHTING RIG
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.2); // Low base light
         scene.add(ambientLight);
 
-        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2); // Sky/Ground reflection
-        scene.add(hemiLight);
-
-        const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        const mainLight = new THREE.DirectionalLight(0xffddaa, 2.5); // Warm key light
         mainLight.position.set(10, 20, 15);
         mainLight.castShadow = true;
+        mainLight.shadow.bias = -0.001;
+        mainLight.shadow.mapSize.width = 2048;
+        mainLight.shadow.mapSize.height = 2048;
         scene.add(mainLight);
 
-        const rimLight = new THREE.PointLight(0x00f0ff, 3, 50); 
-        rimLight.position.set(-10, 5, -10);
+        const rimLight = new THREE.SpotLight(0x00f0ff, 5); // Intense cyan rim light
+        rimLight.position.set(-15, 10, -15);
+        rimLight.lookAt(0, 0, 0);
         scene.add(rimLight);
 
-        // Grid Floor
-        const gridHelper = new THREE.GridHelper(50, 50, 0x00f0ff, 0x111111);
-        gridHelper.position.y = -6;
-        scene.add(gridHelper);
+        const fillLight = new THREE.PointLight(0x4444ff, 1.5, 50); // Cool bottom fill
+        fillLight.position.set(0, -5, 5);
+        scene.add(fillLight);
 
-        // 5. MEGAZORD CONSTRUCTION
-        const megazord = new THREE.Group();
-        
-        // Shiny Metal Materials
-        const getMetalMaterial = (hexColor) => new THREE.MeshStandardMaterial({ 
+        // 5. PBR MATERIALS (Clearcoat Automotive Paint style)
+        const getPBRMaterial = (hexColor) => new THREE.MeshPhysicalMaterial({ 
             color: hexColor, 
-            metalness: 0.6, 
-            roughness: 0.3
+            metalness: 0.9, 
+            roughness: 0.2,
+            clearcoat: 1.0,         // Simulates car paint clearcoat
+            clearcoatRoughness: 0.1,
+            reflectivity: 1.0
         });
 
-        const matRed = getMetalMaterial(0xee1111);   // SPD 1
-        const matBlue = getMetalMaterial(0x1144ff);  // SPD 2
-        const matGreen = getMetalMaterial(0x11cc11); // SPD 3
-        const matYellow = getMetalMaterial(0xffcc00);// SPD 4
-        const matWhite = getMetalMaterial(0xeeeeee); // SPD 5 
-        const matBlack = getMetalMaterial(0x222222); // Joints
+        const matRed = getPBRMaterial(0xaa0000);   
+        const matBlue = getPBRMaterial(0x0022aa);  
+        const matGreen = getPBRMaterial(0x008800); 
+        const matYellow = getPBRMaterial(0xddaa00);
+        const matWhite = getPBRMaterial(0xcccccc); 
+        const matBlack = getPBRMaterial(0x111111); 
         
-        // Glowing Materials
-        const matVisor = new THREE.MeshStandardMaterial({ color: 0x00ff00, emissive: 0x00ff00, emissiveIntensity: 1.5 });
-        const matBadge = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 1 });
+        const matVisor = new THREE.MeshStandardMaterial({ color: 0x00ff00, emissive: 0x00ff00, emissiveIntensity: 2 });
+        const matBadge = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 2 });
 
-        // A. Torso 
-        const torsoGeo = new THREE.BoxGeometry(3, 4, 2);
-        const torso = new THREE.Mesh(torsoGeo, matRed);
-        torso.castShadow = true;
+        // 6. BUILD MEGAZORD
+        const megazord = new THREE.Group();
+        
+        // Torso 
+        const torso = new THREE.Mesh(new THREE.BoxGeometry(3, 4, 2), matRed);
+        torso.castShadow = true; torso.receiveShadow = true;
         megazord.add(torso);
 
-        // Chest Plate (Glowing Badge)
-        const chestGeo = new THREE.BoxGeometry(1.5, 1.5, 2.2);
-        const chest = new THREE.Mesh(chestGeo, matBadge);
+        // Chest Plate Detail
+        const chest = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.8, 2.2), matBlack);
         chest.position.y = 0.5;
         megazord.add(chest);
+        
+        const badge = new THREE.Mesh(new THREE.BoxGeometry(0.8, 0.8, 2.3), matBadge);
+        badge.position.y = 0.5;
+        megazord.add(badge);
 
-        // B. Head
-        const headGeo = new THREE.BoxGeometry(1.2, 1.2, 1.2);
-        const head = new THREE.Mesh(headGeo, matBlack);
+        // Head & Visor
+        const head = new THREE.Mesh(new THREE.BoxGeometry(1.2, 1.2, 1.2), matBlack);
         head.position.y = 2.6;
         head.castShadow = true;
         megazord.add(head);
 
-        // Visor (Glowing)
-        const visorGeo = new THREE.BoxGeometry(1.3, 0.3, 1.3);
-        const visor = new THREE.Mesh(visorGeo, matVisor);
+        const visor = new THREE.Mesh(new THREE.BoxGeometry(1.3, 0.3, 1.3), matVisor);
         visor.position.y = 2.7;
         megazord.add(visor);
 
-        // C. Right Arm (Blue)
-        const armGeo = new THREE.BoxGeometry(1.2, 3.5, 1.2);
+        // Arms (Joints added for mechanical look)
+        const armGeo = new THREE.BoxGeometry(1.2, 3, 1.2);
+        const shoulderGeo = new THREE.BoxGeometry(1.4, 1.4, 1.4);
+        
+        const rightShoulder = new THREE.Mesh(shoulderGeo, matBlack);
+        rightShoulder.position.set(-2.2, 1.5, 0);
         const rightArm = new THREE.Mesh(armGeo, matBlue);
-        rightArm.position.set(-2.2, 0.5, 0);
-        rightArm.castShadow = true;
-        megazord.add(rightArm);
+        rightArm.position.set(0, -1.5, 0);
+        rightShoulder.add(rightArm);
+        megazord.add(rightShoulder);
 
-        // D. Left Arm (Green)
+        const leftShoulder = new THREE.Mesh(shoulderGeo, matBlack);
+        leftShoulder.position.set(2.2, 1.5, 0);
         const leftArm = new THREE.Mesh(armGeo, matGreen);
-        leftArm.position.set(2.2, 0.5, 0);
-        leftArm.castShadow = true;
-        megazord.add(leftArm);
+        leftArm.position.set(0, -1.5, 0);
+        leftShoulder.add(leftArm);
+        megazord.add(leftShoulder);
 
-        // E. Right Leg (Yellow)
+        // Legs
         const legGeo = new THREE.BoxGeometry(1.4, 4, 1.4);
         const rightLeg = new THREE.Mesh(legGeo, matYellow);
         rightLeg.position.set(-0.8, -4, 0);
         rightLeg.castShadow = true;
         megazord.add(rightLeg);
 
-        // F. Left Leg (White)
         const leftLeg = new THREE.Mesh(legGeo, matWhite);
         leftLeg.position.set(0.8, -4, 0);
         leftLeg.castShadow = true;
@@ -156,34 +167,46 @@
         megazord.position.y = 1;
         scene.add(megazord);
 
-        // 6. RESPONSIVE SIZING & CAMERA ADJUSTMENT
+        // 7. PARTICLE SYSTEM (Floating Sparks/Dust)
+        const particleCount = 300;
+        const particlesGeo = new THREE.BufferGeometry();
+        const posArray = new Float32Array(particleCount * 3);
+        
+        for(let i = 0; i < particleCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 40; // Spread across scene
+        }
+        particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        const particlesMat = new THREE.PointsMaterial({
+            size: 0.15,
+            color: 0xffaa00,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+        const particleMesh = new THREE.Points(particlesGeo, particlesMat);
+        scene.add(particleMesh);
+
+        // 8. RESPONSIVE SIZING & CAMERA ADJUSTMENT
         function updateCamera() {
             camera.aspect = window.innerWidth / window.innerHeight;
-            
-            // If on a narrow phone screen, pull the camera way back
             if (window.innerWidth < 600) {
-                camera.position.set(0, 3, 35);
+                camera.position.set(0, 2, 30);
             } else {
-                camera.position.set(0, 5, 20); // Desktop zoom
+                camera.position.set(0, 2, 20); 
             }
-            
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
-        
         window.addEventListener('resize', updateCamera);
-        updateCamera(); // Run once on load
+        updateCamera(); 
 
-        // 7. ANIMATION
-        let mouseX = 0;
-        let mouseY = 0;
+        // 9. ANIMATION & PARALLAX TRACKING
+        let mouseX = 0; let mouseY = 0;
         
         document.addEventListener('mousemove', (event) => {
             mouseX = (event.clientX - window.innerWidth / 2);
             mouseY = (event.clientY - window.innerHeight / 2);
         });
-
-        // Touch support for mobile interaction
         document.addEventListener('touchmove', (event) => {
             if(event.touches.length > 0) {
                 mouseX = (event.touches[0].clientX - window.innerWidth / 2);
@@ -197,14 +220,24 @@
             requestAnimationFrame(animate);
             const elapsedTime = clock.getElapsedTime();
 
-            // Hover breathing effect
-            megazord.position.y = 1 + Math.sin(elapsedTime * 2) * 0.3;
+            // Hover breathing
+            megazord.position.y = 1 + Math.sin(elapsedTime * 1.5) * 0.4;
 
-            // Tracking
+            // Particles floating upwards
+            particleMesh.rotation.y = elapsedTime * 0.05;
+            particleMesh.position.y = (elapsedTime * 0.5) % 10 - 5;
+
+            // Tracking and Parallax Camera
             let targetX = mouseX * 0.001;
             let targetY = mouseY * 0.001;
+            
             megazord.rotation.y += 0.05 * (targetX - megazord.rotation.y);
             megazord.rotation.x += 0.05 * (targetY - megazord.rotation.x);
+
+            // Subtle camera sway for cinematic feel
+            camera.position.x += (mouseX * 0.005 - camera.position.x) * 0.05;
+            camera.position.y += (-mouseY * 0.005 - camera.position.y) * 0.05;
+            camera.lookAt(0, 1, 0);
 
             renderer.render(scene, camera);
         }
