@@ -26,7 +26,7 @@
 
         .neural-container {
             width: 100%;
-            max-width: 1200px; /* EXPANDED FOR DESKTOP SCREENS */
+            max-width: 1200px; 
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(10px);
             border: 1px solid #67e8f9;
@@ -128,7 +128,7 @@
             background: #ffffff;
             border: 2px solid #22d3ee;
             border-radius: 12px;
-            width: 90%; /* Wide on mobile */
+            width: 90%; 
             max-width: 450px;
             box-shadow: 0 4px 6px rgba(6, 182, 212, 0.1);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -138,7 +138,7 @@
 
         /* --- DESKTOP WIDESCREEN ADAPTATION --- */
         @media (min-width: 768px) {
-            .menu-node { width: 42%; max-width: none; } /* Shrinks width so they fit side-by-side */
+            .menu-node { width: 42%; max-width: none; } 
             
             /* Pushes odd menus to the LEFT */
             .neural-branch:nth-child(odd) { align-items: flex-end; padding-right: 54%; }
@@ -206,8 +206,8 @@
             <div class="core-node-container">
                 <div class="core-pulse"><span class="core-icon">🌐</span></div>
             </div>
-            <h1>System Architecture map</h1>
-            <p>ACTIVE ROUTING // 300MS UPLINK</p>
+            <h1>System Architecture Map</h1>
+            <p>ACTIVE ROUTING // FULL DATABASE SYNCED</p>
         </div>
         
         <div class="neural-tree" id="render-target"></div>
@@ -216,20 +216,38 @@
 
     <script>
         // =====================================================================
-        // YOUR EXACT GOOGLE SITES DATA STRUCTURE
+        // UPGRADED GOOGLE SITES DATA STRUCTURE
         // =====================================================================
         const portalStructure = [
             {
                 menuName: "Home",
                 icon: "🏠",
                 dropdowns: [
-                    { name: "Advanced Excel and Gsheets", link: "index.html" }
+                    { name: "Portal Dashboard", link: "#" }
+                ]
+            },
+            {
+                menuName: "Formulas",
+                icon: "📊",
+                dropdowns: [
+                    { name: "Advanced Excel and G-Sheets", link: "excel-matrix.html" },
+                    { name: "Advanced Word", link: "docs-matrix.html" },
+                    { name: "PowerPoint", link: "ppt-matrix.html" }
+                ]
+            },
+            {
+                menuName: "Automation",
+                icon: "⚙️",
+                dropdowns: [
+                    { name: "Apps Script and Triggers", link: "appscript-matrix.html" }
                 ]
             },
             {
                 menuName: "Sitemap",
                 icon: "🗺️",
-                dropdowns: [] 
+                dropdowns: [
+                    { name: "Current Directory (Active)", link: "sitemap.html" }
+                ]
             }
         ];
 
