@@ -9,24 +9,30 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #020617; /* Deep space background */
+            background-color: #020617; 
             font-family: 'Courier New', Courier, monospace;
         }
         #canvas-container {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100vw;
             height: 100vh;
-            display: block;
+            z-index: 1; /* Keep canvas behind HUD */
         }
         .hud {
             position: absolute;
-            top: 20px;
-            left: 20px;
+            top: 15px;
+            left: 15px;
             color: #00f0ff;
             pointer-events: none;
             text-shadow: 0 0 10px #00f0ff;
+            z-index: 10; /* Force HUD to top */
+            max-width: 90vw;
         }
-        .hud h1 { margin: 0; font-size: 24px; letter-spacing: 2px; }
-        .hud p { margin: 5px 0 0 0; font-size: 12px; font-weight: bold; }
+        /* Make text responsive for mobile */
+        .hud h1 { margin: 0; font-size: clamp(16px, 4vw, 24px); letter-spacing: 2px; font-weight: 900; }
+        .hud p { margin: 5px 0 0 0; font-size: clamp(9px, 2.5vw, 12px); font-weight: bold; }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
@@ -34,78 +40,77 @@
 
     <div class="hud">
         <h1>DELTA COMMAND CORE</h1>
-        <p>SYSTEM: ONLINE // 3D RENDER ENGINE: ACTIVE</p>
-        <p>TARGET: SPD MEGAZORD (STYLIZED)</p>
+        <p>SYSTEM: ONLINE // RENDER: ACTIVE</p>
+        <p>TARGET: SPD MEGAZORD</p>
     </div>
 
     <div id="canvas-container"></div>
 
     <script>
-        // ==========================================
         // 1. SCENE SETUP
-        // ==========================================
         const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x020617, 0.05); // Adds deep sci-fi fog
+        scene.fog = new THREE.FogExp2(0x020617, 0.03); 
 
+        // 2. RESPONSIVE CAMERA
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-        camera.position.set(0, 5, 20);
-
+        
+        // 3. RENDERER
         const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.shadowMap.enabled = true;
-        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-        // ==========================================
-        // 2. LIGHTING (Cinematic & Realistic)
-        // ==========================================
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        // 4. STUDIO LIGHTING (Fixed for bright metal)
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // Brighter base light
         scene.add(ambientLight);
 
-        const mainLight = new THREE.DirectionalLight(0xffffff, 1);
-        mainLight.position.set(10, 20, 10);
+        const hemiLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1.2); // Sky/Ground reflection
+        scene.add(hemiLight);
+
+        const mainLight = new THREE.DirectionalLight(0xffffff, 1.5);
+        mainLight.position.set(10, 20, 15);
         mainLight.castShadow = true;
         scene.add(mainLight);
 
-        const rimLight = new THREE.PointLight(0x00f0ff, 2, 50); // Cyan rim light
+        const rimLight = new THREE.PointLight(0x00f0ff, 3, 50); 
         rimLight.position.set(-10, 5, -10);
         scene.add(rimLight);
 
         // Grid Floor
         const gridHelper = new THREE.GridHelper(50, 50, 0x00f0ff, 0x111111);
-        gridHelper.position.y = -5;
+        gridHelper.position.y = -6;
         scene.add(gridHelper);
 
-        // ==========================================
-        // 3. MEGAZORD CONSTRUCTION (Procedural Mesh)
-        // ==========================================
+        // 5. MEGAZORD CONSTRUCTION
         const megazord = new THREE.Group();
         
-        // PBR Material Settings for Realistic Metal
+        // Shiny Metal Materials
         const getMetalMaterial = (hexColor) => new THREE.MeshStandardMaterial({ 
             color: hexColor, 
-            metalness: 0.85, 
-            roughness: 0.2,
-            envMapIntensity: 1.0
+            metalness: 0.6, 
+            roughness: 0.3
         });
 
-        const matRed = getMetalMaterial(0xcc0000);   // SPD 1
-        const matBlue = getMetalMaterial(0x0044ff);  // SPD 2
-        const matGreen = getMetalMaterial(0x00cc00); // SPD 3
+        const matRed = getMetalMaterial(0xee1111);   // SPD 1
+        const matBlue = getMetalMaterial(0x1144ff);  // SPD 2
+        const matGreen = getMetalMaterial(0x11cc11); // SPD 3
         const matYellow = getMetalMaterial(0xffcc00);// SPD 4
-        const matWhite = getMetalMaterial(0xeeeeee); // SPD 5 (Using white for Pink/White leg)
+        const matWhite = getMetalMaterial(0xeeeeee); // SPD 5 
         const matBlack = getMetalMaterial(0x222222); // Joints
-        const matVisor = new THREE.MeshBasicMaterial({ color: 0x00ff00 }); // Glowing Visor
+        
+        // Glowing Materials
+        const matVisor = new THREE.MeshStandardMaterial({ color: 0x00ff00, emissive: 0x00ff00, emissiveIntensity: 1.5 });
+        const matBadge = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x00f0ff, emissiveIntensity: 1 });
 
-        // A. Torso (Red Delta Runner 1)
+        // A. Torso 
         const torsoGeo = new THREE.BoxGeometry(3, 4, 2);
         const torso = new THREE.Mesh(torsoGeo, matRed);
         torso.castShadow = true;
         megazord.add(torso);
 
-        // Chest Plate Detail
-        const chestGeo = new THREE.BoxGeometry(2, 1.5, 2.2);
-        const chest = new THREE.Mesh(chestGeo, matBlack);
+        // Chest Plate (Glowing Badge)
+        const chestGeo = new THREE.BoxGeometry(1.5, 1.5, 2.2);
+        const chest = new THREE.Mesh(chestGeo, matBadge);
         chest.position.y = 0.5;
         megazord.add(chest);
 
@@ -122,72 +127,82 @@
         visor.position.y = 2.7;
         megazord.add(visor);
 
-        // C. Right Arm (Blue Delta Runner 2)
+        // C. Right Arm (Blue)
         const armGeo = new THREE.BoxGeometry(1.2, 3.5, 1.2);
         const rightArm = new THREE.Mesh(armGeo, matBlue);
         rightArm.position.set(-2.2, 0.5, 0);
         rightArm.castShadow = true;
         megazord.add(rightArm);
 
-        // D. Left Arm (Green Delta Runner 3)
+        // D. Left Arm (Green)
         const leftArm = new THREE.Mesh(armGeo, matGreen);
         leftArm.position.set(2.2, 0.5, 0);
         leftArm.castShadow = true;
         megazord.add(leftArm);
 
-        // E. Right Leg (Yellow Delta Runner 4)
+        // E. Right Leg (Yellow)
         const legGeo = new THREE.BoxGeometry(1.4, 4, 1.4);
         const rightLeg = new THREE.Mesh(legGeo, matYellow);
         rightLeg.position.set(-0.8, -4, 0);
         rightLeg.castShadow = true;
         megazord.add(rightLeg);
 
-        // F. Left Leg (White/Pink Delta Runner 5)
+        // F. Left Leg (White)
         const leftLeg = new THREE.Mesh(legGeo, matWhite);
         leftLeg.position.set(0.8, -4, 0);
         leftLeg.castShadow = true;
         megazord.add(leftLeg);
 
-        // Hover positioning
         megazord.position.y = 1;
         scene.add(megazord);
 
-        // ==========================================
-        // 4. ANIMATION & INTERACTION
-        // ==========================================
-        let mouseX = 0;
-        let mouseY = 0;
-        let targetX = 0;
-        let targetY = 0;
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
-
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX - windowHalfX);
-            mouseY = (event.clientY - windowHalfY);
-        });
-
-        // Handle window resize
-        window.addEventListener('resize', () => {
+        // 6. RESPONSIVE SIZING & CAMERA ADJUSTMENT
+        function updateCamera() {
             camera.aspect = window.innerWidth / window.innerHeight;
+            
+            // If on a narrow phone screen, pull the camera way back
+            if (window.innerWidth < 600) {
+                camera.position.set(0, 3, 35);
+            } else {
+                camera.position.set(0, 5, 20); // Desktop zoom
+            }
+            
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+        
+        window.addEventListener('resize', updateCamera);
+        updateCamera(); // Run once on load
+
+        // 7. ANIMATION
+        let mouseX = 0;
+        let mouseY = 0;
+        
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - window.innerWidth / 2);
+            mouseY = (event.clientY - window.innerHeight / 2);
+        });
+
+        // Touch support for mobile interaction
+        document.addEventListener('touchmove', (event) => {
+            if(event.touches.length > 0) {
+                mouseX = (event.touches[0].clientX - window.innerWidth / 2);
+                mouseY = (event.touches[0].clientY - window.innerHeight / 2);
+            }
         });
 
         const clock = new THREE.Clock();
 
         function animate() {
             requestAnimationFrame(animate);
-
             const elapsedTime = clock.getElapsedTime();
 
             // Hover breathing effect
-            megazord.position.y = 1 + Math.sin(elapsedTime * 2) * 0.2;
+            megazord.position.y = 1 + Math.sin(elapsedTime * 2) * 0.3;
 
-            // Smooth mouse tracking (Megazord looks at your cursor)
-            targetX = mouseX * 0.001;
-            targetY = mouseY * 0.001;
-            
+            // Tracking
+            let targetX = mouseX * 0.001;
+            let targetY = mouseY * 0.001;
             megazord.rotation.y += 0.05 * (targetX - megazord.rotation.y);
             megazord.rotation.x += 0.05 * (targetY - megazord.rotation.x);
 
