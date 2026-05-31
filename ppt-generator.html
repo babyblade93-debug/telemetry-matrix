@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guidance Portal - PPT Generator</title>
+    <script src="https://cdn.jsdelivr.net/gh/gitbrent/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        html, body { 
+            width: 100%; min-height: 100%; 
+            background-color: #ecfeff; 
+            background-image: radial-gradient(circle at 50% 10%, #fff 0%, #ecfeff 100%);
+            color: #0f172a; 
+            font-family: 'JetBrains Mono', monospace; 
+            display: flex; justify-content: center; align-items: flex-start;
+            padding: 20px 10px;
+        }
+
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
+            background-size: 30px 30px; z-index: -1; pointer-events: none;
+        }
+
+        .engine-container { width: 100%; max-width: 800px; z-index: 10; display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.8s ease-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .system-header {
+            text-align: center; padding: 20px 10px;
+            border-top: 2px solid #00f0ff; border-bottom: 2px solid #00f0ff;
+            background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            position: relative; overflow: hidden;
+        }
+
+        .system-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: clamp(20px, 6vw, 32px); font-weight: 900; color: #083344; 
+            letter-spacing: 4px; text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+        }
+        .system-header p {
+            color: #0891b2; font-size: clamp(10px, 3vw, 14px); font-weight: 700; letter-spacing: 3px; margin-top: 8px;
+        }
+
+        .data-card {
+            background: rgba(255, 255, 255, 0.85); border: 1px solid #0891b2; padding: 25px;
+            display: flex; flex-direction: column; gap: 15px; backdrop-filter: blur(8px);
+            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.1), inset 0 0 15px rgba(6, 182, 212, 0.05);
+            border-left: 4px solid #0ea5e9; border-radius: 4px;
+        }
+
+        .card-title {
+            font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; color: #0369a1; 
+            letter-spacing: 2px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
+        .input-group label { font-size: 11px; font-weight: bold; color: #0369a1; letter-spacing: 1px; text-transform: uppercase; }
+        
+        input[type="text"], textarea {
+            width: 100%; padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: 13px;
+            background: rgba(236, 254, 255, 0.5); border: 1px solid #38bdf8; color: #0f172a;
+            border-radius: 2px; outline: none; transition: 0.2s;
+        }
+        input[type="text"]:focus, textarea:focus { border-color: #00f0ff; box-shadow: 0 0 8px rgba(0, 240, 255, 0.4); background: #fff; }
+        textarea { resize: vertical; min-height: 80px; }
+
+        #slides-container { display: flex; flex-direction: column; gap: 15px; }
+        .slide-block {
+            background: rgba(14, 165, 233, 0.05); border: 1px dashed #0ea5e9; padding: 15px;
+            border-radius: 4px; position: relative; animation: fadeIn 0.3s ease-out;
+        }
+        .slide-header { font-size: 12px; font-weight: bold; color: #083344; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 5px; display: flex; justify-content: space-between;}
+        
+        .remove-btn { color: #ef4444; cursor: pointer; font-size: 10px; font-weight: bold; }
+        .remove-btn:hover { text-decoration: underline; }
+
+        .btn {
+            padding: 12px 20px; font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: bold;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer; border: none; border-radius: 2px;
+            transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .btn-add { background: rgba(14, 165, 233, 0.1); color: #0284c7; border: 1px solid #0284c7; }
+        .btn-add:hover { background: #0284c7; color: #fff; box-shadow: 0 0 15px rgba(2, 132, 199, 0.4); }
+        
+        .btn-compile { background: #00f0ff; color: #083344; box-shadow: 0 0 15px rgba(0, 240, 255, 0.4); border: 1px solid #083344; margin-top: 10px; }
+        .btn-compile:hover { background: #083344; color: #00f0ff; box-shadow: 0 0 20px rgba(0, 240, 255, 0.6); }
+
+        .sys-footer { text-align: center; margin-top: 20px; font-size: 10px; color: #64748b; letter-spacing: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="engine-container">
+        
+        <div class="system-header">
+            <h1>PPT_GENERATOR</h1>
+            <p>OPERATIONAL DECK GENERATOR // V1.0</p>
+        </div>
+
+        <div class="data-card">
+            <div class="card-title"><span class="card-icon">📂</span> [ DECK METADATA ]</div>
+            
+            <div class="input-group">
+                <label>Presentation Title</label>
+                <input type="text" id="deck-title" placeholder="e.g., Weekly QA Report" value="Operational Telemetry Deck">
+            </div>
+            
+            <div class="input-group">
+                <label>Author / Lead</label>
+                <input type="text" id="deck-author" value="Subhasis Roy">
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="card-title"><span class="card-icon">📝</span> [ SLIDE MATRIX ]</div>
+            
+            <div id="slides-container">
+                <div class="slide-block" id="slide-1">
+                    <div class="slide-header"><span>SLIDE 01</span></div>
+                    <div class="input-group">
+                        <label>Slide Heading</label>
+                        <input type="text" class="slide-title-input" placeholder="Main talking point...">
+                    </div>
+                    <div class="input-group">
+                        <label>Slide Content (Bullet Points)</label>
+                        <textarea class="slide-content-input" placeholder="Enter text here. Use new lines for separate bullet points."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <button class="btn btn-add" onclick="addSlideBlock()">+ ADD NEW SLIDE</button>
+            <button class="btn btn-compile" onclick="compilePPT()">⚙️ [ EXECUTE PPTX COMPILE ]</button>
+        </div>
+
+        <div class="sys-footer">
+            [ DECK GENERATOR // AWAITING INPUT ]
+        </div>
+
+    </div>
+
+    <script>
+        let slideCount = 1;
+
+        function addSlideBlock() {
+            slideCount++;
+            const container = document.getElementById('slides-container');
+            
+            const slideHTML = `
+                <div class="slide-block" id="slide-${slideCount}">
+                    <div class="slide-header">
+                        <span>SLIDE ${slideCount.toString().padStart(2, '0')}</span>
+                        <span class="remove-btn" onclick="removeSlide('slide-${slideCount}')">[X] REMOVE</span>
+                    </div>
+                    <div class="input-group">
+                        <label>Slide Heading</label>
+                        <input type="text" class="slide-title-input" placeholder="Main talking point...">
+                    </div>
+                    <div class="input-group">
+                        <label>Slide Content (Bullet Points)</label>
+                        <textarea class="slide-content-input" placeholder="Enter text here. Use new lines for separate bullet points."></textarea>
+                    </div>
+                </div>
+            `;
+            container.insertAdjacentHTML('beforeend', slideHTML);
+        }
+
+        function removeSlide(slideId) {
+            const slide = document.getElementById(slideId);
+            if (slide) {
+                slide.remove();
+            }
+        }
+
+        function compilePPT() {
+            let pptx = new PptxGenJS();
+            
+            const title = document.getElementById('deck-title').value || "Guidance Portal Deck";
+            const author = document.getElementById('deck-author').value || "Lead Architect";
+            
+            pptx.author = author;
+            pptx.company = 'Guidance Portal Operations';
+            pptx.title = title;
+
+            let masterSlide = pptx.addSlide();
+            masterSlide.background = { color: "020617" }; 
+            masterSlide.addText(title, { x: 1, y: 2, w: '80%', h: 1, fontSize: 36, bold: true, color: "00f0ff", align: "center" });
+            masterSlide.addText(`Prepared by: ${author}`, { x: 1, y: 3.2, w: '80%', h: 0.5, fontSize: 16, color: "cbd5e1", align: "center" });
+
+            const slideBlocks = document.querySelectorAll('.slide-block');
+            
+            slideBlocks.forEach((block) => {
+                const sTitle = block.querySelector('.slide-title-input').value;
+                const sContentRaw = block.querySelector('.slide-content-input').value;
+                
+                let newSlide = pptx.addSlide();
+                newSlide.background = { color: "ffffff" };
+                
+                newSlide.addText(sTitle || "Data Node", { 
+                    x: 0.5, y: 0.5, w: '90%', h: 0.8, 
+                    fontSize: 28, bold: true, color: "083344", 
+                    border: { type: 'bottom', pt: 2, color: '00f0ff' } 
+                });
+
+                if (sContentRaw) {
+                    const bullets = sContentRaw.split('\n').filter(line => line.trim() !== '');
+                    const formattedBullets = bullets.map(text => ({ text: text, options: { bullet: true } }));
+                    
+                    newSlide.addText(formattedBullets, { 
+                        x: 0.5, y: 1.5, w: '90%', h: 3.5, 
+                        fontSize: 18, color: "334155", 
+                        valign: "top", margin: 10 
+                    });
+                }
+            });
+
+            pptx.writeFile({ fileName: `${title.replace(/\s+/g, '_')}_Matrix.pptx` });
+        }
+    </script>
+</body>
+</html>
+
