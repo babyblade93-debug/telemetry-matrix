@@ -3,225 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guidance Portal - AI Dossier</title>
+    <title>Guidance Portal - About Node</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
         
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
+        * { box-sizing: border-box; margin: 0; padding: 0; cursor: default; }
         
         html, body { 
             width: 100%; min-height: 100%; 
-            /* ⚪ NEW LIGHT CYNIC THEME BG ⚪ */
             background-color: #ecfeff; 
             background-image: radial-gradient(circle at 50% 10%, #fff 0%, #ecfeff 100%);
             color: #0f172a; 
             font-family: 'JetBrains Mono', monospace; 
-            overflow-x: hidden;
             display: flex; justify-content: center; align-items: flex-start;
             padding: 20px 10px;
         }
 
-        /* --- HOLOGRAPHIC SCANNER BACKGROUND --- */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(rgba(6, 182, 212, 0.1) 1px, transparent 1px),
                         linear-gradient(90deg, rgba(6, 182, 212, 0.1) 1px, transparent 1px);
             background-size: 30px 30px; z-index: 1; pointer-events: none;
         }
-        
-        .scanner-beam {
-            position: fixed; top: -100%; left: 0; width: 100%; height: 200px;
-            background: linear-gradient(to bottom, transparent, rgba(6, 182, 212, 0.2), transparent);
-            z-index: 2; pointer-events: none;
-            animation: scanScreen 6s infinite linear;
-        }
-        @keyframes scanScreen { 0% { top: -50%; } 100% { top: 150%; } }
 
-        /* --- MAIN CONTAINER & SCALE ANIMATION --- */
-        .ai-matrix-container {
-            width: 100%; max-width: 900px; z-index: 10;
-            display: flex; flex-direction: column; gap: 20px;
-            opacity: 0; transform: scale(0.8) translateY(30px);
-            animation: materializeMatrix 1.2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
-        }
-        @keyframes materializeMatrix {
-            to { opacity: 1; transform: scale(1) translateY(0); }
-        }
+        .engine-container { width: 100%; max-width: 800px; z-index: 10; display: flex; flex-direction: column; gap: 20px; animation: fadeIn 0.8s ease-out; }
 
-        /* --- TACTICAL AI HEADER --- */
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         .system-header {
             text-align: center; padding: 20px 10px;
             border-top: 2px solid #00f0ff; border-bottom: 2px solid #00f0ff;
             background: rgba(0, 240, 255, 0.1);
-            position: relative; box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
-            width: 100%;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3);
+            position: relative; overflow: hidden;
         }
         
-        /* 🚨 RESPONSIVE FIX: Fluid typography and word-wrap applied 🚨 */
+        .system-header::after {
+            content: ''; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+            animation: scanline 3s infinite linear;
+        }
+        @keyframes scanline { 0% { left: -100%; } 100% { left: 200%; } }
+
         .system-header h1 {
-            font-family: 'Orbitron', sans-serif; 
-            font-size: clamp(18px, 6vw, 32px); 
-            font-weight: 900;
-            /* Text now dark cyan blue for contrast */
-            color: #083344; 
-            letter-spacing: clamp(1px, 2vw, 5px); 
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-            animation: textGlitch 3s infinite;
-            word-wrap: break-word;
+            font-family: 'Orbitron', sans-serif; font-size: clamp(20px, 6vw, 32px); font-weight: 900; color: #083344; 
+            letter-spacing: 4px; text-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
         }
         .system-header p {
-            color: #0891b2; 
-            font-size: clamp(8px, 2.5vw, 12px); 
-            font-weight: 700; 
-            letter-spacing: clamp(1px, 1vw, 3px); 
-            margin-top: 8px;
+            color: #0891b2; font-size: clamp(10px, 3vw, 14px); font-weight: 700; letter-spacing: 3px; margin-top: 8px;
         }
 
-        /* --- DOSSIER GRID --- */
-        .grid-core { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .grid-core { grid-template-columns: 1fr 1.5fr; } }
-
-        /* --- PROFILE HUD (LEFT) --- */
-        .hud-panel {
-            background: rgba(255, 255, 255, 0.8);
-            border: 1px solid #0891b2;
-            padding: 20px; position: relative;
-            backdrop-filter: blur(5px);
+        .data-card {
+            background: rgba(255, 255, 255, 0.85); border: 1px solid #0891b2; padding: 25px;
+            display: flex; flex-direction: column; gap: 15px; backdrop-filter: blur(8px);
             box-shadow: 0 10px 25px rgba(6, 182, 212, 0.1), inset 0 0 15px rgba(6, 182, 212, 0.05);
-            transition: all 0.3s ease;
-            width: 100%;
+            border-left: 4px solid #0ea5e9; transition: transform 0.2s, box-shadow 0.2s;
         }
-        .hud-panel:hover { border-color: #00f0ff; box-shadow: inset 0 0 20px rgba(0, 240, 255, 0.1), 0 0 20px rgba(0, 240, 255, 0.2); }
+        .data-card:hover { transform: translateX(5px); box-shadow: 0 10px 25px rgba(6, 182, 212, 0.2); border-left-color: #00f0ff; }
 
-        .hud-panel::before, .hud-panel::after { content: ''; position: absolute; width: 15px; height: 15px; border: 2px solid #00f0ff; }
-        .hud-panel::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
-        .hud-panel::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
-
-        .holo-avatar {
-            width: clamp(80px, 20vw, 100px); 
-            height: clamp(80px, 20vw, 100px); 
-            margin: 0 auto 20px auto;
-            border-radius: 50%; border: 2px solid #00f0ff;
-            display: flex; justify-content: center; align-items: center;
-            font-size: clamp(30px, 8vw, 40px); background: rgba(0, 240, 255, 0.1);
-            box-shadow: 0 0 20px #00f0ff; animation: pulseGlow 2s infinite alternate;
+        .card-title {
+            font-family: 'Orbitron', sans-serif; font-size: 16px; font-weight: 900; color: #0369a1; 
+            letter-spacing: 2px; border-bottom: 1px dashed #cbd5e1; padding-bottom: 10px;
+            display: flex; align-items: center; gap: 10px;
         }
-        @keyframes pulseGlow { from { box-shadow: 0 0 10px #00f0ff; } to { box-shadow: 0 0 30px #00f0ff, inset 0 0 15px #00f0ff; } }
+        .card-icon { font-size: 20px; }
 
-        .hud-name { font-family: 'Orbitron', sans-serif; font-size: clamp(20px, 5vw, 24px); color: #083344; text-align: center; font-weight: 700; text-shadow: 0 0 5px rgba(0, 240, 255, 0.5); }
-        .hud-alias { color: #00f0ff; background: #083344; padding: 2px 8px; font-size: 14px; text-align: center; margin: 10px auto 25px auto; font-weight: 700; letter-spacing: 2px; width: fit-content;}
+        .card-text { font-size: clamp(13px, 3.5vw, 15px); line-height: 1.7; color: #334155; }
+        .card-text strong { color: #0f172a; font-weight: 700; background: rgba(14, 165, 233, 0.1); padding: 0 4px; border-radius: 2px; }
 
-        .telemetry-data { list-style: none; font-size: clamp(11px, 3vw, 13px); line-height: 2.2; color: #475569; }
-        .telemetry-data span { color: #0f172a; font-weight: 700; }
-        .telemetry-data li::before { content: '[+]'; color: #0891b2; margin-right: 10px; font-weight: 700; }
+        /* --- ARCHITECT AVATAR SECTION --- */
+        .architect-profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .architect-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 3px solid #00f0ff;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.6);
+            object-fit: cover;
+            background: #0f172a;
+        }
+        .architect-details {
+            flex: 1;
+            min-width: 250px;
+        }
+        .device-watermark {
+            display: inline-block;
+            margin-top: 15px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: #0891b2;
+            font-weight: bold;
+            letter-spacing: 1px;
+            background: rgba(8, 145, 178, 0.1);
+            padding: 4px 8px;
+            border-left: 2px solid #0891b2;
+        }
 
-        /* --- DATA STREAMS (RIGHT) --- */
-        .data-streams { display: flex; flex-direction: column; gap: 20px; width: 100%; }
+        /* --- NEW ROSTER MATRIX SECTION --- */
+        .roster-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 5px; }
+        .roster-member { 
+            background: rgba(236, 254, 255, 0.6); border: 1px solid #0891b2; 
+            padding: 12px; border-left: 4px solid #0ea5e9; border-radius: 2px;
+            display: flex; flex-direction: column; gap: 4px;
+        }
+        .member-name { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #083344; font-size: 14px; letter-spacing: 2px; }
+        .member-role { font-size: 11px; color: #0369a1; font-weight: bold; }
+        .member-status { font-size: 10px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
+        .member-wo { font-size: 10px; font-weight: 700; color: #ea580c; margin-top: 4px; border-top: 1px dashed #cbd5e1; padding-top: 6px; }
         
-        .stream-block {
-            background: linear-gradient(90deg, rgba(6, 182, 212, 0.1), transparent);
-            border-left: 3px solid #00f0ff; padding: 20px;
-        }
-        .stream-title {
-            font-family: 'Orbitron', sans-serif; font-size: clamp(14px, 4vw, 16px); color: #0c4a6e;
-            font-weight: 700; letter-spacing: 1px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 10px; word-wrap: break-word;
-        }
-        .stream-title::before { content: ''; width: 8px; height: 8px; background: #00f0ff; box-shadow: 0 0 10px #00f0ff; flex-shrink: 0; }
-        
-        .stream-text { font-family: 'Inter', sans-serif; font-size: clamp(13px, 3.5vw, 14px); color: #0f172a; line-height: 1.7; }
-        .stream-highlight { color: #06b6d4; font-family: 'JetBrains Mono'; font-weight: 700; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+        .dot.online { background: #10b981; box-shadow: 0 0 8px #10b981; animation: pulse 2s infinite; }
+        .dot.active { background: #0ea5e9; box-shadow: 0 0 8px #0ea5e9; }
+        .dot.standby { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        /* --- MOTTO ALERT --- */
-        .critical-alert {
-            background: rgba(165, 243, 252, 0.3); border: 1px dashed #0891b2; padding: 15px;
-            text-align: center; color: #0c4a6e; font-family: 'Orbitron', sans-serif;
-            font-size: clamp(14px, 4vw, 18px); font-weight: 900; letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 240, 255, 0.5); animation: textGlitch 4s infinite;
+        .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
+        .tech-badge {
+            background: rgba(236, 254, 255, 0.8); border: 1px solid #38bdf8; color: #0284c7;
+            padding: 8px; text-align: center; font-size: 11px; font-weight: bold; letter-spacing: 1px;
+            border-radius: 2px;
         }
 
-        /* --- INTERFACE BUTTONS --- */
-        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; } 
-        
-        .cyber-btn {
-            background: rgba(255, 255, 255, 0.9); border: 1px solid #0891b2; color: #0c4a6e;
-            padding: 15px 10px; text-align: center; text-decoration: none; font-weight: 700;
-            font-family: 'Orbitron', sans-serif; letter-spacing: 1px; font-size: clamp(11px, 3vw, 14px);
-            position: relative; overflow: hidden; transition: 0.3s;
-            box-shadow: 0 4px 6px rgba(6, 182, 212, 0.1);
-        }
-        .cyber-btn::before {
-            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.6), transparent);
-            transition: left 0.5s ease;
-        }
-        .cyber-btn:hover { background: rgba(165, 243, 252, 0.4); border-color: #00f0ff; color: #0369a1; box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
-        .cyber-btn:hover::before { left: 100%; }
-
-        @keyframes textGlitch {
-            0%, 95%, 100% { transform: translate(0); }
-            96% { transform: translate(-2px, 2px); text-shadow: -2px 0 #00f0ff, 2px 0 #fff; }
-            98% { transform: translate(2px, -2px); text-shadow: 2px 0 #00f0ff, -2px 0 #fff; }
-        }
+        .sys-footer { text-align: center; margin-top: 20px; font-size: 10px; color: #64748b; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-    <div class="scanner-beam"></div>
-
-    <div class="ai-matrix-container">
+    <div class="engine-container">
         
         <div class="system-header">
-            <h1>OPERATOR_IDENTITY</h1>
-            <p>BIOMETRIC SCAN COMPLETE // DATA UNLOCKED</p>
+            <h1>ABOUT_NODE</h1>
+            <p>SYSTEM MANIFESTO // V2.0 OP-MATRIX</p>
         </div>
 
-        <div class="grid-core">
+        <div class="data-card">
+            <div class="card-title"><span class="card-icon">👨‍💻</span> [ LEAD ARCHITECT ]</div>
             
-            <div class="hud-panel">
-                <div class="holo-avatar">🏍️</div>
-                <div class="hud-name">SUBHASIS ROY</div>
-                <div class="hud-alias">[ B2R ]</div>
+            <div class="architect-profile">
+                <img src="119998.webp" alt="Subhasis Roy" class="architect-avatar">
                 
-                <ul class="telemetry-data">
-                    <li>CLASS: <span>Digital Creator</span></li>
-                    <li>BASE: <span>Kolkata, WB</span></li>
-                    <li>ORIGIN: <span>October 11, 1993</span></li>
-                    <li>ACADEMY: <span>GMIT</span></li>
-                    <li>NETWORKS: <span>2.8K+ Nodes</span></li>
-                </ul>
+                <div class="architect-details card-text">
+                    Designed and deployed by <strong>Subhasis Roy</strong>. <br><br>
+                    Drawing on extensive experience in workforce coordination, team shift structuring, and high-level HR operations for Swiggy IM Voice, this portal was built from the ground up to solve real-world QA and roster challenges. It represents the intersection of tactical team management and next-generation browser architecture.
+                    <br>
+                    <div class="device-watermark">Shot on Galaxy S25 ~ Subhasis</div>
+                </div>
             </div>
+        </div>
 
-            <div class="data-streams">
+        <div class="data-card">
+            <div class="card-title"><span class="card-icon">👥</span> [ OPERATIONAL ROSTER ]</div>
+            <div class="roster-grid">
                 
-                <div class="stream-block">
-                    <div class="stream-title">FILE 01: THE ARCHITECT</div>
-                    <div class="stream-text">
-                        <span class="stream-highlight">QA Analyst by profession.</span> Specializing in rigorous system telemetry, team roster management, and advanced macro deployments. Designing highly efficient Apps Script architectures and Google ecosystem automations to optimize operational bandwidth.
-                    </div>
+                <div class="roster-member">
+                    <div class="member-name">SUBHASIS ROY</div>
+                    <div class="member-role">Lead Architect // HR Ops Coordinator</div>
+                    <div class="member-status"><span class="dot online"></span> SYSTEM ADMIN ONLINE</div>
                 </div>
 
-                <div class="stream-block">
-                    <div class="stream-title">FILE 02: FUEL-INJECTED SOUL</div>
-                    <div class="stream-text">
-                        A die-hard rider driven by wanderlust and asphalt. Exploring the world one highway at a time—from carving through Araku Valley to chasing horizons along Rishikonda Beach. Pushing the physical limits of the Honda CBR 250R through <span class="stream-highlight">extreme motorcycle stunts</span>, high-adrenaline stoppies, and aggressive burnouts. When the terminal shuts down, the stunt lot takes over. B2R Motovlogs documents the raw chaos of the ride.
-                    </div>
+                <div class="roster-member">
+                    <div class="member-name">TAMALI GHOSH</div>
+                    <div class="member-role">Voice Process // Swiggy IM</div>
+                    <div class="member-status"><span class="dot active"></span> SHIFT HRS: 08:00 TO 17:00</div>
+                    <div class="member-wo">MAINTENANCE CYCLE [W.O]: WEDNESDAY</div>
                 </div>
 
-                <div class="critical-alert">
-                    "NEVER TWIST THE THROTTLE WITH EGO."
-                </div>
-
-                <div class="button-grid">
-                    <a href="https://instagram.com/roy_the_biker93" target="_blank" class="cyber-btn">INSTAGRAM</a>
-                    <a href="https://youtube.com/c/b2rmotovlogs" target="_blank" class="cyber-btn">YOUTUBE</a>
-                    <a href="https://facebook.com/subhasis.roy" target="_blank" class="cyber-btn">FACEBOOK</a>
+                <div class="roster-member">
+                    <div class="member-name">TEAM LEAD</div>
+                    <div class="member-role">Oversight // Shift Authorization</div>
+                    <div class="member-status"><span class="dot standby"></span> STANDBY FOR APPROVALS</div>
                 </div>
 
             </div>
         </div>
+
+        <div class="data-card">
+            <div class="card-title"><span class="card-icon">🎯</span> [ MISSION PARAMETERS ]</div>
+            <div class="card-text">
+                The Guidance Portal is an advanced telemetry and operational matrix engineered to streamline workflow, enhance quality assurance, and provide critical downtime recovery. Our core directive is to leverage zero-latency edge AI and localized tools to bypass traditional cloud bottlenecks, ensuring maximum efficiency for dynamic teams.
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="card-title"><span class="card-icon">⚙️</span> [ TECH SPECS ]</div>
+            <div class="card-text">
+                This portal operates entirely within the browser matrix, utilizing heavily optimized local engines to process data without exposing internal audio files or metrics to third-party API servers.
+            </div>
+            <div class="tech-grid">
+                <div class="tech-badge">TRANSFORMERS.JS</div>
+                <div class="tech-badge">WHISPER AI NEURAL</div>
+                <div class="tech-badge">WEBGL PARTICLES</div>
+                <div class="tech-badge">DYNAMIC HARDWARE DETECT</div>
+            </div>
+        </div>
+
+        <div class="sys-footer">
+            [ GUIDANCE PORTAL // ALL SYSTEMS OPERATIONAL ]
+        </div>
+
     </div>
 
 </body>
 </html>
-
