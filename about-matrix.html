@@ -3,207 +3,200 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guidance Portal - Operator Dossier</title>
+    <title>Guidance Portal - AI Dossier</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
         
         * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
         
-        body { 
-            font-family: 'JetBrains Mono', monospace; 
-            background: #000000; 
+        html, body { 
+            width: 100%; min-height: 100%; 
+            background-color: #020617; 
             color: #cffafe; 
-            padding: 40px 15px; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh;
-            position: relative;
+            font-family: 'JetBrains Mono', monospace; 
             overflow-x: hidden;
+            display: flex; justify-content: center; align-items: flex-start;
+            padding: 30px 10px;
         }
 
-        /* --- CRT OVERLAYS --- */
+        /* --- HOLOGRAPHIC SCANNER BACKGROUND --- */
         body::before {
             content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px; z-index: 100; pointer-events: none; opacity: 0.15;
+            background: linear-gradient(rgba(6, 182, 212, 0.05) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(6, 182, 212, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px; z-index: 1; pointer-events: none;
         }
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(6, 182, 212, 0.03); opacity: 0; z-index: 99; pointer-events: none;
-            animation: flicker 0.1s infinite;
-        }
-        @keyframes flicker { 0% { opacity: 0.1; } 50% { opacity: 0.2; } 100% { opacity: 0.1; } }
-
-        .container { width: 100%; max-width: 850px; z-index: 10; position: relative; }
         
-        /* --- TACTICAL HEADER --- */
-        .header-container { 
-            text-align: center; margin-bottom: 40px; position: relative; padding: 20px; 
-            border: 2px solid #1e293b; background: rgba(15, 23, 42, 0.4);
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px); 
+        .scanner-beam {
+            position: fixed; top: -100%; left: 0; width: 100%; height: 200px;
+            background: linear-gradient(to bottom, transparent, rgba(6, 182, 212, 0.2), transparent);
+            z-index: 2; pointer-events: none;
+            animation: scanScreen 6s infinite linear;
         }
-        .header { font-size: 28px; color: #fff; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; text-shadow: 0 0 15px #22d3ee; }
-        .sub { color: #06b6d4; font-size: 12px; font-weight: 800; letter-spacing: 2px; margin-top: 5px; }
+        @keyframes scanScreen { 0% { top: -50%; } 100% { top: 150%; } }
+
+        /* --- MAIN CONTAINER & SCALE ANIMATION --- */
+        .ai-matrix-container {
+            width: 100%; max-width: 900px; z-index: 10;
+            display: flex; flex-direction: column; gap: 25px;
+            opacity: 0; transform: scale(0.8) translateY(30px);
+            animation: materializeMatrix 1.2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
+        }
+        @keyframes materializeMatrix {
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* --- TACTICAL AI HEADER --- */
+        .system-header {
+            text-align: center; padding: 20px;
+            border-top: 2px solid #00f0ff; border-bottom: 2px solid #00f0ff;
+            background: rgba(0, 240, 255, 0.05);
+            position: relative; box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+        .system-header h1 {
+            font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900;
+            color: #ffffff; letter-spacing: 5px; text-shadow: 0 0 15px #00f0ff;
+            animation: textGlitch 3s infinite;
+        }
+        .system-header p {
+            color: #00f0ff; font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-top: 5px;
+        }
 
         /* --- DOSSIER GRID --- */
-        .dossier-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 20px;
-        }
-        @media (min-width: 768px) {
-            .dossier-grid { grid-template-columns: 1.2fr 2fr; }
-        }
+        .grid-core { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .grid-core { grid-template-columns: 1fr 1.5fr; } }
 
-        /* --- PROFILE BLOCK --- */
-        .profile-block {
-            background: #000; border: 2px solid #1e293b; padding: 25px;
-            position: relative; overflow: hidden;
-            clip-path: polygon(15px 0, 100% 0, 100% calc(100% - 15px), calc(100% - 15px) 100%, 0 100%, 0 15px);
+        /* --- PROFILE HUD (LEFT) --- */
+        .hud-panel {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid #0891b2;
+            padding: 25px; position: relative;
+            backdrop-filter: blur(5px);
+            box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.1);
+            transition: all 0.3s ease;
         }
-        .profile-block::before {
-            content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%;
-            background: #22d3ee; box-shadow: 0 0 15px #06b6d4;
+        .hud-panel:hover { border-color: #00f0ff; box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.2), 0 0 20px rgba(0, 240, 255, 0.3); }
+
+        .hud-panel::before, .hud-panel::after { content: ''; position: absolute; width: 15px; height: 15px; border: 2px solid #00f0ff; }
+        .hud-panel::before { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .hud-panel::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+
+        .holo-avatar {
+            width: 100px; height: 100px; margin: 0 auto 20px auto;
+            border-radius: 50%; border: 2px solid #00f0ff;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 40px; background: rgba(0, 240, 255, 0.1);
+            box-shadow: 0 0 20px #00f0ff; animation: pulseGlow 2s infinite alternate;
         }
+        @keyframes pulseGlow { from { box-shadow: 0 0 10px #00f0ff; } to { box-shadow: 0 0 30px #00f0ff, inset 0 0 15px #00f0ff; } }
 
-        .avatar-placeholder {
-            width: 120px; height: 120px; border: 2px dashed #0ea5e9; border-radius: 50%;
-            margin: 0 auto 20px auto; display: flex; justify-content: center; align-items: center;
-            font-size: 40px; background: rgba(14, 165, 233, 0.1); animation: pulse 2s infinite;
-        }
+        .hud-name { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff; text-align: center; font-weight: 700; text-shadow: 0 0 8px #00f0ff; }
+        .hud-alias { color: #67e8f9; font-size: 14px; text-align: center; margin-bottom: 25px; font-weight: 700; letter-spacing: 2px; }
 
-        .identity-name { font-size: 22px; color: #fff; font-weight: 800; text-align: center; letter-spacing: 1px; margin-bottom: 5px; }
-        .identity-alias { color: #38bdf8; font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 20px; }
+        .telemetry-data { list-style: none; font-size: 13px; line-height: 2.2; color: #94a3b8; }
+        .telemetry-data span { color: #fff; font-weight: 700; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
+        .telemetry-data li::before { content: '[+]'; color: #00f0ff; margin-right: 10px; font-weight: 700; }
 
-        .telemetry-list { list-style: none; font-size: 12px; line-height: 2; color: #94a3b8; }
-        .telemetry-list span { color: #e2e8f0; font-weight: 700; }
-        .telemetry-list li::before { content: '>'; color: #0ea5e9; margin-right: 8px; font-weight: 800; }
-
-        /* --- DATA BLOCK --- */
-        .data-block {
-            display: flex; flex-direction: column; gap: 20px;
-        }
-
-        .data-panel {
-            background: rgba(15, 23, 42, 0.3); border: 1px solid #334155; padding: 25px;
-            position: relative; border-left: 4px solid #334155; transition: all 0.3s;
-        }
-        .data-panel:hover { border-left-color: #0ea5e9; background: rgba(15, 23, 42, 0.6); }
+        /* --- DATA STREAMS (RIGHT) --- */
+        .data-streams { display: flex; flex-direction: column; gap: 20px; }
         
-        .panel-header { font-size: 14px; color: #38bdf8; text-transform: uppercase; font-weight: 800; letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; }
-        .panel-header::before { content: ''; width: 8px; height: 8px; background: #0ea5e9; display: inline-block; }
-
-        .panel-text { font-family: 'Inter', sans-serif; font-size: 14px; color: #cbd5e1; line-height: 1.6; }
-        .highlight { color: #22d3ee; font-family: 'JetBrains Mono'; font-weight: 700; }
+        .stream-block {
+            background: linear-gradient(90deg, rgba(6, 182, 212, 0.1), transparent);
+            border-left: 3px solid #00f0ff; padding: 20px;
+        }
+        .stream-title {
+            font-family: 'Orbitron', sans-serif; font-size: 16px; color: #00f0ff;
+            font-weight: 700; letter-spacing: 2px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .stream-title::before { content: ''; width: 8px; height: 8px; background: #fff; box-shadow: 0 0 10px #fff; }
+        
+        .stream-text { font-family: 'Inter', sans-serif; font-size: 14px; color: #cbd5e1; line-height: 1.7; }
+        .stream-highlight { color: #67e8f9; font-family: 'JetBrains Mono'; font-weight: 700; }
 
         /* --- MOTTO ALERT --- */
-        .motto-alert {
-            background: rgba(239, 68, 68, 0.1); border: 1px solid #ef4444; padding: 15px;
-            text-align: center; margin-top: 10px; color: #fca5a5; font-size: 15px; font-weight: 800;
-            text-transform: uppercase; letter-spacing: 1px;
-            animation: warningPulse 3s infinite;
+        .critical-alert {
+            background: rgba(0, 240, 255, 0.1); border: 1px dashed #00f0ff; padding: 20px;
+            text-align: center; color: #ffffff; font-family: 'Orbitron', sans-serif;
+            font-size: 18px; font-weight: 900; letter-spacing: 2px;
+            text-shadow: 0 0 10px #00f0ff; animation: textGlitch 4s infinite;
         }
-        @keyframes warningPulse { 0%, 100% { box-shadow: inset 0 0 0 transparent; } 50% { box-shadow: inset 0 0 15px rgba(239, 68, 68, 0.2); } }
 
-        /* --- ENDPOINTS (LINKS) --- */
-        .endpoint-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 10px; }
+        /* --- INTERFACE BUTTONS --- */
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
         
-        .endpoint-btn {
-            background: #000; border: 2px solid #1e293b; padding: 15px; text-decoration: none;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-            transition: all 0.15s; position: relative; overflow: hidden;
+        .cyber-btn {
+            background: transparent; border: 1px solid #0891b2; color: #67e8f9;
+            padding: 15px; text-align: center; text-decoration: none; font-weight: 700;
+            font-family: 'Orbitron', sans-serif; letter-spacing: 1px; font-size: 14px;
+            position: relative; overflow: hidden; transition: 0.3s;
         }
-        .ep-icon { font-size: 24px; color: #64748b; transition: all 0.2s; }
-        .ep-text { font-size: 11px; color: #94a3b8; font-weight: 700; letter-spacing: 1px; transition: all 0.2s; }
-
-        /* Targeting Reticle Hover */
-        .endpoint-btn:hover { border-color: #06b6d4; transform: scale(1.02); }
-        .endpoint-btn:hover .ep-icon { color: #fff; text-shadow: 0 0 10px #22d3ee; }
-        .endpoint-btn:hover .ep-text { color: #22d3ee; animation: glitch 0.3s forwards; }
-        
-        .endpoint-btn::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(#06b6d4 2px, transparent 2px), linear-gradient(90deg, #06b6d4 2px, transparent 2px),
-                linear-gradient(#06b6d4 2px, transparent 2px), linear-gradient(90deg, #06b6d4 2px, transparent 2px);
-            background-size: 10px 10px; background-repeat: no-repeat;
-            background-position: 0 0, 0 0, 100% 100%, 100% 100%;
-            opacity: 0; transition: opacity 0.1s; pointer-events: none;
+        .cyber-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 240, 255, 0.4), transparent);
+            transition: left 0.5s ease;
         }
-        .endpoint-btn:hover::after { opacity: 1; }
+        .cyber-btn:hover { background: rgba(0, 240, 255, 0.15); border-color: #00f0ff; color: #fff; box-shadow: 0 0 15px rgba(0, 240, 255, 0.5); }
+        .cyber-btn:hover::before { left: 100%; }
 
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        
-        @keyframes glitch {
-            0% { transform: translate(0); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
-            20% { transform: translate(-2px, 2px); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
-            40% { transform: translate(-2px, -2px); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
-            60% { transform: translate(2px, 2px); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
-            80% { transform: translate(2px, -2px); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
-            100% { transform: translate(0); text-shadow: none; }
+        @keyframes textGlitch {
+            0%, 95%, 100% { transform: translate(0); }
+            96% { transform: translate(-2px, 2px); text-shadow: -2px 0 #00f0ff, 2px 0 #fff; }
+            98% { transform: translate(2px, -2px); text-shadow: 2px 0 #00f0ff, -2px 0 #fff; }
         }
-
     </style>
 </head>
 <body>
 
-    <div class="container">
+    <div class="scanner-beam"></div>
+
+    <div class="ai-matrix-container">
         
-        <div class="header-container">
-            <div class="header">OPERATOR_IDENTITY_LOG</div>
-            <div class="sub">AUTHORIZATION: GRANTED // DATA SYNCED</div>
+        <div class="system-header">
+            <h1>OPERATOR_IDENTITY</h1>
+            <p>BIOMETRIC SCAN COMPLETE // DATA UNLOCKED</p>
         </div>
 
-        <div class="dossier-grid">
+        <div class="grid-core">
             
-            <div class="profile-block">
-                <div class="avatar-placeholder">🏍️</div>
-                <div class="identity-name">SUBHASIS ROY</div>
-                <div class="identity-alias">[ B2R ]</div>
+            <div class="hud-panel">
+                <div class="holo-avatar">🏍️</div>
+                <div class="hud-name">SUBHASIS ROY</div>
+                <div class="hud-alias">[ B2R ]</div>
                 
-                <ul class="telemetry-list">
+                <ul class="telemetry-data">
                     <li>CLASS: <span>Digital Creator</span></li>
                     <li>BASE: <span>Kolkata, WB</span></li>
                     <li>ORIGIN: <span>October 11, 1993</span></li>
-                    <li>STATUS: <span>Engaged</span></li>
                     <li>ACADEMY: <span>GMIT</span></li>
                     <li>NETWORKS: <span>2.8K+ Nodes</span></li>
                 </ul>
             </div>
 
-            <div class="data-block">
+            <div class="data-streams">
                 
-                <div class="data-panel">
-                    <div class="panel-header">FILE 01: The Architect</div>
-                    <div class="panel-text">
-                        <span class="highlight">QA Analyst by profession.</span> Specializing in rigorous system telemetry, team roster management, and advanced macro deployments. Designing highly efficient Apps Script architectures and Google ecosystem automations to optimize operational bandwidth.
+                <div class="stream-block">
+                    <div class="stream-title">FILE 01: THE ARCHITECT</div>
+                    <div class="stream-text">
+                        <span class="stream-highlight">QA Analyst by profession.</span> Specializing in rigorous system telemetry, team roster management, and advanced macro deployments. Designing highly efficient Apps Script architectures and Google ecosystem automations to optimize operational bandwidth.
                     </div>
                 </div>
 
-                <div class="data-panel">
-                    <div class="panel-header">FILE 02: The Rider</div>
-                    <div class="panel-text">
-                        <span class="highlight">Rider by passion. Fuel injected soul.</span> When the terminal shuts down, the asphalt takes over. Pushing limits on the Honda CBR 250R and documenting the adrenaline through <span class="highlight">B2R Motovlogs</span>. Balancing the precision of code with the chaos of the open road.
+                <div class="stream-block">
+                    <div class="stream-title">FILE 02: FUEL-INJECTED SOUL</div>
+                    <div class="stream-text">
+                        A die-hard rider driven by wanderlust and asphalt. Exploring the world one highway at a time—from carving through Araku Valley to chasing horizons along Rishikonda Beach. Pushing the physical limits of the Honda CBR 250R through <span class="stream-highlight">extreme motorcycle stunts</span>, high-adrenaline stoppies, and aggressive burnouts. When the terminal shuts down, the stunt lot takes over. B2R Motovlogs documents the raw chaos of the ride.
                     </div>
                 </div>
 
-                <div class="motto-alert">
+                <div class="critical-alert">
                     "NEVER TWIST THE THROTTLE WITH EGO."
                 </div>
 
-                <div class="endpoint-grid">
-                    <a href="https://instagram.com/roy_the_biker93" target="_blank" class="endpoint-btn">
-                        <span class="ep-icon">📸</span>
-                        <span class="ep-text">INSTAGRAM</span>
-                    </a>
-                    <a href="https://youtube.com/c/b2rmotovlogs" target="_blank" class="endpoint-btn">
-                        <span class="ep-icon">🎥</span>
-                        <span class="ep-text">YOUTUBE</span>
-                    </a>
-                    <a href="https://facebook.com/subhasis.roy" target="_blank" class="endpoint-btn">
-                        <span class="ep-icon">🌐</span>
-                        <span class="ep-text">FACEBOOK</span>
-                    </a>
+                <div class="button-grid">
+                    <a href="https://instagram.com/roy_the_biker93" target="_blank" class="cyber-btn">INSTAGRAM</a>
+                    <a href="https://youtube.com/c/b2rmotovlogs" target="_blank" class="cyber-btn">YOUTUBE</a>
+                    <a href="https://facebook.com/subhasis.roy" target="_blank" class="cyber-btn">FACEBOOK</a>
                 </div>
 
             </div>
@@ -212,4 +205,3 @@
 
 </body>
 </html>
-
