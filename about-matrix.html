@@ -16,7 +16,7 @@
             font-family: 'JetBrains Mono', monospace; 
             overflow-x: hidden;
             display: flex; justify-content: center; align-items: flex-start;
-            padding: 30px 10px;
+            padding: 20px 10px; /* Slightly reduced padding for mobile breathing room */
         }
 
         /* --- HOLOGRAPHIC SCANNER BACKGROUND --- */
@@ -38,7 +38,7 @@
         /* --- MAIN CONTAINER & SCALE ANIMATION --- */
         .ai-matrix-container {
             width: 100%; max-width: 900px; z-index: 10;
-            display: flex; flex-direction: column; gap: 25px;
+            display: flex; flex-direction: column; gap: 20px;
             opacity: 0; transform: scale(0.8) translateY(30px);
             animation: materializeMatrix 1.2s cubic-bezier(0.1, 0.8, 0.1, 1) forwards;
         }
@@ -48,18 +48,30 @@
 
         /* --- TACTICAL AI HEADER --- */
         .system-header {
-            text-align: center; padding: 20px;
+            text-align: center; padding: 20px 10px;
             border-top: 2px solid #00f0ff; border-bottom: 2px solid #00f0ff;
             background: rgba(0, 240, 255, 0.05);
             position: relative; box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+            width: 100%;
         }
+        
+        /* 🚨 RESPONSIVE FIX: Fluid typography and word-wrap applied 🚨 */
         .system-header h1 {
-            font-family: 'Orbitron', sans-serif; font-size: 32px; font-weight: 900;
-            color: #ffffff; letter-spacing: 5px; text-shadow: 0 0 15px #00f0ff;
+            font-family: 'Orbitron', sans-serif; 
+            font-size: clamp(18px, 6vw, 32px); /* Scales dynamically with screen width */
+            font-weight: 900;
+            color: #ffffff; 
+            letter-spacing: clamp(1px, 2vw, 5px); /* Scales letter spacing dynamically */
+            text-shadow: 0 0 15px #00f0ff;
             animation: textGlitch 3s infinite;
+            word-wrap: break-word; /* Prevents overflow cropping */
         }
         .system-header p {
-            color: #00f0ff; font-size: 12px; font-weight: 700; letter-spacing: 3px; margin-top: 5px;
+            color: #00f0ff; 
+            font-size: clamp(8px, 2.5vw, 12px); 
+            font-weight: 700; 
+            letter-spacing: clamp(1px, 1vw, 3px); 
+            margin-top: 8px;
         }
 
         /* --- DOSSIER GRID --- */
@@ -70,10 +82,11 @@
         .hud-panel {
             background: rgba(15, 23, 42, 0.6);
             border: 1px solid #0891b2;
-            padding: 25px; position: relative;
+            padding: 20px; position: relative;
             backdrop-filter: blur(5px);
             box-shadow: inset 0 0 20px rgba(6, 182, 212, 0.1);
             transition: all 0.3s ease;
+            width: 100%;
         }
         .hud-panel:hover { border-color: #00f0ff; box-shadow: inset 0 0 30px rgba(0, 240, 255, 0.2), 0 0 20px rgba(0, 240, 255, 0.3); }
 
@@ -82,53 +95,55 @@
         .hud-panel::after { bottom: -2px; right: -2px; border-left: none; border-top: none; }
 
         .holo-avatar {
-            width: 100px; height: 100px; margin: 0 auto 20px auto;
+            width: clamp(80px, 20vw, 100px); 
+            height: clamp(80px, 20vw, 100px); 
+            margin: 0 auto 20px auto;
             border-radius: 50%; border: 2px solid #00f0ff;
             display: flex; justify-content: center; align-items: center;
-            font-size: 40px; background: rgba(0, 240, 255, 0.1);
+            font-size: clamp(30px, 8vw, 40px); background: rgba(0, 240, 255, 0.1);
             box-shadow: 0 0 20px #00f0ff; animation: pulseGlow 2s infinite alternate;
         }
         @keyframes pulseGlow { from { box-shadow: 0 0 10px #00f0ff; } to { box-shadow: 0 0 30px #00f0ff, inset 0 0 15px #00f0ff; } }
 
-        .hud-name { font-family: 'Orbitron', sans-serif; font-size: 24px; color: #fff; text-align: center; font-weight: 700; text-shadow: 0 0 8px #00f0ff; }
+        .hud-name { font-family: 'Orbitron', sans-serif; font-size: clamp(20px, 5vw, 24px); color: #fff; text-align: center; font-weight: 700; text-shadow: 0 0 8px #00f0ff; }
         .hud-alias { color: #67e8f9; font-size: 14px; text-align: center; margin-bottom: 25px; font-weight: 700; letter-spacing: 2px; }
 
-        .telemetry-data { list-style: none; font-size: 13px; line-height: 2.2; color: #94a3b8; }
+        .telemetry-data { list-style: none; font-size: clamp(11px, 3vw, 13px); line-height: 2.2; color: #94a3b8; }
         .telemetry-data span { color: #fff; font-weight: 700; text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); }
         .telemetry-data li::before { content: '[+]'; color: #00f0ff; margin-right: 10px; font-weight: 700; }
 
         /* --- DATA STREAMS (RIGHT) --- */
-        .data-streams { display: flex; flex-direction: column; gap: 20px; }
+        .data-streams { display: flex; flex-direction: column; gap: 20px; width: 100%; }
         
         .stream-block {
             background: linear-gradient(90deg, rgba(6, 182, 212, 0.1), transparent);
             border-left: 3px solid #00f0ff; padding: 20px;
         }
         .stream-title {
-            font-family: 'Orbitron', sans-serif; font-size: 16px; color: #00f0ff;
-            font-weight: 700; letter-spacing: 2px; margin-bottom: 12px;
-            display: flex; align-items: center; gap: 10px;
+            font-family: 'Orbitron', sans-serif; font-size: clamp(14px, 4vw, 16px); color: #00f0ff;
+            font-weight: 700; letter-spacing: 1px; margin-bottom: 12px;
+            display: flex; align-items: center; gap: 10px; word-wrap: break-word;
         }
-        .stream-title::before { content: ''; width: 8px; height: 8px; background: #fff; box-shadow: 0 0 10px #fff; }
+        .stream-title::before { content: ''; width: 8px; height: 8px; background: #fff; box-shadow: 0 0 10px #fff; flex-shrink: 0; }
         
-        .stream-text { font-family: 'Inter', sans-serif; font-size: 14px; color: #cbd5e1; line-height: 1.7; }
+        .stream-text { font-family: 'Inter', sans-serif; font-size: clamp(13px, 3.5vw, 14px); color: #cbd5e1; line-height: 1.7; }
         .stream-highlight { color: #67e8f9; font-family: 'JetBrains Mono'; font-weight: 700; }
 
         /* --- MOTTO ALERT --- */
         .critical-alert {
-            background: rgba(0, 240, 255, 0.1); border: 1px dashed #00f0ff; padding: 20px;
+            background: rgba(0, 240, 255, 0.1); border: 1px dashed #00f0ff; padding: 15px;
             text-align: center; color: #ffffff; font-family: 'Orbitron', sans-serif;
-            font-size: 18px; font-weight: 900; letter-spacing: 2px;
+            font-size: clamp(14px, 4vw, 18px); font-weight: 900; letter-spacing: 2px;
             text-shadow: 0 0 10px #00f0ff; animation: textGlitch 4s infinite;
         }
 
         /* --- INTERFACE BUTTONS --- */
-        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; }
+        .button-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 15px; } /* Adjusted for mobile grids */
         
         .cyber-btn {
             background: transparent; border: 1px solid #0891b2; color: #67e8f9;
-            padding: 15px; text-align: center; text-decoration: none; font-weight: 700;
-            font-family: 'Orbitron', sans-serif; letter-spacing: 1px; font-size: 14px;
+            padding: 15px 10px; text-align: center; text-decoration: none; font-weight: 700;
+            font-family: 'Orbitron', sans-serif; letter-spacing: 1px; font-size: clamp(11px, 3vw, 14px);
             position: relative; overflow: hidden; transition: 0.3s;
         }
         .cyber-btn::before {
