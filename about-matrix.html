@@ -53,44 +53,6 @@
             color: #0891b2; font-size: clamp(10px, 3vw, 14px); font-weight: 700; letter-spacing: 3px; margin-top: 8px;
         }
 
-        /* --- NEW INTRO VIDEO GRID --- */
-        .intro-video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            width: 100%;
-            margin-bottom: 5px;
-        }
-
-        .video-wrapper {
-            width: 100%;
-            aspect-ratio: 9/16; 
-            background: #020617;
-            border: 2px solid #0891b2;
-            position: relative;
-            overflow: hidden;
-            border-radius: 4px;
-            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.15);
-        }
-
-        video {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.85;
-            transition: 0.3s;
-        }
-        
-        .video-wrapper:hover video { opacity: 1; transform: scale(1.02); }
-
-        .video-overlay {
-            position: absolute; top: 10px; right: 10px;
-            background: rgba(239, 68, 68, 0.8); color: #fff;
-            padding: 2px 6px; font-size: 9px; font-weight: bold; letter-spacing: 1px;
-            border-radius: 2px; animation: blink 2s infinite; z-index: 2;
-        }
-        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
         /* --- CARDS --- */
         .data-card {
             background: rgba(255, 255, 255, 0.85); border: 1px solid #0891b2; padding: 25px;
@@ -150,6 +112,44 @@
             border-radius: 2px;
         }
 
+        /* --- VIDEO GRID (MOVED TO BOTTOM) --- */
+        .telemetry-video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin-top: 10px;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            aspect-ratio: 9/16; 
+            background: #020617;
+            border: 2px solid #0891b2;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.15);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+            transition: 0.3s;
+        }
+        
+        .video-wrapper:hover video { opacity: 1; transform: scale(1.02); }
+
+        .video-overlay {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(239, 68, 68, 0.8); color: #fff;
+            padding: 2px 6px; font-size: 9px; font-weight: bold; letter-spacing: 1px;
+            border-radius: 2px; animation: blink 2s infinite; z-index: 2;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
         .sys-footer { text-align: center; margin-top: 20px; font-size: 10px; color: #64748b; letter-spacing: 2px; }
     </style>
 </head>
@@ -159,22 +159,7 @@
         
         <div class="system-header">
             <h1>ABOUT_NODE</h1>
-            <p>SYSTEM MANIFESTO // V3.0 CINEMATIC</p>
-        </div>
-
-        <div class="intro-video-grid">
-            <div class="video-wrapper">
-                <div class="video-overlay">REC</div>
-                <video src="Video-238.mp4" autoplay loop muted playsinline></video>
-            </div>
-            <div class="video-wrapper">
-                <div class="video-overlay">REC</div>
-                <video src="Video-488.mp4" autoplay loop muted playsinline></video>
-            </div>
-            <div class="video-wrapper">
-                <div class="video-overlay">REC</div>
-                <video src="Video-907.mp4" autoplay loop muted playsinline></video>
-            </div>
+            <p>SYSTEM MANIFESTO // V3.1 CINEMATIC</p>
         </div>
 
         <div class="data-card">
@@ -209,6 +194,21 @@
                 <div class="tech-badge">WHISPER AI NEURAL</div>
                 <div class="tech-badge">WEBGL PARTICLES</div>
                 <div class="tech-badge">DYNAMIC HARDWARE DETECT</div>
+            </div>
+        </div>
+
+        <div class="telemetry-video-grid">
+            <div class="video-wrapper">
+                <div class="video-overlay">REC</div>
+                <video src="Video-238.mp4" autoplay loop muted playsinline></video>
+            </div>
+            <div class="video-wrapper">
+                <div class="video-overlay">REC</div>
+                <video src="Video-488.mp4" autoplay loop muted playsinline></video>
+            </div>
+            <div class="video-wrapper">
+                <div class="video-overlay">REC</div>
+                <video src="Video-907.mp4" autoplay loop muted playsinline></video>
             </div>
         </div>
 
