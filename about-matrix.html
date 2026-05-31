@@ -53,6 +53,45 @@
             color: #0891b2; font-size: clamp(10px, 3vw, 14px); font-weight: 700; letter-spacing: 3px; margin-top: 8px;
         }
 
+        /* --- NEW INTRO VIDEO GRID --- */
+        .intro-video-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            width: 100%;
+            margin-bottom: 5px;
+        }
+
+        .video-wrapper {
+            width: 100%;
+            aspect-ratio: 9/16; 
+            background: #020617;
+            border: 2px solid #0891b2;
+            position: relative;
+            overflow: hidden;
+            border-radius: 4px;
+            box-shadow: 0 10px 20px rgba(6, 182, 212, 0.15);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+            transition: 0.3s;
+        }
+        
+        .video-wrapper:hover video { opacity: 1; transform: scale(1.02); }
+
+        .video-overlay {
+            position: absolute; top: 10px; right: 10px;
+            background: rgba(239, 68, 68, 0.8); color: #fff;
+            padding: 2px 6px; font-size: 9px; font-weight: bold; letter-spacing: 1px;
+            border-radius: 2px; animation: blink 2s infinite; z-index: 2;
+        }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+
+        /* --- CARDS --- */
         .data-card {
             background: rgba(255, 255, 255, 0.85); border: 1px solid #0891b2; padding: 25px;
             display: flex; flex-direction: column; gap: 15px; backdrop-filter: blur(8px);
@@ -104,24 +143,6 @@
             border-left: 2px solid #0891b2;
         }
 
-        /* --- NEW ROSTER MATRIX SECTION --- */
-        .roster-grid { display: flex; flex-direction: column; gap: 12px; margin-top: 5px; }
-        .roster-member { 
-            background: rgba(236, 254, 255, 0.6); border: 1px solid #0891b2; 
-            padding: 12px; border-left: 4px solid #0ea5e9; border-radius: 2px;
-            display: flex; flex-direction: column; gap: 4px;
-        }
-        .member-name { font-family: 'Orbitron', sans-serif; font-weight: 900; color: #083344; font-size: 14px; letter-spacing: 2px; }
-        .member-role { font-size: 11px; color: #0369a1; font-weight: bold; }
-        .member-status { font-size: 10px; font-weight: 700; color: #0f172a; display: flex; align-items: center; gap: 6px; margin-top: 4px; }
-        .member-wo { font-size: 10px; font-weight: 700; color: #ea580c; margin-top: 4px; border-top: 1px dashed #cbd5e1; padding-top: 6px; }
-        
-        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .dot.online { background: #10b981; box-shadow: 0 0 8px #10b981; animation: pulse 2s infinite; }
-        .dot.active { background: #0ea5e9; box-shadow: 0 0 8px #0ea5e9; }
-        .dot.standby { background: #f59e0b; box-shadow: 0 0 8px #f59e0b; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
         .tech-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 10px; }
         .tech-badge {
             background: rgba(236, 254, 255, 0.8); border: 1px solid #38bdf8; color: #0284c7;
@@ -138,7 +159,29 @@
         
         <div class="system-header">
             <h1>ABOUT_NODE</h1>
-            <p>SYSTEM MANIFESTO // V2.0 OP-MATRIX</p>
+            <p>SYSTEM MANIFESTO // V3.0 CINEMATIC</p>
+        </div>
+
+        <div class="intro-video-grid">
+            <div class="video-wrapper">
+                <div class="video-overlay">REC</div>
+                <video src="Video-238.mp4" autoplay loop muted playsinline></video>
+            </div>
+            <div class="video-wrapper">
+                <div class="video-overlay">REC</div>
+                <video src="Video-488.mp4" autoplay loop muted playsinline></video>
+            </div>
+            <div class="video-wrapper">
+                <div class="video-overlay">REC</div>
+                <video src="Video-907.mp4" autoplay loop muted playsinline></video>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="card-title"><span class="card-icon">🎯</span> [ MISSION PARAMETERS ]</div>
+            <div class="card-text">
+                The Guidance Portal is an advanced telemetry and operational matrix engineered to streamline workflow, enhance quality assurance, and provide critical downtime recovery. Our core directive is to leverage zero-latency edge AI and localized tools to bypass traditional cloud bottlenecks, ensuring maximum efficiency for dynamic teams.
+            </div>
         </div>
 
         <div class="data-card">
@@ -153,39 +196,6 @@
                     <br>
                     <div class="device-watermark">Shot on Galaxy S25 ~ Subhasis</div>
                 </div>
-            </div>
-        </div>
-
-        <div class="data-card">
-            <div class="card-title"><span class="card-icon">👥</span> [ OPERATIONAL ROSTER ]</div>
-            <div class="roster-grid">
-                
-                <div class="roster-member">
-                    <div class="member-name">SUBHASIS ROY</div>
-                    <div class="member-role">Lead Architect // HR Ops Coordinator</div>
-                    <div class="member-status"><span class="dot online"></span> SYSTEM ADMIN ONLINE</div>
-                </div>
-
-                <div class="roster-member">
-                    <div class="member-name">TAMALI GHOSH</div>
-                    <div class="member-role">Voice Process // Swiggy IM</div>
-                    <div class="member-status"><span class="dot active"></span> SHIFT HRS: 08:00 TO 17:00</div>
-                    <div class="member-wo">MAINTENANCE CYCLE [W.O]: WEDNESDAY</div>
-                </div>
-
-                <div class="roster-member">
-                    <div class="member-name">TEAM LEAD</div>
-                    <div class="member-role">Oversight // Shift Authorization</div>
-                    <div class="member-status"><span class="dot standby"></span> STANDBY FOR APPROVALS</div>
-                </div>
-
-            </div>
-        </div>
-
-        <div class="data-card">
-            <div class="card-title"><span class="card-icon">🎯</span> [ MISSION PARAMETERS ]</div>
-            <div class="card-text">
-                The Guidance Portal is an advanced telemetry and operational matrix engineered to streamline workflow, enhance quality assurance, and provide critical downtime recovery. Our core directive is to leverage zero-latency edge AI and localized tools to bypass traditional cloud bottlenecks, ensuring maximum efficiency for dynamic teams.
             </div>
         </div>
 
