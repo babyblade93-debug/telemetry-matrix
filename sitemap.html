@@ -3,197 +3,947 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guidance Portal - Sitemap Matrix OCP-v4</title>
+    <title>AI Core - Interactive Anti-Collision Directory Engine</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700&display=swap');
-        
-        * { box-sizing: border-box; margin: 0; padding: 0; cursor: crosshair; }
-        
-        body { 
-            font-family: 'JetBrains Mono', monospace; 
-            background: #000000; 
-            color: #cffafe; 
-            padding: 40px 10px; 
-            display: flex; 
-            justify-content: center; 
-            min-height: 100vh;
-            position: relative;
-            overflow-x: hidden;
+        /* --- 1. Cybernetic Light Cyan Blue Palette Core --- */
+        :root {
+            --bg-color: #e6f7fa; 
+            --panel-border: #00b4d8;
+            --panel-border-glow: #4cc9f0;
+            --glow-color: rgba(0, 180, 216, 0.25);
+            --panel-bg: rgba(255, 255, 255, 0.65);
+            --cyan-primary: #0077b6;
+            --cyan-bright: #03045e;
+            --cyan-accent: #00b4d8;
+            --text-light: #023e8a;
+            --text-dark: #03045e;
+            --font-family: 'Segoe UI', -apple-system, sans-serif;
+            --font-mono: 'Consolas', 'Courier New', monospace;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-color);
+            font-family: var(--font-family);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         body::before {
-            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
-            background-size: 100% 4px; z-index: 100; pointer-events: none; opacity: 0.15;
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 15% 15%, rgba(0, 180, 216, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 85% 85%, rgba(76, 201, 240, 0.25) 0%, transparent 55%),
+                linear-gradient(rgba(0, 180, 216, 0.08) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(0, 180, 216, 0.08) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+            z-index: -2;
         }
-        body::after {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(6, 182, 212, 0.03); opacity: 0; z-index: 99; pointer-events: none;
-            animation: flicker 0.1s infinite;
-        }
-        @keyframes flicker { 0% { opacity: 0.1; } 50% { opacity: 0.2; } 100% { opacity: 0.1; } }
 
-        .container { width: 100%; max-width: 900px; z-index: 10; position: relative; }
+        .global-hud-matrix-shield {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background: 
+                linear-gradient(rgba(255, 255, 255, 0) 50%, rgba(0, 180, 216, 0.04) 50%), 
+                linear-gradient(90deg, rgba(0, 180, 216, 0.02), rgba(0, 245, 212, 0.01), rgba(76, 201, 240, 0.02));
+            background-size: 100% 4px, 6px 100%;
+            z-index: 9999;
+            opacity: 0.9;
+        }
+
+        /* --- 2. Full Chassis Cinematic HUD Layout --- */
+        .simulation-container {
+            width: 96vw;
+            height: 94vh;
+            max-width: 1800px;
+            max-height: 1000px;
+            background: rgba(240, 251, 253, 0.85);
+            border: 2px solid var(--panel-border);
+            border-radius: 4px;
+            box-shadow: 0 0 35px rgba(0, 180, 216, 0.2), inset 0 0 25px rgba(255, 255, 255, 0.6);
+            padding: 24px;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+
+        .corner-bracket {
+            position: absolute; width: 18px; height: 18px; border-color: var(--panel-border); border-style: solid; z-index: 10;
+            filter: drop-shadow(0 0 4px var(--panel-border));
+        }
+        .cb-tl { top: 6px; left: 6px; border-width: 3px 0 0 3px; }
+        .cb-tr { top: 6px; right: 6px; border-width: 3px 3px 0 0; }
+        .cb-bl { bottom: 6px; left: 6px; border-width: 0 0 3px 3px; }
+        .cb-br { bottom: 6px; right: 6px; border-width: 0 3px 3px 0; }
+
+        .sim-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed rgba(0, 180, 216, 0.4);
+            padding-bottom: 8px;
+            color: var(--cyan-primary);
+            font-weight: bold;
+            font-family: var(--font-mono);
+            letter-spacing: 2px;
+            text-shadow: 0 0 4px rgba(0, 180, 216, 0.3);
+            flex-shrink: 0;
+        }
+
+        .header-controls-bay {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .status-node {
+            display: flex;
+            align-items: center;
+            font-size: 11px;
+            background: rgba(0, 180, 216, 0.12);
+            padding: 4px 12px;
+            border-radius: 2px;
+            border: 1px solid var(--panel-border);
+            color: var(--text-dark);
+            font-weight: 700;
+            font-family: var(--font-mono);
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .status-node-interactive {
+            cursor: pointer;
+            background: rgba(0, 119, 182, 0.1);
+        }
+        .status-node-interactive:hover {
+            background: rgba(0, 119, 182, 0.25);
+            box-shadow: 0 0 8px rgba(0, 180, 216, 0.3);
+            color: var(--cyan-bright);
+        }
+
+        .status-pulse {
+            width: 8px;
+            height: 8px;
+            background-color: var(--cyan-primary);
+            border-radius: 50%;
+            margin-right: 8px;
+            box-shadow: 0 0 8px var(--cyan-primary);
+            animation: pulse-glow 0.8s infinite alternate;
+        }
+
+        @keyframes pulse-glow { 0% { opacity: 0.5; transform: scale(0.8); } 100% { opacity: 1; transform: scale(1.2); } }
+
+        /* --- 3. Viewport Panel Matrix Layout --- */
+        .viewport-panel {
+            background-color: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: inset 0 0 30px rgba(0, 180, 216, 0.05);
+            flex-grow: 1; 
+        }
+
+        .panel-title-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0, 180, 216, 0.15);
+            border-bottom: 1px solid rgba(0, 180, 216, 0.3);
+            padding: 6px 14px;
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            font-size: 12px;
+            font-family: var(--font-mono);
+            color: var(--text-dark);
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+
+        .live-indicator {
+            font-family: var(--font-mono);
+            font-size: 11px;
+            background: rgba(0, 204, 136, 0.15);
+            border: 1px solid #00cc88;
+            color: #007a52;
+            padding: 3px 8px;
+            border-radius: 2px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
         
-        .header-container { text-align: center; margin-bottom: 60px; position: relative; padding: 20px; border: 2px solid #1e293b; clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px); }
-        .header-container::before { content: '[ '; color: #22d3ee; font-size: 32px; font-weight: 800; }
-        .header-container::after { content: ' ]'; color: #22d3ee; font-size: 32px; font-weight: 800; }
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #00cc88;
+            border-radius: 50%;
+            animation: pulse-glow 0.6s infinite alternate;
+        }
 
-        .header { font-size: 32px; color: #fff; text-transform: uppercase; letter-spacing: 4px; font-weight: 800; text-shadow: 0 0 15px #22d3ee; display: inline; }
-        .sub { color: #06b6d4; font-size: 11px; font-weight: 800; letter-spacing: 3px; margin-top: 10px; text-transform: uppercase; }
+        .canvas-container-wrapper {
+            flex-grow: 1;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
 
-        .neural-tree { width: 100%; display: flex; flex-direction: column; gap: 40px; position: relative; padding-bottom: 50px; }
+        canvas.tree-canvas-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .hud-laser-scanner {
+            position: absolute; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(to bottom, transparent, var(--panel-border), transparent);
+            box-shadow: 0 0 12px var(--panel-border);
+            opacity: 0.6;
+            animation: move-laser 3.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+            pointer-events: none;
+            z-index: 4;
+        }
+
+        @keyframes move-laser { 0% { top: -2%; } 100% { top: 102%; } }
+
+        /* --- 4. Profile Hologram Base Rack Deck --- */
+        .profile-matrix-rack {
+            background: rgba(224, 247, 250, 0.8);
+            border: 1px solid var(--panel-border);
+            padding: 12px 16px;
+            display: grid;
+            grid-template-columns: 310px 260px 1fr; 
+            gap: 20px;
+            box-sizing: border-box;
+            align-items: center;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(0, 180, 216, 0.1);
+            flex-shrink: 0;
+            height: 145px; 
+            overflow: hidden;
+        }
+
+        .identity-avatar-card { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+            border-right: 1px dashed rgba(0, 180, 216, 0.4); 
+            padding-right: 10px; 
+            height: 100%;
+        }
+
+        .reactor-3d-viewport {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle, #021a2e 0%, #00050a 100%);
+            border: 2px solid var(--panel-border);
+            border-radius: 50%;
+            box-shadow: 0 0 15px rgba(76, 201, 240, 0.4), inset 0 0 12px #000000;
+            overflow: hidden;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .reactor-canvas-3d {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .identity-meta h2 { margin: 0 0 2px 0; font-size: 16px; color: var(--cyan-bright); font-weight: 800; text-shadow: 0 0 4px rgba(0, 119, 182, 0.1); }
+        .identity-meta div { font-size: 11px; font-family: var(--font-mono); font-weight: 600; margin-top: 2px; letter-spacing: 0.5px; }
+        .meta-role { color: var(--text-light); }
+        .meta-loc { color: #005f73; opacity: 0.95; }
+        .meta-id { color: var(--cyan-primary); }
+
+        .responsibilities-grid { display: flex; flex-direction: column; justify-content: center; border-right: 1px dashed rgba(0, 180, 216, 0.4); padding-right: 10px; height: 100%; }
+        .responsibilities-title { font-family: var(--font-mono); font-size: 11px; color: var(--text-dark); font-weight: bold; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 1px; }
+        .resp-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+        .resp-list li { font-size: 11px; color: var(--text-dark); display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+        .resp-list li::before { content: '>'; color: var(--cyan-primary); font-family: var(--font-mono); font-weight: bold; }
+
+        .metrics-summary-panel { 
+            position: relative; 
+            height: 100%; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            width: 100%; 
+            min-width: 0; 
+        }
         
-        .neural-tree::before {
-            content: ''; position: absolute; top: -40px; bottom: 0px; left: 50%; width: 6px;
-            background: repeating-linear-gradient(to bottom, #0ea5e9, #0ea5e9 10px, #000 10px, #000 20px);
-            transform: translateX(-50%); z-index: 1; opacity: 0.3; animation: conduitPulse 1s infinite linear;
-        }
-        @keyframes conduitPulse { from { background-position: 0 0; } to { background-position: 0 40px; } }
-
-        .neural-branch { display: flex; flex-direction: column; align-items: center; width: 100%; position: relative; z-index: 2; }
-
-        .section-header {
-            width: 100%; max-width: 500px; background: #1e293b; border: 2px solid #334155; padding: 12px 20px;
-            margin-bottom: 20px; color: #fff; font-weight: 800; font-size: 14px; text-transform: uppercase;
-            letter-spacing: 2px; position: relative; display: flex; align-items: center; gap: 15px;
-            clip-path: polygon(0 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
-        }
-        .section-header::before { content: ''; width: 10px; height: 10px; background: #22d3ee; box-shadow: 0 0 10px #22d3ee; animation: pulse 1.5s infinite; }
-        
-        @media (min-width: 768px) {
-            .neural-branch:nth-child(odd) { align-items: flex-end; padding-right: 54%; }
-            .neural-branch:nth-child(even) { align-items: flex-start; padding-left: 54%; }
-            
-            .neural-branch::before {
-                content: ''; position: absolute; top: 25px; left: 50%; width: 50%; height: 3px;
-                background: linear-gradient(90deg, #06b6d4, transparent); z-index: -1; animation: pulse 2s infinite;
-            }
-            .neural-branch:nth-child(odd)::before {
-                left: auto; right: 50%; background: linear-gradient(270deg, #06b6d4, transparent);
-            }
-        }
-
-        .endpoint-list { list-style: none; padding: 0; margin: 0; width: 100%; max-width: 500px; display: flex; flex-direction: column; gap: 10px; }
-        
-        .endpoint-item {
-            background: #000; border: 2px solid #1e293b; position: relative; overflow: hidden;
-            clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
-            transition: all 0.1s;
+        .quantum-chronograph-box { 
+            position: relative; 
+            background: rgba(255, 255, 255, 0.7); 
+            border: 1px solid var(--panel-border); 
+            padding: 12px 20px; 
+            box-shadow: 0 0 15px rgba(0, 180, 216, 0.12); 
+            box-sizing: border-box;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-width: 0;
         }
         
-        /* ADDED target="_top" TO BREAK OUT OF THE EMBED BOX */
-        .endpoint-link {
-            display: flex; align-items: center; justify-content: space-between; padding: 16px 20px;
-            color: #bae6fd; text-decoration: none; font-weight: 700; font-size: 13px; letter-spacing: 1px;
-            position: relative; z-index: 10;
+        .time-matrix-block { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center;
+            min-width: 0; 
+            width: 100%;
         }
-        .endpoint-link::before { content: '> '; color: #22d3ee; font-weight: 800; font-size: 16px; }
 
-        .data-id { font-size: 9px; color: #64748b; background: rgba(30, 41, 59, 0.5); padding: 2px 6px; border-radius: 2px; }
-
-        .endpoint-item:hover {
-            border-color: #ef4444; 
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
-            transform: scale(1.02);
+        .date-matrix-row { 
+            font-family: var(--font-mono); 
+            font-size: 13px; 
+            font-weight: 700; 
+            color: var(--text-light); 
+            letter-spacing: 2px;
+            white-space: nowrap;
         }
-        
-        .endpoint-item:hover .endpoint-link { color: #fff; animation: glitch 0.3s forwards; }
-        .endpoint-item:hover .endpoint-link::before { color: #ef4444; content: 'X '; }
-        .endpoint-item:hover .data-id { color: #ef4444; background: rgba(239, 68, 68, 0.1); }
 
-        .endpoint-item::after {
-            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background-image: 
-                linear-gradient(#ef4444 2px, transparent 2px), linear-gradient(90deg, #ef4444 2px, transparent 2px),
-                linear-gradient(#ef4444 2px, transparent 2px), linear-gradient(90deg, #ef4444 2px, transparent 2px);
-            background-size: 15px 15px; background-repeat: no-repeat;
-            background-position: 0 0, 0 0, 100% 100%, 100% 100%;
-            opacity: 0; transition: opacity 0.1s; pointer-events: none;
+        .kinetic-clock-row { 
+            font-family: var(--font-mono); 
+            font-size: 32px; 
+            font-weight: 900; 
+            color: var(--cyan-bright); 
+            letter-spacing: 1px; 
+            display: flex; 
+            align-items: center; 
+            margin-top: 2px;
+            white-space: nowrap;
         }
-        .endpoint-item:hover::after { opacity: 1; }
+        .ms-ticker { font-size: 16px; color: var(--cyan-primary); margin-left: 2px; font-weight: 700; width: 42px; display: inline-block; text-align: left; }
+        .ampm-hud-badge { font-size: 11px; background: var(--cyan-primary); color: #ffffff; padding: 2px 6px; font-weight: bold; margin-left: 6px; border-radius: 2px; }
 
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-        
-        @keyframes glitch {
-            0% { transform: translate(0); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
-            20% { transform: translate(-2px, 2px); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
-            40% { transform: translate(-2px, -2px); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
-            60% { transform: translate(2px, 2px); text-shadow: 2px 0 #ef4444, -2px 0 #06b6d4; }
-            80% { transform: translate(2px, -2px); text-shadow: -2px 0 #ef4444, 2px 0 #06b6d4; }
-            100% { transform: translate(0); text-shadow: none; }
+        .quote-banner { 
+            font-style: italic; 
+            font-size: 11px; 
+            color: var(--text-light); 
+            margin-top: 6px; 
+            border-top: 1px solid rgba(0, 180, 216, 0.2); 
+            padding-top: 4px; 
+            text-align: center; 
+            width: 100%; 
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis; 
+            font-weight: 600; 
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="header-container">
-            <h1 class="header">SYSTEM_MAP_OCP_v4</h1>
-            <p class="sub">ROUTING PROTOCOLS // TACTICAL OVERVIEW</p>
-        </div>
+    <ul id="dynamic-sitemap-data" style="display: none;">
+        <li data-type="leaf">Home</li>
+        <li data-type="leaf">Stats</li>
+        <li data-type="tab">Formulas ⌵
+            <ul>
+                <li data-type="leaf">Advanced Excel and Gsheets</li>
+                <li data-type="leaf">Advanced Word</li>
+                <li data-type="leaf">PowerPoint</li>
+            </ul>
+        </li>
+        <li data-type="tab">Automation ⌵
+            <ul>
+                <li data-type="leaf">Apps script and triggers</li>
+            </ul>
+        </li>
+        <li data-type="tab">Tools ⌵
+            <ul>
+                <li data-type="leaf">Call Transcriber</li>
+                <li data-type="leaf">PPT Generator</li>
+            </ul>
+        </li>
+        <li data-type="leaf">Entertainment</li>
+        <li data-type="leaf">Sitemap</li>
+        <li data-type="leaf">About Us</li>
+    </ul>
 
-        <div class="neural-tree">
-            
-            <div class="neural-branch">
-                <div class="section-header">Directives: Formulas & Software</div>
-                <ul class="endpoint-list">
-                    <li class="endpoint-item">
-                        <a href="PASTE_YOUR_GOOGLE_SITES_EXCEL_LINK_HERE" target="_top" class="endpoint-link">
-                            <span>Advanced Excel / G-Sheets</span>
-                            <span class="data-id">DATA_MATRIX.gs</span>
-                        </a>
-                    </li>
-                    <li class="endpoint-item">
-                        <a href="PASTE_YOUR_GOOGLE_SITES_WORD_LINK_HERE" target="_top" class="endpoint-link">
-                            <span>Word / Docs Formatting [P1]</span>
-                            <span class="data-id">DOCS_CORE.wps</span>
-                        </a>
-                    </li>
-                    <li class="endpoint-item">
-                        <a href="PASTE_YOUR_GOOGLE_SITES_WORD_ADV_LINK_HERE" target="_top" class="endpoint-link">
-                            <span>Word / Docs Automation [P2]</span>
-                            <span class="data-id">DOCS_ADV.wps</span>
-                        </a>
-                    </li>
-                    <li class="endpoint-item">
-                        <a href="PASTE_YOUR_GOOGLE_SITES_PPT_LINK_HERE" target="_top" class="endpoint-link">
-                            <span>PowerPoint / Slides Visualization</span>
-                            <span class="data-id">PPT_ARCH.wps</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+    <div class="global-hud-matrix-shield"></div>
 
-            <div class="neural-branch">
-                <div class="section-header" style="border-color: #10b981;">
-                    <span style="background: #10b981; width: 10px; height: 10px; border-radius: 50%; display: inline-block; box-shadow: 0 0 10px #10b981; animation: pulse 1.5s infinite;"></span>
-                    Directives: Automation
+    <div class="simulation-container">
+        <div class="corner-bracket cb-tl"></div>
+        <div class="corner-bracket cb-tr"></div>
+        <div class="corner-bracket cb-bl"></div>
+        <div class="corner-bracket cb-br"></div>
+
+        <header class="sim-header">
+            <div>[ SYSTEM_NODE_HYPERVISOR // SYSTEM_MAP_OCP_v5 // ARCH_ROUTER ]</div>
+            <div class="header-controls-bay">
+                <div id="hud-audio-node" class="status-node status-node-interactive">
+                    <span>⚡ ARC_CORE::TAP_TO_BOOT</span>
                 </div>
-                <ul class="endpoint-list">
-                    <li class="endpoint-item" style="border-color: rgba(16, 185, 129, 0.3);">
-                        <a href="PASTE_YOUR_GOOGLE_SITES_APPSCRIPT_LINK_HERE" target="_top" class="endpoint-link" style="color: #a7f3d0;">
-                            <span>Apps Script & Event Triggers</span>
-                            <span class="data-id">GS_IDE.sandbox</span>
-                        </a>
-                    </li>
+                <div class="status-node">
+                    <span class="status-pulse"></span>
+                    <span>MARK_LXXXV::ONLINE</span>
+                </div>
+            </div>
+        </header>
+
+        <main class="viewport-panel">
+            <div class="hud-laser-scanner"></div>
+            <div class="panel-title-container">
+                <h3 class="panel-title">// HOLOGRAPHIC DIRECTORY ENG // CLICK PARENTS TO TOGGLE DROPDOWN BRANCHES</h3>
+                <div class="live-indicator"><span class="live-dot"></span>HOLOGRAPHIC INTERACTIVE ACTIVE</div>
+            </div>
+            <div class="canvas-container-wrapper" id="canvasWrapper">
+                <canvas id="sitemapCanvas" class="tree-canvas-layer"></canvas>
+            </div>
+        </main>
+
+        <footer class="profile-matrix-rack">
+            <div class="identity-avatar-card">
+                <div class="reactor-3d-viewport">
+                    <canvas id="reactor3DCanvas" class="reactor-canvas-3d"></canvas>
+                </div>
+                <div class="identity-meta">
+                    <h2>Subhasis Roy</h2>
+                    <div class="meta-role">◈ Quality Evaluator</div>
+                    <div class="meta-loc">⫸ Maxicus || Kolkata</div>
+                    <div class="meta-id">SYS_ID_8240041652</div>
+                </div>
+            </div>
+
+            <div class="responsibilities-grid">
+                <div class="responsibilities-title">DATA_INTEGRITY_COMPLIANCE</div>
+                <ul class="resp-list">
+                    <li>Real-time integrity audits & analysis.</li>
+                    <li>Automated workflows & SOP compliance.</li>
+                    <li>Queries & analytical data maps.</li>
                 </ul>
             </div>
 
-            <div class="neural-branch">
-                <div class="section-header" style="border-color: #64748b;">Directives: System Core</div>
-                <ul class="endpoint-list">
-                    <li class="endpoint-item" style="border-color: #334155;">
-                        <a href="#" class="endpoint-link" style="color: #94a3b8; pointer-events: none;">
-                            <span>Current Directory [ACTIVE]</span>
-                            <span class="data-id">SYS_MAP.html</span>
-                        </a>
-                    </li>
-                </ul>
+            <div class="metrics-summary-panel">
+                <div class="quantum-chronograph-box">
+                    <div class="time-matrix-block">
+                        <div class="date-matrix-row">
+                            <span id="hud-day">TRACKING</span> // <span id="hud-date">SYNC_CALENDAR</span>
+                        </div>
+                        <div class="kinetic-clock-row">
+                            <span id="hud-hours">00</span>:<span id="hud-minutes">00</span>:<span id="hud-seconds">00</span>
+                            <span id="hud-ms" class="ms-ticker">.000</span>
+                            <span id="hud-ampm" class="ampm-hud-badge">SYS</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="quote-banner" title="The journey of a thousand miles begins with a single step">
+                    "The journey of a thousand miles begins with a single step"
+                </div>
             </div>
-
-        </div>
+        </footer>
     </div>
 
+    <script>
+        // =========================================================================
+        // 🔗 LINK ROUTER CONTEXT CONFIGURATION 
+        // -> PASTE YOUR GOOGLE SITE LINKS HERE! <-
+        // =========================================================================
+        const GOOGLE_SITE_BASE_URL = "https://sites.google.com/external.swiggy.in/qaportalb2r";
+        const ROUTING_TARGET_CONTEXT = "_top"; 
+
+        const EXTERNAL_OVERRIDE_ROUTER = {
+            "Home": "PASTE_LINK_HERE",
+            "Stats": "PASTE_LINK_HERE",
+            "Advanced Excel and Gsheets": "PASTE_LINK_HERE",
+            "Advanced Word": "PASTE_LINK_HERE",
+            "PowerPoint": "PASTE_LINK_HERE",
+            "Apps script and triggers": "PASTE_LINK_HERE",
+            "Call Transcriber": "PASTE_LINK_HERE",
+            "PPT Generator": "PASTE_LINK_HERE",
+            "Entertainment": "PASTE_LINK_HERE",
+            "Sitemap": "PASTE_LINK_HERE",
+            "About Us": "PASTE_LINK_HERE"
+        };
+
+        const ELLIPSIS_SLUG_MAP = {
+            // Fallback mapper logic
+        };
+
+        function cleanNodeToUrlSlug(name) {
+            let normalized = name.replace(/[⌵\s]+$/g, '').trim().toLowerCase();
+            if (ELLIPSIS_SLUG_MAP[normalized]) {
+                return ELLIPSIS_SLUG_MAP[normalized];
+            }
+            return normalized.replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        }
+
+        // --- HUD CHRONOGRAPH ENGINE ---
+        function runCinematicHUDChronograph() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            const ms = String(now.getMilliseconds()).padStart(3, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            const formattedHours = String(hours).padStart(2, '0');
+            
+            document.getElementById('hud-hours').innerText = formattedHours;
+            document.getElementById('hud-minutes').innerText = minutes;
+            document.getElementById('hud-seconds').innerText = seconds;
+            document.getElementById('hud-ms').innerText = `.${ms}`;
+            document.getElementById('hud-ampm').innerText = ampm;
+            
+            const dayNum = String(now.getDate()).padStart(2, '0');
+            const monthsList = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+            document.getElementById('hud-date').innerText = `${dayNum} ${monthsList[now.getMonth()]} ${now.getFullYear()}`;
+            
+            const daysList = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"];
+            document.getElementById('hud-day').innerText = daysList[now.getDay()];
+
+            requestAnimationFrame(runCinematicHUDChronograph);
+        }
+
+        // --- AUDIO FEEDBACK NETWORK ---
+        let audioCtx = null;
+        let audioEnabled = false;
+        let dataStreamInterval = null;
+
+        function initAudioEngine() {
+            if (audioCtx) return; 
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            audioEnabled = true;
+
+            const audioNode = document.getElementById('hud-audio-node');
+            audioNode.innerHTML = `<span>⚡ ARC_CORE::ONLINE</span>`;
+            audioNode.style.borderColor = "#00b4d8";
+            audioNode.style.background = "rgba(76, 201, 240, 0.2)";
+
+            const nowTime = audioCtx.currentTime;
+            const bootOsc = audioCtx.createOscillator();
+            const bootGain = audioCtx.createGain();
+            bootOsc.type = 'sine';
+            bootOsc.frequency.setValueAtTime(80, nowTime);
+            bootOsc.frequency.exponentialRampToValueAtTime(1250, nowTime + 1.6);
+            
+            bootGain.gain.setValueAtTime(0.001, nowTime);
+            bootGain.gain.linearRampToValueAtTime(0.04, nowTime + 0.4);
+            bootGain.gain.exponentialRampToValueAtTime(0.00001, nowTime + 1.8);
+            
+            bootOsc.connect(bootGain);
+            bootGain.connect(audioCtx.destination);
+            bootOsc.start(nowTime);
+            bootOsc.stop(nowTime + 1.8);
+
+            dataStreamInterval = setInterval(() => {
+                if (!audioEnabled) return;
+                const dataOsc = audioCtx.createOscillator();
+                const dataGain = audioCtx.createGain();
+                dataOsc.type = 'sine';
+                dataOsc.frequency.setValueAtTime(1400 + (Math.random() * 600), audioCtx.currentTime);
+                dataOsc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.05);
+                dataGain.gain.setValueAtTime(0.004, audioCtx.currentTime); 
+                dataGain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.06);
+                dataOsc.connect(dataGain); dataGain.connect(audioCtx.destination);
+                dataOsc.start(); dataOsc.stop(audioCtx.currentTime + 0.07);
+            }, 140); 
+        }
+
+        function playNodeClickAudioFeedback() {
+            if (!audioCtx || !audioEnabled) return;
+            const clickOsc = audioCtx.createOscillator();
+            const clickGain = audioCtx.createGain();
+            clickOsc.type = 'triangle';
+            clickOsc.frequency.setValueAtTime(1800, audioCtx.currentTime);
+            clickOsc.frequency.setValueAtTime(2500, audioCtx.currentTime + 0.02);
+            clickGain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            clickGain.gain.exponentialRampToValueAtTime(0.00001, audioCtx.currentTime + 0.08);
+            clickOsc.connect(clickGain); clickGain.connect(audioCtx.destination);
+            clickOsc.start(); clickOsc.stop(audioCtx.currentTime + 0.09);
+        }
+
+        // --- HIGH-FIDELITY CYBERNETIC ARC REACTOR CANVAS ---
+        function runHD3DReactorPipeline() {
+            const canvas = document.getElementById('reactor3DCanvas');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            const size = 90;
+            
+            canvas.width = size * window.devicePixelRatio;
+            canvas.height = size * window.devicePixelRatio;
+            ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+            const cx = size / 2;
+            const cy = size / 2;
+            let rotationalAngle = 0;
+
+            function drawRotatingMeshReactor() {
+                ctx.clearRect(0, 0, size, size);
+                rotationalAngle += 0.025;
+
+                let auraGrad = ctx.createRadialGradient(cx, cy, 2, cx, cy, 40);
+                auraGrad.addColorStop(0, 'rgba(255, 255, 255, 0.9)');
+                auraGrad.addColorStop(0.2, 'rgba(76, 201, 240, 0.5)');
+                auraGrad.addColorStop(0.6, 'rgba(0, 180, 216, 0.15)');
+                auraGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+                ctx.fillStyle = auraGrad;
+                ctx.beginPath(); ctx.arc(cx, cy, 40, 0, Math.PI * 2); ctx.fill();
+
+                ctx.save();
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = 'rgba(0, 180, 216, 0.6)';
+                ctx.setLineDash([4, 6]);
+                ctx.translate(cx, cy);
+                ctx.rotate(rotationalAngle * 0.4);
+                ctx.beginPath(); ctx.arc(0, 0, 38, 0, Math.PI * 2); ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.lineWidth = 3.5;
+                ctx.strokeStyle = '#4cc9f0';
+                ctx.translate(cx, cy);
+                ctx.rotate(-rotationalAngle * 0.7);
+                ctx.setLineDash([14, 8, 4, 8]);
+                ctx.beginPath(); ctx.arc(0, 0, 28, 0, Math.PI * 2); ctx.stroke();
+                ctx.restore();
+
+                ctx.save();
+                ctx.lineWidth = 1;
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)';
+                ctx.translate(cx, cy);
+                ctx.rotate(rotationalAngle * 1.2);
+                ctx.setLineDash([2, 3]);
+                ctx.beginPath(); ctx.arc(0, 0, 19, 0, Math.PI * 2); ctx.stroke(); 
+                ctx.restore();
+
+                ctx.save();
+                ctx.translate(cx, cy);
+                ctx.rotate(rotationalAngle * 0.4);
+                ctx.fillStyle = 'rgba(0, 180, 216, 0.8)';
+                for (let i = 0; i < 3; i++) {
+                    ctx.rotate((Math.PI * 2) / 3);
+                    ctx.beginPath();
+                    ctx.moveTo(0, -32);
+                    ctx.lineTo(4, -26);
+                    ctx.lineTo(-4, -26);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                ctx.restore();
+
+                let coreGradient = ctx.createRadialGradient(cx, cy, 0, cx, cy, 9);
+                coreGradient.addColorStop(0, '#ffffff');
+                coreGradient.addColorStop(0.3, '#e6f7fa');
+                coreGradient.addColorStop(0.7, '#00b4d8');
+                coreGradient.addColorStop(1, 'rgba(3, 4, 94, 0)');
+                ctx.fillStyle = coreGradient;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 10 + Math.sin(rotationalAngle * 5) * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+
+                requestAnimationFrame(drawRotatingMeshReactor);
+            }
+            drawRotatingMeshReactor();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            requestAnimationFrame(runCinematicHUDChronograph);
+            runHD3DReactorPipeline();
+
+            document.body.addEventListener('click', () => {
+                if (audioCtx && audioCtx.state === 'suspended') audioCtx.resume(); else initAudioEngine();
+            }, { once: false });
+
+            const canvas = document.getElementById('sitemapCanvas');
+            const wrapper = document.getElementById('canvasWrapper');
+            const ctx = canvas.getContext('2d');
+
+            let masterTreeData = null;
+            const visibleNodesToRender = [];
+            const activeVectorPaths = [];
+            let globalMaxVisibleDepth = 0;
+            let currentlyHoveredNodeRef = null;
+
+            // --- HTML TREE PARSER FOR INTERACTIVE DROPDOWNS ---
+            function parseHTMLToDataTree(rootLabel = "QA PORTAL CORE") {
+                function buildNestedNode(li, parentPathString = "") {
+                    let cleanTextName = Array.from(li.childNodes)
+                        .filter(n => n.nodeType === Node.TEXT_NODE)
+                        .map(n => n.textContent).join('').trim();
+                    
+                    let nodeType = li.getAttribute('data-type') || 'leaf';
+                    let currentSlug = cleanNodeToUrlSlug(cleanTextName);
+                    
+                    let combinedSitePath = parentPathString + "/" + currentSlug;
+                    
+                    let nodeInstance = { 
+                        name: cleanTextName, 
+                        type: nodeType, 
+                        sitePath: combinedSitePath,
+                        expanded: true, 
+                        children: [] 
+                    };
+
+                    let childUl = Array.from(li.children).find(el => el.tagName === 'UL');
+                    if (childUl) {
+                        Array.from(childUl.children)
+                            .filter(el => el.tagName === 'LI')
+                            .forEach(childLi => {
+                                nodeInstance.children.push(buildNestedNode(childLi, combinedSitePath));
+                            });
+                    }
+                    if (nodeInstance.children.length === 0) {
+                        delete nodeInstance.children;
+                    } else {
+                        nodeInstance.type = (nodeType === 'leaf' || nodeType === 'deep-leaf') ? 'sub-dropdown' : nodeType;
+                    }
+                    return nodeInstance;
+                }
+
+                let rootObj = { name: rootLabel, type: "root", expanded: true, children: [] };
+                let mainList = document.getElementById('dynamic-sitemap-data');
+                if (mainList) {
+                    Array.from(mainList.children)
+                        .filter(el => el.tagName === 'LI')
+                        .forEach(li => rootObj.children.push(buildNestedNode(li, "")));
+                }
+                return rootObj;
+            }
+
+            function getActiveVisibleLeafCount(node) {
+                if (!node.expanded || !node.children || node.children.length === 0) return 1;
+                let sum = 0; 
+                node.children.forEach(c => sum += getActiveVisibleLeafCount(c)); 
+                return sum;
+            }
+
+            function computeMaxVisibleDepth(node, activeDepth) {
+                if (activeDepth > globalMaxVisibleDepth) globalMaxVisibleDepth = activeDepth;
+                if (node.expanded && node.children && node.children.length > 0) {
+                    node.children.forEach(c => computeMaxVisibleDepth(c, activeDepth + 1));
+                }
+            }
+
+            // --- COORDINATE PLOTTER RECALCULATOR ---
+            function calculateVisibleLayoutCoordinates(node, depth, currentYStart, totalHeightAvailable, parentRef = null) {
+                const canvasW = canvas.width || 1200;
+                const canvasH = canvas.height || 600;
+                
+                const horizontalColWidth = (canvasW - 240) / Math.max(1, globalMaxVisibleDepth); 
+                const centerY = currentYStart + (totalHeightAvailable / 2);
+                const boxHeight = 28; const paddingY = 32;
+                const clampedY = Math.max(paddingY + (boxHeight / 2), Math.min(canvasH - paddingY - (boxHeight / 2), centerY));
+
+                ctx.font = 'bold 12px Consolas';
+                let calculatedBoxWidth = Math.max(165, ctx.measureText(node.name).width + 24);
+
+                const renderObject = {
+                    sourceNode: node, 
+                    name: node.name,
+                    type: node.type,
+                    depth: depth,
+                    x: 20 + (depth * horizontalColWidth),
+                    y: clampedY,
+                    w: calculatedBoxWidth,
+                    h: boxHeight,
+                    phaseOffset: Math.random() * Math.PI,
+                    oscSpeed: 0.002 + Math.random() * 0.003
+                };
+
+                visibleNodesToRender.push(renderObject);
+                if (parentRef) activeVectorPaths.push({ from: parentRef, to: renderObject, signalProgress: Math.random() });
+
+                if (node.expanded && node.children && node.children.length > 0) {
+                    let totalLeaves = 0; node.children.forEach(c => totalLeaves += getActiveVisibleLeafCount(c));
+                    let verticalAccumulatorY = currentYStart;
+                    
+                    node.children.forEach(child => {
+                        const childLeaves = getActiveVisibleLeafCount(child);
+                        const allocatedHeight = (childLeaves / totalLeaves) * totalHeightAvailable;
+                        calculateVisibleLayoutCoordinates(child, depth + 1, verticalAccumulatorY, allocatedHeight, renderObject);
+                        verticalAccumulatorY += allocatedHeight;
+                    });
+                }
+            }
+
+            function resizeCanvas() {
+                const rect = wrapper.getBoundingClientRect();
+                canvas.width = rect.width > 100 ? rect.width : window.innerWidth * 0.9; 
+                canvas.height = rect.height > 100 ? rect.height : window.innerHeight * 0.6;
+            }
+
+            window.refreshHolographicTree = function() {
+                if (!masterTreeData) masterTreeData = parseHTMLToDataTree();
+                globalMaxVisibleDepth = 0; 
+                visibleNodesToRender.length = 0; 
+                activeVectorPaths.length = 0;
+                
+                resizeCanvas();
+                computeMaxVisibleDepth(masterTreeData, 0);
+                calculateVisibleLayoutCoordinates(masterTreeData, 0, 32, (canvas.height || 600) - 64);
+            };
+            
+            setTimeout(window.refreshHolographicTree, 150);
+
+            function getCanvasRelativeMouseCoordinates(e) {
+                const bounds = canvas.getBoundingClientRect();
+                return { x: e.clientX - bounds.left, y: e.clientY - bounds.top };
+            }
+
+            // --- HOVER MONITOR MATRIX ---
+            canvas.addEventListener('mousemove', (e) => {
+                const mouse = getCanvasRelativeMouseCoordinates(e);
+                let hitNode = null;
+
+                for (let i = 0; i < visibleNodesToRender.length; i++) {
+                    let node = visibleNodesToRender[i];
+                    if (node.type === 'root') continue;
+
+                    let floatY = Math.sin(node.phaseOffset) * 1.5;
+                    let bx = node.x;
+                    let by = node.y - node.h / 2 + floatY;
+
+                    if (mouse.x >= bx && mouse.x <= bx + node.w && mouse.y >= by && mouse.y <= by + node.h) {
+                        hitNode = node;
+                        break;
+                    }
+                }
+
+                if (hitNode !== currentlyHoveredNodeRef) {
+                    currentlyHoveredNodeRef = hitNode;
+                    canvas.style.cursor = currentlyHoveredNodeRef ? 'pointer' : 'default';
+                }
+            });
+
+            // --- DROPDOWN TOGGLE & SANDBOX NAVIGATION ROUTER BRIDGE ---
+            canvas.addEventListener('click', () => {
+                if (!currentlyHoveredNodeRef) return;
+                
+                playNodeClickAudioFeedback();
+                let selected = currentlyHoveredNodeRef.sourceNode;
+
+                if (selected.children && selected.children.length > 0) {
+                    selected.expanded = !selected.expanded;
+                    window.refreshHolographicTree(); 
+                } else {
+                    let finalTargetUrl = "";
+                    let cleanTextKey = selected.name.replace(/[⌵\s]+$/g, '').trim();
+
+                    // CHECK IF YOU HAVE PASTED A CUSTOM URL IN THE EXTERNAL_OVERRIDE_ROUTER
+                    if (EXTERNAL_OVERRIDE_ROUTER[cleanTextKey] && EXTERNAL_OVERRIDE_ROUTER[cleanTextKey] !== "PASTE_LINK_HERE") {
+                        finalTargetUrl = EXTERNAL_OVERRIDE_ROUTER[cleanTextKey];
+                    } else {
+                        // Fallback auto-router
+                        finalTargetUrl = GOOGLE_SITE_BASE_URL + selected.sitePath;
+                    }
+                    
+                    if (finalTargetUrl === "#") return; 
+
+                    // ⚡ THE SANDBOX BREAKOUT BRIDGE
+                    try {
+                        const navigationBridgeAnchor = document.createElement('a');
+                        navigationBridgeAnchor.href = finalTargetUrl;
+                        navigationBridgeAnchor.target = ROUTING_TARGET_CONTEXT;
+                        document.body.appendChild(navigationBridgeAnchor);
+                        navigationBridgeAnchor.click();
+                        document.body.removeChild(navigationBridgeAnchor);
+                    } catch (routerException) {
+                        console.warn("[HUD ROUTER] Virtual anchor fallback initialized:", routerException);
+                        window.open(finalTargetUrl, ROUTING_TARGET_CONTEXT);
+                    }
+                }
+            });
+
+            // --- ANIMATION CORE RENDER LOOP ---
+            function renderHUDPipelineLoop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                activeVectorPaths.forEach(path => {
+                    let fromF = Math.sin(path.from.phaseOffset) * 1.5;
+                    let toF = Math.sin(path.to.phaseOffset) * 1.5;
+                    let startX = path.from.x + path.from.w;
+                    let startY = path.from.y + fromF;
+                    let endX = path.to.x;
+                    let endY = path.to.y + toF;
+                    let midX = (startX + endX) / 2;
+                    
+                    ctx.beginPath(); ctx.moveTo(startX, startY); ctx.bezierCurveTo(midX, startY, midX, endY, endX, endY);
+                    ctx.strokeStyle = 'rgba(0, 119, 182, 0.35)'; ctx.lineWidth = 1.5; ctx.stroke();
+
+                    path.signalProgress += 0.0025; if (path.signalProgress > 1) path.signalProgress = 0;
+                    let t = path.signalProgress; let mt = 1 - t;
+                    let pX = mt*mt*mt*startX + 3*mt*mt*t*midX + 3*mt*t*t*midX + t*t*t*endX;
+                    let pY = mt*mt*mt*startY + 3*mt*mt*t*startY + 3*mt*t*t*endY + t*t*t*endY;
+                    ctx.fillStyle = '#00b4d8'; ctx.fillRect(pX - 2.5, pY - 2.5, 5, 5);
+                });
+
+                visibleNodesToRender.forEach(node => {
+                    node.phaseOffset += node.oscSpeed;
+                    let floatY = Math.sin(node.phaseOffset) * 1.5;
+
+                    ctx.save();
+                    ctx.font = 'bold 12px Consolas';
+                    let bx = node.x;
+                    let by = node.y - node.h / 2 + floatY;
+                    let isHovered = (currentlyHoveredNodeRef === node);
+
+                    if (node.type === 'root') {
+                        ctx.fillStyle = 'rgba(0, 180, 216, 0.22)';
+                    } else if (node.sourceNode.children && node.sourceNode.children.length > 0) {
+                        ctx.fillStyle = isHovered ? 'rgba(76, 201, 240, 0.35)' : 'rgba(76, 201, 240, 0.18)';
+                    } else {
+                        ctx.fillStyle = isHovered ? '#e6f7fa' : 'rgba(255, 255, 255, 0.95)';
+                    }
+
+                    ctx.fillRect(bx, by, node.w, node.h);
+                    
+                    if (isHovered) {
+                        ctx.strokeStyle = '#00f5d4';
+                        ctx.shadowBlur = 8;
+                        ctx.shadowColor = '#00f5d4';
+                        ctx.lineWidth = 2.5;
+                    } else {
+                        ctx.strokeStyle = (node.sourceNode.children) ? 'rgba(0, 180, 216, 0.9)' : 'rgba(0, 119, 182, 0.8)';
+                        ctx.lineWidth = 1.5;
+                    }
+                    ctx.strokeRect(bx, by, node.w, node.h);
+
+                    ctx.fillStyle = isHovered ? '#00f5d4' : '#0077b6';
+                    ctx.fillRect(bx, by, 3, 3); ctx.fillRect(bx + node.w - 3, by, 3, 3);
+                    ctx.fillRect(bx, by + node.h - 3, 3, 3); ctx.fillRect(bx + node.w - 3, by + node.h - 3, 3, 3);
+
+                    ctx.shadowBlur = 0; 
+                    ctx.fillStyle = isHovered ? '#0077b6' : '#03045e';
+                    
+                    let displayLabel = node.name;
+                    if (node.sourceNode.children && node.sourceNode.children.length > 0) {
+                        displayLabel = (node.sourceNode.expanded ? "[-] " : "[+] ") + displayLabel.replace(/[⌵]/g, '');
+                    }
+                    
+                    ctx.fillText(displayLabel, bx + 12, by + 18);
+                    ctx.restore();
+                });
+
+                requestAnimationFrame(renderHUDPipelineLoop);
+            }
+
+            renderHUDPipelineLoop();
+            window.addEventListener('resize', () => { window.refreshHolographicTree(); });
+        });
+    </script>
 </body>
 </html>
